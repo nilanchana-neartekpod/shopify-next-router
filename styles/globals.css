@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.productsList{
+  display: grid;
+  gap: 20px;
+  padding: 20px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+
+  & .product{
+    display: block;
+    text-align: center;
+    border: 1px solid #ececec;
+    padding: 10px;
+    border-radius: 5px;
+
+    & > div{
+      position: relative;
+      display: block;
+
+      & img{
+        position: relative !important;
+        object-fit: contain;
+        height: auto !important;
+        max-height: 300px;
+      }
+
+      &:last-child{
+        padding-top: 10px;
+      }
+    }
+  }
+}
+
+.product-details{
+  padding:40px;
+  display: flex;
+
+  & .left{
+    & img{
+      position:  relative !important;
+      height: auto !important;
+    }
+  }
+
+  @media(max-width:767px){
+    padding:20px;
+    flex-direction: column;
+  }
+}
+
+@media(max-width:767px){
+  .productsList{
+    grid-template-columns: 1fr;
+  }
+}
