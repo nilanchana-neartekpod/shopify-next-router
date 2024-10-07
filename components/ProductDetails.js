@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { addToCart } from "../utils/shopify";
+import { addToCart, updateCart } from "../utils/shopify";
 
 const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
@@ -18,10 +18,12 @@ const ProductDetails = ({product}) => {
         if (quantity > 0) {
           if (cartId) {
             await updateCart(cartId, product.variants.edges[0].node.id, quantity);
+            setCheckout(true);
           } else {
             let data = await addToCart(product.variants.edges[0].node.id, quantity);
             cartId = data.cartCreate.cart.id;
             sessionStorage.setItem("cartId", cartId);
+            setCheckout(true);
           }
         }
     };
@@ -30,7 +32,7 @@ const ProductDetails = ({product}) => {
         <>
             {checkout ? (
                 <Link href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
-                    Checkout
+                    View Cart
                 </Link>
             ) : (
                 <></>
@@ -45,7 +47,7 @@ const ProductDetails = ({product}) => {
                 </div>
                 <div className="right">
                     <span>
-                        <h2>{product.title}</h2>
+                        <h1>{product.title}</h1>
                         <h3>{product.priceRange.minVariantPrice.amount}</h3>
                     </span>
                     <input
