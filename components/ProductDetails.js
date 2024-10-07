@@ -31,7 +31,7 @@ const ProductDetails = ({product}) => {
     return (
         <>
             {checkout ? (
-                <Link href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                <Link className="viewCartCta" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
                     View Cart
                 </Link>
             ) : (

@@ -172,3 +172,17 @@ body {
     padding: 20px 20px;
   }
 }
+
+.viewCartCta{
+  padding: 10px 20px;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: #0348be;
+  color: #fff;
+  border-radius: 3px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 150px;
+}
