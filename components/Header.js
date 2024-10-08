@@ -12,6 +12,7 @@ const Header = () => {
   return (
     <div>
       Header 
+      <Link href={`/`}>Home</Link>
       {cartId ? (<>
         <Link href={`/cart?cartid=${cartId}`}>View Cart</Link>
       </>) : (<>
