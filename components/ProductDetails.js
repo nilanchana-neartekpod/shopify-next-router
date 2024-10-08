@@ -39,11 +39,15 @@ const ProductDetails = ({product}) => {
             )}
             <div className="product-details">
                 <div className="left">
-                    <Image
-                        src={product.featuredImage.url}
-                        alt={product.featuredImage.altText}
-                        fill={true}
-                    />
+                    {product.featuredImage?.url ? (
+                        <>
+                            <Image src={product.featuredImage?.url} alt={product.featuredImage?.alttext} fill={true} />
+                        </>
+                    ) : (
+                        <>
+                            <Image src="https://dummyimage.com/1200/09f/fff.png" alt={product.title} fill={true} />
+                        </>
+                    )}
                 </div>
                 <div className="right">
                     <span>
