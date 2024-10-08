@@ -10,9 +10,9 @@ const Header = () => {
   },[cartId]);
   
   return (
-    <div>
-      Header 
+    <div className='site-header'>
       <Link href={`/`}>Home</Link>
+      <Link href={`/search`}>Search</Link>
       {cartId ? (<>
         <Link href={`/cart?cartid=${cartId}`}>View Cart</Link>
       </>) : (<>
