@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 const Header = () => {
   let [cartId, setCartId] = useState(null);
@@ -12,9 +13,9 @@ const Header = () => {
     <div>
       Header 
       {cartId ? (<>
-        <a href={`/cart?cartid=${cartId}`}>View Cart</a>
+        <Link href={`/cart?cartid=${cartId}`}>View Cart</Link>
       </>) : (<>
-        <a href="/cart">View Cart</a>
+        <Link href={`/cart`}>View Cart</Link>
       </>) }
     </div>
   )
