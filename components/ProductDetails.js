@@ -61,7 +61,7 @@ const ProductDetails = ({product}) => {
                         min={0}
                     />
                     <button onClick={handleAddToCart}>
-                        Add to Cart
+                        {quantity == 0 ? "Update Product Quantity" : "Add to Cart"}
                     </button>
                 </div>
             </div>
