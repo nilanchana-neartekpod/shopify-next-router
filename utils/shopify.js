@@ -207,3 +207,27 @@ export const getCheckoutUrl = async (cartId) => {
       throw new Error(error);
     }
 };
+
+export async function getCollections() {
+  const query = gql`
+      {
+        collections(first: 3) {
+          nodes{
+              title
+              id
+              handle
+              image {
+                  altText
+                  url
+              }
+          }
+        }
+      }
+  `;
+
+  try {
+    return await graphQLClient.request(query);
+  } catch (error) {
+    throw new Error(error);
+  }
+}

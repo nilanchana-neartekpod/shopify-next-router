@@ -228,7 +228,7 @@ body {
 .voice-assistant-modal{
   position:fixed;
   top:0;
-  right:-100%;
+  right:-150%;
   height:100vh;
   width:400px;
   background: blue;
@@ -237,5 +237,30 @@ body {
   &.active{
     right:0px;
     transition: 0.3s ease-in;
+  }
+}
+
+.collectionList{
+  position: relative;
+  display: flex;
+  gap:20px;
+  margin-bottom: 40px;
+  
+  @media(max-width:767px){
+    flex-direction: column;
+  }
+
+  & > div{
+    flex:1;
+  }
+
+  & .collection{
+    position: relative;
+    & img{
+      position: relative !important;
+      height: auto !important;
+      max-height: 300px;
+      width:auto !important;
+    }
   }
 }

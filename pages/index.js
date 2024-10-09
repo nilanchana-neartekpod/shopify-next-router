@@ -13,18 +13,22 @@ const geistMono = localFont({
 });
 
 import Head from "next/head";
-import { getProducts } from "../utils/shopify";
+import { getProducts, getCollections } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
+import CollectionCard from "@/components/CollectionCard";
 
 export const getServerSideProps = async () => {
   const data = await getProducts();
+  const collections = await getCollections();
   return {
-    props: { data }, 
+    props: { data, collections }, 
   };
 };
 
-export default function Home({data}) {
+export default function Home({data, collections}) {
   const products = data.products.nodes;
+  console.log(collections);
+  const collectionList = collections.collections.nodes;
   return (
     <>
       <Head>
@@ -34,6 +38,12 @@ export default function Home({data}) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
+        <h2>collections</h2>
+        <div className="collectionList">
+          {collectionList.map((collection) => {
+            return <CollectionCard key={collection.id} collection={collection} />;
+          })}
+        </div>
         <div className="productsList">
           {products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
