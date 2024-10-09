@@ -224,3 +224,18 @@ body {
     display: none;
   }
 }
+
+.voice-assistant-modal{
+  position:fixed;
+  top:0;
+  right:-100%;
+  height:100vh;
+  width:400px;
+  background: blue;
+  transition: 0.3s ease-in;
+
+  &.active{
+    right:0px;
+    transition: 0.3s ease-in;
+  }
+}
