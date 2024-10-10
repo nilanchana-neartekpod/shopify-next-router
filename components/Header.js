@@ -1,24 +1,69 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa' // Imported FaUser icon for contact
 
 const Header = () => {
   let [cartId, setCartId] = useState(null);
+  const [showSearchInput, setShowSearchInput] = useState(false); // State to toggle search input visibility
 
-  useEffect(() =>{
+  useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
-    if(_cartId) setCartId(_cartId);
-  },[cartId]);
-  
+    if (_cartId) setCartId(_cartId);
+  }, [cartId]);
+
+  const toggleSearchInput = () => {
+    setShowSearchInput((prev) => !prev);
+  };
+
   return (
-    <div className='site-header'>
-      <Link href={`/`}>Home</Link>
-      <Link href={`/search`}>Search</Link>
-      {cartId ? (<>
-        <Link href={`/cart?cartid=${cartId}`}>View Cart</Link>
-      </>) : (<>
-        <Link href={`/cart`}>View Cart</Link>
-      </>) }
-    </div>
+    <header className="w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50">
+      <div className="container mx-auto flex items-center justify-between">
+        
+        {/* Left: Logo and Title */}
+        <div className="flex items-center space-x-3">
+          <Link href="/">
+            {/* Set a smaller width and height for the logo */}
+            <img src="/House.svg" alt="Furniro" className="w-[64px] h-[40px]" />
+          </Link>
+          <span className="text-gray-800 text-xl font-semibold">Shop Smarter</span>
+        </div>
+
+        {/* Center: Navigation */}
+        <nav className="flex space-x-6 gap-10">
+          <Link href="/" className="text-gray-800">Home</Link>
+          <Link href="/shop" className="text-gray-800">Shop</Link>
+          <Link href="/about" className="text-gray-800">About</Link>
+          <Link href="/contact" className="text-gray-800">Contact</Link>
+        </nav>
+
+        {/* Right: Icons */}
+        <div className="flex items-center space-x-6 gap-5">
+          <Link href="/contact" className="text-">
+            <FaUser className="w-5 h-5" /> {/* Changed to FaUser for contact */}
+          </Link>
+          <button onClick={toggleSearchInput} className="text-gray-800">
+            <FaSearch className="w-5 h-5" />
+          </button>
+          {showSearchInput && (
+            <input
+              type="text"
+              placeholder="Search..."
+              className="border rounded-md px-2 py-1"
+              onBlur={() => setShowSearchInput(false)} // Hide on blur
+            />
+          )}
+          {cartId ? (
+            <Link href={`/cart?cartid=${cartId}`} className="text-gray-800">
+              <FaShoppingCart className="w-5 h-5" />
+            </Link>
+          ) : (
+            <Link href="/cart" className="text-gray-800">
+              <FaShoppingCart className="w-5 h-5" />
+            </Link>
+          )}
+        </div>
+      </div>
+    </header>
   )
 }
 

@@ -37,7 +37,7 @@ export default function Home({data, collections}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <main className="mt-24">
         <h2>collections</h2>
         <div className="collectionList">
           {collectionList.map((collection) => {
