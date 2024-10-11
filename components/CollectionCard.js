@@ -1,9 +1,11 @@
 import React from 'react';
 import Image from 'next/image'
+import Link from 'next/link';
 
 const CollectionCard = ({collection}) => {
   return (
     <div className='collection'>
+      <Link href={`/collections/${collection.handle}`}>
         {collection.image?.url ? (
             <>
                 <Image src={collection.image?.url} alt={collection.title} fill={true} />
@@ -14,6 +16,7 @@ const CollectionCard = ({collection}) => {
             </>
         )}
         <h2 className='text-center pt-4'>{collection.title}</h2>
+      </Link>
     </div>
   )
 }
