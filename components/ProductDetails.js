@@ -15,7 +15,9 @@ const ProductDetails = ({product}) => {
         imagesArray.push({
             original: item.url,
             thumbnail: item.url,
-            srcSet:item.url
+            srcSet: item.url,
+            originalAlt: product.title,
+            thumbnailAlt: product.title
         });
     }
 
@@ -43,15 +45,6 @@ const ProductDetails = ({product}) => {
 
     return (
         <div className="mt-24">
-            {checkout ? (
-                <div className="px-4 md:px-12">
-                    <Link className="viewCartCta" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
-                        View Cart
-                    </Link>
-                </div>
-            ) : (
-                <></>
-            )}
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
                 <div className="left">
                     <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
@@ -66,7 +59,7 @@ const ProductDetails = ({product}) => {
 
                         <div className="mb-4 flex">
                             {Array.from({ length: Number(product.rating.value) }, (_, i) => 
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
                                 </svg>
                             )}
@@ -84,12 +77,16 @@ const ProductDetails = ({product}) => {
                                 +
                             </button>
                        </div>
-                       <div className="mt-4">
-                            <button onClick={handleAddToCart} className="w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-500">
-                                    {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
-                            </button>
-                       </div>
-                        
+                    </div>
+                    <div className="mt-4 flex w-auto gap-x-4">
+                        <button onClick={handleAddToCart} className="w-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-500 justify-self-start">
+                            {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
+                        </button>
+                        {checkout && (
+                            <Link className="viewCartCta justify-self-start" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                                View Cart
+                            </Link>
+                        )}
                     </div>
                     {product.variants.edges.length > 1 && (
                             <div className="mb-4">
@@ -124,7 +121,7 @@ const ProductDetails = ({product}) => {
                 })}
             </div>
             
-            <div class="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
+            <div className="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
                 <Link href='/' className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
             </div>
             

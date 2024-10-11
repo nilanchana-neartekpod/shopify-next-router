@@ -10,7 +10,7 @@ const ProductCard = ({product}) => {
                     
                     {product.featuredImage?.url ? (
                         <>
-                            <Image src={product.featuredImage?.url} alt={product.featuredImage?.alttext} fill={true} />
+                            <Image src={product.featuredImage?.url} alt={product.title} fill={true} />
                         </>
                     ) : (
                         <>

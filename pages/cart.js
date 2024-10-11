@@ -9,7 +9,7 @@ export default function Cart({ cart, checkoutUrl }) {
 
     return (
       <>
-        <div className="cart-page mt-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="cart-page mt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold mb-8">Your Shopping Cart</h1>
           <ul role="list-item" className="space-y-6">
             {cart.lines.edges.map((item) => {

@@ -4,12 +4,27 @@ import { FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa' // Imported Fa
 
 const Header = () => {
   let [cartId, setCartId] = useState(null);
+  let [qty, setQty] = useState(0);
   const [showSearchInput, setShowSearchInput] = useState(false); // State to toggle search input visibility
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
-    if (_cartId) setCartId(_cartId);
+    if (_cartId){
+      setCartId(_cartId);
+      getCartQty(_cartId);
+    }
   }, [cartId]);
+
+  const getCartQty = async (cartId) =>{
+    let settings = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cartId: cartId })
+    }
+    let response = await fetch(`/api/cart`, settings);
+    let data = await response.json();
+    setQty(data.qty);
+  }
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev);
@@ -53,8 +68,9 @@ const Header = () => {
             />
           )}
           {cartId ? (
-            <Link href={`/cart?cartid=${cartId}`} className="text-gray-800">
+            <Link href={`/cart?cartid=${cartId}`} className="text-gray-800 shoppingCartIcon">
               <FaShoppingCart className="w-5 h-5" />
+              <span>{qty}</span>
             </Link>
           ) : (
             <Link href="/cart" className="text-gray-800">
