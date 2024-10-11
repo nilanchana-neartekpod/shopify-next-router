@@ -21,7 +21,7 @@ const ProductCard = ({product}) => {
             </div>
             <div>
                 <Link href={`products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}><h5>{product.title}</h5></Link>
-                <small>{product.priceRange.minVariantPrice.amount} ₹</small>
+                <div>{product.priceRange.minVariantPrice.amount} ₹</div>
             </div> 
         </div>
     </>

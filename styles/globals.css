@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 :root {
   --background: #ffffff;
@@ -17,7 +18,16 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-family: "PT Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1, h2, h3, h4, h5, h6{
+  font-family: "PT Sans", sans-serif;
+  font-weight: 700;
+  font-style: normal;
 }
 
 @layer utilities {
@@ -29,8 +39,7 @@ body {
 .productsList{
   display: grid;
   gap: 20px;
-  padding: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 
   & .product{
     display: block;
@@ -43,11 +52,18 @@ body {
       position: relative;
       display: block;
 
+      & h5{
+        font-size: 16px;
+      }
+
+      & div{
+        font-size: 20px;
+      }
+
       & img{
         position: relative !important;
         object-fit: contain;
         height: auto !important;
-        max-height: 300px;
       }
 
       &:last-child{
@@ -244,7 +260,6 @@ body {
   position: relative;
   display: flex;
   gap:20px;
-  margin-bottom: 40px;
   
   @media(max-width:767px){
     flex-direction: column;
@@ -259,8 +274,12 @@ body {
     & img{
       position: relative !important;
       height: auto !important;
-      max-height: 300px;
       width:auto !important;
+      margin: 0 auto;
+
+      @media(max-width:767px){
+        width: 100% !important;
+      }
     }
   }
 }

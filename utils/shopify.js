@@ -12,7 +12,7 @@ const graphQLClient = new GraphQLClient(endpoint, {
 export async function getProducts() {
     const query = gql`
         {
-            products(first: 10) {
+            products(first: 8) {
                 nodes{
                     title
                     id

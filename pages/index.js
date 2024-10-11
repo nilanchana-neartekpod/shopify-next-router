@@ -38,13 +38,18 @@ export default function Home({data, collections}) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-24">
-        <h2>collections</h2>
-        <div className="collectionList">
-          {collectionList.map((collection) => {
-            return <CollectionCard key={collection.id} collection={collection} />;
-          })}
+        <div className="home-collections px-4 md:px-12 text-center">
+          <h2 className="text-xl md:text-2xl mb-2">Browse The Range</h2>
+          <p className="mb-8 md:mb-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <div className="collectionList">
+            {collectionList.map((collection) => {
+              return <CollectionCard key={collection.id} collection={collection} />;
+            })}
+          </div>
         </div>
-        <div className="productsList">
+
+        <h2 className="text-xl md:text-2xl text-center mt-8 md:mt-12 mb-0">Our Products</h2>
+        <div className="productsList px-4 md:px-12 py-8 md:py-12">
           {products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
           })}
