@@ -74,6 +74,34 @@ export const getProduct = async (id) => {
                         }
                     }
                 }
+                rating: metafield(key: "rating", namespace: "custom") {
+                  value
+                }
+                collection: metafield(key: "collection", namespace: "custom") {
+                  reference {
+                    ... on Collection {
+                      id
+                      handle
+                      title
+                      products(first: 4) {
+                        nodes {
+                          featuredImage {
+                            url
+                          }
+                          id
+                          handle
+                          title
+                          priceRange {
+                              minVariantPrice {
+                                  amount
+                                  currencyCode
+                              }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
             }
         }
     `;

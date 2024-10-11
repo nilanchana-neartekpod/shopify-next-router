@@ -2,11 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
+import ProductCard from "@/components/ProductCard";
 
 const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
+
+    console.log(product.collection.reference.products.nodes);
 
     const updateQuantity = (e) => {
         if (e && e.target) {
@@ -59,11 +62,20 @@ const ProductDetails = ({product}) => {
                     </nav>
                     <div>
                         <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
-                        <h3 className="text-xl text-gray-700 mb-4">{product.priceRange.minVariantPrice.amount} {product.priceRange.minVariantPrice.currencyCode}</h3>
+                        <h3 className="text-xl text-gray-700 mb-4">{product.priceRange.minVariantPrice.amount} {product.priceRange.minVariantPrice.currencyCode}</h3> 
+
+                        <div className="mb-4 flex">
+                            {Array.from({ length: Number(product.rating.value) }, (_, i) => 
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                                </svg>
+                            )}
+                        </div>
+
                     </div>
-                    <label className="block text-2xl font-semibold text-gray-700 mb-2">Quantity:</label>
+                    <label className="block text-2xl font-semibold text-gray-700">Quantity:</label>
                     <div className="flex flex-col items-start mt-4">
-                       <div className="flex items-center justify-between border border-gray-300 h-12 w-40">
+                       <div className="flex items-center justify-between h-12 w-auto">
                             <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2">
                                 -
                             </button>
@@ -72,7 +84,7 @@ const ProductDetails = ({product}) => {
                                 +
                             </button>
                        </div>
-                       <div className="mt-2 ">
+                       <div className="mt-4">
                             <button onClick={handleAddToCart} className="w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-500">
                                     {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
                             </button>
@@ -95,12 +107,27 @@ const ProductDetails = ({product}) => {
                                 </select>
                             </div>
                         )}
-                    <div className="mb-4">
-                        <h2 className="text-2xl font-semibold mb-2">About this Item</h2>
+                    <div className="mt-4">
+                        <h2 className="text-2xl font-semibold mb-4">Product Details</h2>
                         <p className="text-gray-600">{product.description}</p>
                     </div>
                 </div>
             </div>
+
+            <div className="px-4 md:px-12">
+                <h2 className="text-center text-xl md:text-3xl mb-4 md:mb-8">Related Products</h2>
+            </div>
+
+            <div className="productsList px-4 md:px-12 pb-8 md:pb-12">
+                {product.collection.reference.products.nodes.map((product) => {
+                    return <ProductCard key={product.id} product={product} />;
+                })}
+            </div>
+            
+            <div class="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
+                <Link href='/' className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
+            </div>
+            
         </div>
     )
 }

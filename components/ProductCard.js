@@ -6,7 +6,7 @@ const ProductCard = ({product}) => {
     <>
         <div className='product'>
             <div>
-                <Link href={`products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
+                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
                     
                     {product.featuredImage?.url ? (
                         <>
@@ -20,7 +20,7 @@ const ProductCard = ({product}) => {
                 </Link>
             </div>
             <div>
-                <Link href={`products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}><h5>{product.title}</h5></Link>
+                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}><h5>{product.title}</h5></Link>
                 <div>{product.priceRange.minVariantPrice.amount} ₹</div>
             </div> 
         </div>

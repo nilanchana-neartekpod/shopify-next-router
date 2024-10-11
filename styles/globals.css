@@ -88,13 +88,22 @@ h1, h2, h3, h4, h5, h6{
   & .right{
     input{
       padding:10px;
-      height: 45px;
+      height: 48px;
       border: 1px solid #ededed;
-      border-radius: 5px;
+      border-left: 0;
+      border-right: 0;
       width:70px;
       text-align: center;
-      margin-right: 20px;
-      margin-top: 30px;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type=number] {
+      -moz-appearance: textfield;
     }
 
     & h1{
@@ -109,8 +118,6 @@ h1, h2, h3, h4, h5, h6{
       cursor: pointer;
       background: #0348be;
       color: #fff;
-      border-radius: 3px;
-      margin-top: 30px;
     }
   }
 
