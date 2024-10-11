@@ -4,7 +4,7 @@ import { getCheckoutUrl, retrieveCart } from "../utils/shopify";
 export default function Cart({ cart, checkoutUrl }) {
    
     if(Object.keys(cart).length === 0 && cart.constructor === Object){
-        return "Empty Cart"
+      return "Empty Cart"
     }
 
     return (

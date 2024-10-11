@@ -1,14 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import ImageGallery from "react-image-gallery";
+import useGlobalStore from '../store/store'
 
 const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
+
+    const cartTotal = useGlobalStore((state) => state.cartTotal);
 
     let imagesArray =  [];
     for(let item of product.images.nodes){
@@ -34,11 +37,15 @@ const ProductDetails = ({product}) => {
           if (cartId) {
             await updateCart(cartId, product.variants.edges[0].node.id, quantity);
             setCheckout(true);
+            cartTotal(cartId);
+            setQuantity(0);
           } else {
             let data = await addToCart(product.variants.edges[0].node.id, quantity);
-            cartId = data.cartCreate.cart.id;
-            sessionStorage.setItem("cartId", cartId);
+            let newCartId = data.cartCreate.cart.id;
+            sessionStorage.setItem("cartId", newCartId);
             setCheckout(true);
+            setQuantity(0);
+            cartTotal(newCartId);
           }
         }
     };

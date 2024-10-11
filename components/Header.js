@@ -1,30 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { FaSearch, FaShoppingCart, FaUser } from 'react-icons/fa' // Imported FaUser icon for contact
+import useGlobalStore from '../store/store'
 
 const Header = () => {
   let [cartId, setCartId] = useState(null);
-  let [qty, setQty] = useState(0);
   const [showSearchInput, setShowSearchInput] = useState(false); // State to toggle search input visibility
 
+  const cartTotal = useGlobalStore((state) => state.cartTotal);
+  const quantity = useGlobalStore((state) => state.quantity);
+  
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
     if (_cartId){
       setCartId(_cartId);
-      getCartQty(_cartId);
+      cartTotal(cartId);
     }
-  }, [cartId]);
-
-  const getCartQty = async (cartId) =>{
-    let settings = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cartId: cartId })
-    }
-    let response = await fetch(`/api/cart`, settings);
-    let data = await response.json();
-    setQty(data.qty);
-  }
+  }, [cartId, quantity]);
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev);
@@ -70,7 +62,7 @@ const Header = () => {
           {cartId ? (
             <Link href={`/cart?cartid=${cartId}`} className="text-gray-800 shoppingCartIcon">
               <FaShoppingCart className="w-5 h-5" />
-              <span>{qty}</span>
+              <span>{quantity}</span>
             </Link>
           ) : (
             <Link href="/cart" className="text-gray-800">
