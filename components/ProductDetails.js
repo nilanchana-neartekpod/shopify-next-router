@@ -9,8 +9,10 @@ const ProductDetails = ({product}) => {
     const [checkout, setCheckout] = useState(false);
 
     const updateQuantity = (e) => {
-        setQuantity(e.target.value);
-        if (quantity == 0) setCheckout(false);
+        if (e && e.target) {
+            setQuantity(Number(e.target.value)); // Convert to number
+            if (Number(e.target.value) === 0) setCheckout(false); // Update checkout status based on quantity
+        }
     };
 
     const handleAddToCart = async () => {
@@ -51,20 +53,52 @@ const ProductDetails = ({product}) => {
                         </>
                     )}
                 </div>
-                <div className="right">
-                    <span>
-                        <h1>{product.title}</h1>
-                        <h3>{product.priceRange.minVariantPrice.amount}</h3>
-                    </span>
-                    <input
-                        value={quantity}
-                        onChange={updateQuantity}
-                        type="number"
-                        min={0}
-                    />
-                    <button onClick={handleAddToCart}>
-                        {quantity == 0 ? "Update Product Quantity" : "Add to Cart"}
-                    </button>
+                <div className="right md:w-1/2 md:pl-8 mt-6 md:mt-0">
+                    <nav className="mb-4 text-sm text-gray-600">
+                        <Link href="/">Home</Link> &gt; <Link href="/products">Products</Link> &gt; <span>{product.title}</span>
+                    </nav>
+                    <div>
+                        <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
+                        <h3 className="text-xl text-gray-700 mb-4">{product.priceRange.minVariantPrice.amount} {product.priceRange.minVariantPrice.currencyCode}</h3>
+                    </div>
+                    <label className="block text-2xl font-semibold text-gray-700 mb-2">Quantity:</label>
+                    <div className="flex flex-col items-start mt-4">
+                       <div className="flex items-center justify-between border border-gray-300 h-12 w-40">
+                            <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2">
+                                -
+                            </button>
+                            <input value={quantity} onChange={updateQuantity} type="number" min={0}  className="text-center w-12" />
+                            <button onClick={() => setQuantity(quantity + 1)} className="text-lg text-gray-400">
+                                +
+                            </button>
+                       </div>
+                       <div className="mt-2 ">
+                            <button onClick={handleAddToCart} className="w-full bg-black text-white px-4 py-2 rounded hover:bg-gray-500">
+                                    {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
+                            </button>
+                       </div>
+                        
+                    </div>
+                    {product.variants.edges.length > 1 && (
+                            <div className="mb-4">
+                                <label className="block text-gray-700 mb-2">Choose Variant:</label>
+                                <select
+                                    value={selectedVariant}
+                                    onChange={(e) => setSelectedVariant(e.target.value)}
+                                    className="border border-gray-300 rounded px-3 py-2 w-full"
+                                >
+                                    {product.variants.edges.map(edge => (
+                                        <option key={edge.node.id} value={edge.node.id}>
+                                            {edge.node.product.title}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                    <div className="mb-4">
+                        <h2 className="text-2xl font-semibold mb-2">About this Item</h2>
+                        <p className="text-gray-600">{product.description}</p>
+                    </div>
                 </div>
             </div>
         </div>
