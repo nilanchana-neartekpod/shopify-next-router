@@ -18,7 +18,7 @@ import ProductCard from "@/components/ProductCard";
 import CollectionCard from "@/components/CollectionCard";
 
 export const getServerSideProps = async () => {
-  const data = await getProducts();
+  const data = await getProducts(8);
   const collections = await getCollections();
   return {
     props: { data, collections }, 

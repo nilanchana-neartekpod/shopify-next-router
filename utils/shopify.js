@@ -9,10 +9,10 @@ const graphQLClient = new GraphQLClient(endpoint, {
     },
 });
 
-export async function getProducts() {
+export async function getProducts(count) {
     const query = gql`
         {
-            products(first: 8) {
+            products(first: ${count}) {
                 nodes{
                     title
                     id

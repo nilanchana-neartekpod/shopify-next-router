@@ -31,7 +31,7 @@ const Header = () => {
         {/* Center: Navigation */}
         <nav className="flex space-x-6 gap-10">
           <Link href="/" className="text-gray-800">Home</Link>
-          <Link href="/shop" className="text-gray-800">Shop</Link>
+          <Link href="/products" className="text-gray-800">Shop</Link>
           <Link href="/about" className="text-gray-800">About</Link>
           <Link href="/contact" className="text-gray-800">Contact</Link>
         </nav>
