@@ -27,10 +27,7 @@ export default function Cart({ cart, checkoutUrl }) {
                   <div className="flex-1">
                     <h2 className="text-xl font-semibold">{item.node.merchandise.product.title}</h2>
                     <p className="text-lg text-gray-600 mt-2">
-                      {
-                        item.node.merchandise.product.priceRange.minVariantPrice
-                          .amount
-                      }
+                      { item.node.merchandise.product.priceRange.minVariantPrice.amount} ₹
                     </p>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {item.node.quantity}</p>
                   </div>
@@ -39,7 +36,7 @@ export default function Cart({ cart, checkoutUrl }) {
             })}
           </ul>
           <div className="checkout-section mt-10 flex justify-between items-center border-t pt-6">
-            <h2 className="text-2xl font-semibold">Total - {cart.estimatedCost.totalAmount.amount}</h2>
+            <h2 className="text-2xl font-semibold">Total - {cart.estimatedCost.totalAmount.amount} ₹</h2>
             <a href={checkoutUrl}>
                 <button className="checkout-button ">Checkout</button>
             </a>
