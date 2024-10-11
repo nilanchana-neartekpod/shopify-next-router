@@ -27,7 +27,6 @@ export const getServerSideProps = async () => {
 
 export default function Home({data, collections}) {
   const products = data.products.nodes;
-  console.log(collections);
   const collectionList = collections.collections.nodes;
   return (
     <>

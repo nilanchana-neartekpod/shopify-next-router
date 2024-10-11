@@ -62,6 +62,11 @@ export const getProduct = async (id) => {
                     url
                     altText
                 }
+                images(first: 50) {
+                  nodes {
+                    url
+                  }
+                }
                 variants(first: 10) {
                     edges {
                         node {

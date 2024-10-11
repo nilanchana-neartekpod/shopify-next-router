@@ -9,7 +9,7 @@ export default function Cart({ cart, checkoutUrl }) {
 
     return (
       <>
-        <div className="cart-page">
+        <div className="cart-page mt-16">
           <h1>Cart</h1>
           <ul role="list-item">
             {cart.lines.edges.map((item) => {

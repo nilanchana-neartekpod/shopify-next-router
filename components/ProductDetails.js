@@ -29,15 +29,17 @@ const ProductDetails = ({product}) => {
     };
 
     return (
-        <>
+        <div className="mt-24">
             {checkout ? (
-                <Link className="viewCartCta" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
-                    View Cart
-                </Link>
+                <div className="px-4 md:px-12">
+                    <Link className="viewCartCta" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                        View Cart
+                    </Link>
+                </div>
             ) : (
                 <></>
             )}
-            <div className="product-details">
+            <div className="product-details px-4 md:px-12 py-8 md:py-12">
                 <div className="left">
                     {product.featuredImage?.url ? (
                         <>
@@ -65,7 +67,7 @@ const ProductDetails = ({product}) => {
                     </button>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

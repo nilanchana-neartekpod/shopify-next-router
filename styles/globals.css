@@ -74,8 +74,8 @@ h1, h2, h3, h4, h5, h6{
 }
 
 .product-details{
-  padding:40px;
   display: flex;
+  gap:40px;
 
   & .left{
     & img{
