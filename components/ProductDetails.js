@@ -3,13 +3,21 @@ import Link from "next/link";
 import { useState } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
+import ImageGallery from "react-image-gallery";
 
 const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
 
-    console.log(product.collection.reference.products.nodes);
+    let imagesArray =  [];
+    for(let item of product.images.nodes){
+        imagesArray.push({
+            original: item.url,
+            thumbnail: item.url,
+            srcSet:item.url
+        });
+    }
 
     const updateQuantity = (e) => {
         if (e && e.target) {
@@ -46,15 +54,7 @@ const ProductDetails = ({product}) => {
             )}
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
                 <div className="left">
-                    {product.featuredImage?.url ? (
-                        <>
-                            <Image src={product.featuredImage?.url} alt={product.featuredImage?.alttext} fill={true} />
-                        </>
-                    ) : (
-                        <>
-                            <Image src="https://dummyimage.com/1200/09f/fff.png" alt={product.title} fill={true} />
-                        </>
-                    )}
+                    <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
                 </div>
                 <div className="right md:w-1/2 md:pl-8 mt-6 md:mt-0">
                     <nav className="mb-4 text-sm text-gray-600">
