@@ -173,6 +173,7 @@ export async function retrieveCart(cartId) {
       query cartQuery($cartId: ID!) {
         cart(id: $cartId) {
           id
+          totalQuantity
           createdAt
           updatedAt
           lines(first: 10) {
@@ -260,6 +261,72 @@ export async function getCollections() {
 
   try {
     return await graphQLClient.request(query);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export async function removeFromCart(cartId, lineId) {
+  const updateCartMutation = gql`
+    mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+      cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+        cart {
+          id
+          totalQuantity
+          createdAt
+          updatedAt
+          checkoutUrl
+          lines(first: 10) {
+            edges {
+              node {
+                id
+                quantity
+                merchandise {
+                  ... on ProductVariant {
+                    id
+                    product {
+                      id
+                      title
+                      handle
+                      featuredImage {
+                        url
+                        altText
+                      }
+                      priceRange {
+                        minVariantPrice {
+                          amount
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+  
+          estimatedCost {
+            totalAmount {
+              amount
+            }
+          }
+        }
+      }
+    }
+  `;
+  const variables = {
+    cartId: cartId,
+    lineIds: [lineId],
+  };
+
+  let newClient = new GraphQLClient("https://naveen-theme-spp-extn.myshopify.com/api/2024-07/graphql.json", {
+      headers: {
+        "X-Shopify-Storefront-Access-Token": "20d63e886174fe2c971fba41226ec126",
+      },
+  });
+
+  try {
+    const data = await newClient.request(updateCartMutation, variables);
+    return data;
   } catch (error) {
     throw new Error(error);
   }
