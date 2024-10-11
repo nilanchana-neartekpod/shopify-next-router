@@ -28,26 +28,27 @@ const Header = () => {
         
         {/* Left: Logo and Title */}
         <div className="flex items-center space-x-3">
-          <Link href="/">
+          <Link className={'flex items-center gap-4'} href="/">
             {/* Set a smaller width and height for the logo */}
             <img src="/House.svg" alt="Furniro" className="w-[64px] h-[40px]" />
+            <span className="text-gray-800 text-xl font-semibold">Shop Smarter</span>
           </Link>
-          <span className="text-gray-800 text-xl font-semibold">Shop Smarter</span>
         </div>
 
         {/* Center: Navigation */}
         <nav className="flex space-x-6 gap-10">
           <Link href="/" className="text-gray-800">Home</Link>
           <Link href="/products" className="text-gray-800">Shop</Link>
-          <Link href="/about" className="text-gray-800">About</Link>
-          <Link href="/contact" className="text-gray-800">Contact</Link>
+          <Link href="/collections/shoes" className="text-gray-800">Shoes</Link>
+          <Link href="/collections/electronics" className="text-gray-800">Electronics</Link>
+          <Link href="/collections/clothes" className="text-gray-800">Clothes</Link>
         </nav>
 
         {/* Right: Icons */}
         <div className="flex items-center space-x-6 gap-5">
-          <Link href="/contact" className="text-">
-            <FaUser className="w-5 h-5" /> {/* Changed to FaUser for contact */}
-          </Link>
+          {/* <Link href="/contact" className="text-">
+            <FaUser className="w-5 h-5" />
+          </Link> */}
           <button onClick={toggleSearchInput} className="text-gray-800">
             <FaSearch className="w-5 h-5" />
           </button>

@@ -129,7 +129,7 @@ const ProductDetails = ({product}) => {
             </div>
             
             <div className="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
-                <Link href='/' className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
+                <Link href={`/collections/${product.collection.reference.handle}`} className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
             </div>
             
         </div>

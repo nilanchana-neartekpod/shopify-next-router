@@ -44,6 +44,38 @@ export async function getProducts(count) {
     }
 }
 
+export async function getCollectionProducts(handle) {
+  const query = gql`
+    {
+      collectionByHandle(handle: "${handle}"){
+        title
+        products(first: 250) {
+            nodes{
+                title
+                id
+                handle
+                priceRange {
+                    minVariantPrice {
+                        amount
+                    }
+                }
+                featuredImage {
+                    altText
+                    url
+                }
+            }
+        }
+      }
+    }
+  `;
+
+  try {
+    return await graphQLClient.request(query);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export const getProduct = async (id) => {
     const productQuery = gql`
         query getProduct($id: ID!) {
