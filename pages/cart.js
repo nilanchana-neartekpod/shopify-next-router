@@ -9,38 +9,39 @@ export default function Cart({ cart, checkoutUrl }) {
 
     return (
       <>
-        <div className="cart-page mt-16">
-          <h1>Cart</h1>
-          <ul role="list-item">
+        <div className="cart-page mt-24 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-bold mb-8">Cart</h1>
+          <ul role="list-item" className="space-y-6">
             {cart.lines.edges.map((item) => {
               return (
-                <li key={item.node.id}>
-                  <div>
+                <li key={item.node.id} className="flex items-center gap-6 border-b pb-6">
+                  <div className="w-32 h-32">
                     <Image
                       src={item.node.merchandise.product.featuredImage.url}
                       alt={item.node.merchandise.product.featuredImage.altText}
-                      width={100}
-                      height={100}
+                      className="object-cover rounded-md"
+                      width={128}
+                      height={128}
                     />
                   </div>
-                  <div>
-                    <h2>{item.node.merchandise.product.title}</h2>
-                    <p>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-semibold">{item.node.merchandise.product.title}</h2>
+                    <p className="text-lg text-gray-600 mt-2">
                       {
                         item.node.merchandise.product.priceRange.minVariantPrice
                           .amount
                       }
                     </p>
-                    <p>Quantity: {item.node.quantity}</p>
+                    <p className="text-sm text-gray-500 mt-1">Quantity: {item.node.quantity}</p>
                   </div>
                 </li>
               );
             })}
           </ul>
-          <div className="checkout-section">
-            <h2>Total - {cart.estimatedCost.totalAmount.amount}</h2>
+          <div className="checkout-section mt-10 flex justify-between items-center border-t pt-6">
+            <h2 className="text-2xl font-semibold">Total - {cart.estimatedCost.totalAmount.amount}</h2>
             <a href={checkoutUrl}>
-                <button className="checkout-button">Checkout</button>
+                <button className="checkout-button ">Checkout</button>
             </a>
           </div>
         </div>
