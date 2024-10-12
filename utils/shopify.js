@@ -3,10 +3,7 @@ const token = process.env.TOKEN;
 const endpoint = process.env.SHOPURL;
 
 const graphQLClient = new GraphQLClient(endpoint, {
-    headers: {
-        "X-Shopify-Storefront-Access-Token": token,
-        "Content-Type": "application/json",
-    },
+  headers: { "X-Shopify-Storefront-Access-Token": token, "Content-Type": "application/json" }
 });
 
 export async function getProducts(count) {
@@ -153,29 +150,15 @@ export const addToCart = async (itemId, quantity) => {
     const createCartMutation = gql`mutation createCart($cartInput: CartInput){ cartCreate(input: $cartInput){ cart{ id } } }`;
     const variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId } ] } };
 
-    let newClient = new GraphQLClient("https://naveen-theme-spp-extn.myshopify.com/api/2024-07/graphql.json", {
-        headers: {
-            "X-Shopify-Storefront-Access-Token": "20d63e886174fe2c971fba41226ec126",
-        },
-    });
-
     try {
-      return await newClient.request(createCartMutation, variables);
+      return await graphQLClient.request(createCartMutation, variables);
     } catch (error) {
       throw new Error(error);
     }
 }
 
 export async function updateCart(cartId, itemId, quantity) {
-    const updateCartMutation = gql`
-      mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
-        cartLinesAdd(cartId: $cartId, lines: $lines) {
-          cart {
-            id
-          }
-        }
-      }
-    `;
+    const updateCartMutation = gql`mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id } } }`;
     const variables = {
       cartId: cartId,
       lines: [
@@ -186,14 +169,8 @@ export async function updateCart(cartId, itemId, quantity) {
       ],
     };
 
-    let newClient = new GraphQLClient("https://naveen-theme-spp-extn.myshopify.com/api/2024-07/graphql.json", {
-        headers: {
-            "X-Shopify-Storefront-Access-Token": "20d63e886174fe2c971fba41226ec126",
-        },
-    });
-  
     try {
-      const data = await newClient.request(updateCartMutation, variables);
+      const data = await graphQLClient.request(updateCartMutation, variables);
       return data;
     } catch (error) {
       throw new Error(error);
@@ -256,13 +233,7 @@ export async function retrieveCart(cartId) {
 }
 
 export const getCheckoutUrl = async (cartId) => {
-    const getCheckoutUrlQuery = gql`
-      query checkoutURL($cartId: ID!) {
-        cart(id: $cartId) {
-          checkoutUrl
-        }
-      }
-    `;
+    const getCheckoutUrlQuery = gql`query checkoutURL($cartId: ID!) { cart(id: $cartId) { checkoutUrl } }`;
     const variables = {
       cartId: cartId,
     };
@@ -345,19 +316,10 @@ export async function removeFromCart(cartId, lineId) {
       }
     }
   `;
-  const variables = {
-    cartId: cartId,
-    lineIds: [lineId],
-  };
 
-  let newClient = new GraphQLClient("https://naveen-theme-spp-extn.myshopify.com/api/2024-07/graphql.json", {
-      headers: {
-        "X-Shopify-Storefront-Access-Token": "20d63e886174fe2c971fba41226ec126",
-      },
-  });
-
+  const variables = { cartId: cartId, lineIds: [lineId] };
   try {
-    const data = await newClient.request(updateCartMutation, variables);
+    const data = await graphQLClient.request(updateCartMutation, variables);
     return data;
   } catch (error) {
     throw new Error(error);

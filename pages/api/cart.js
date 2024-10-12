@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { retrieveCart,removeFromCart } from "../../utils/shopify";
+import { retrieveCart, removeFromCart, addToCart, updateCart } from "../../utils/shopify";
 
 export default async function handler(req, res) {
   if (req.method === 'POST' && req.body.type === 'QTY_UPDATE_HEADER') {
@@ -13,6 +13,18 @@ export default async function handler(req, res) {
     let {cartId, lineId} = req.body;
     let resp = await removeFromCart(cartId, lineId);
     res.status(200).json({ cart:resp.cartLinesRemove.cart });
+  
+  } else if(req.method === 'POST' && req.body.type === 'ADD_TO_CART'){
+
+    let {varId, quantity} = req.body;
+    let data = await addToCart(varId, quantity);
+    res.status(200).json({ cartId: data.cartCreate.cart.id });
+  
+  } else if(req.method === 'POST' && req.body.type === 'UPDATE_CART'){
+
+    let {cartId, varId, quantity} = req.body;
+    let data = await updateCart(cartId, varId, quantity);
+    res.status(200).json({ cartId: data.cartLinesAdd.cart.id });
 
   } else {
     res.status(200).json({ name: "John Doe" });

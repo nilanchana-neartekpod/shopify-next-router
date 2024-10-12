@@ -35,17 +35,32 @@ const ProductDetails = ({product}) => {
         let cartId = sessionStorage.getItem("cartId");
         if (quantity > 0) {
           if (cartId) {
-            await updateCart(cartId, product.variants.edges[0].node.id, quantity);
+
+            let settings = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cartId, varId: product.variants.edges[0].node.id, quantity, type: 'UPDATE_CART' })
+            }
+            let response = await fetch('/api/cart', settings);
+            let data = await response.json();
+
             setCheckout(true);
-            cartTotal(cartId);
+            cartTotal(data.cartId);
             setQuantity(0);
           } else {
-            let data = await addToCart(product.variants.edges[0].node.id, quantity);
-            let newCartId = data.cartCreate.cart.id;
-            sessionStorage.setItem("cartId", newCartId);
+
+            let settings = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ varId: product.variants.edges[0].node.id, quantity, type: 'ADD_TO_CART' })
+            }
+            let response = await fetch('/api/cart', settings);
+            let data = await response.json();
+
+            sessionStorage.setItem("cartId", data.cartId);
             setCheckout(true);
             setQuantity(0);
-            cartTotal(newCartId);
+            cartTotal(data.cartId);
           }
         }
     };
