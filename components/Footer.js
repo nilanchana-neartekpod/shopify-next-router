@@ -48,8 +48,8 @@ const Footer = () => {
             <div>
               <h3 className="text-gray-800 text-sm font-medium mb-2">Newsletter</h3>
               <form>
-                <input type="email" placeholder="Enter your email address" className="py-1 text-sm text-gray-700 border border-gray-300" />
-                <button type="submit" className=" text-black font-sm py-2 px-4 rounded">Subscribe</button>
+                <input type="email" placeholder="Enter your email address" className="border rounded-md px-2 py-1" />
+                <button type="submit" className="text-white bg-[#0348be] font-sm py-1 px-4 rounded">Subscribe</button>
               </form>
             </div>
           </div>
