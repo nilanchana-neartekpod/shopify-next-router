@@ -3,12 +3,13 @@ import { getCheckoutUrl, retrieveCart } from "../utils/shopify";
 import { ImBin } from "react-icons/im";
 import useGlobalStore from '../store/store'
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Cart({ cart, checkoutUrl }) {
     const cartTotal = useGlobalStore((state) => state.cartTotal);
    
     if(Object.keys(cart).length === 0 && cart.constructor === Object){
-      return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">Empty Cart</div>
+      return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">Empty Cart: <Link className="underline text-[#0348be]" href='/products'>Continue shopping</Link></div>
     }
 
     let [icart, setIcart] = useState(cart);
@@ -32,7 +33,7 @@ export default function Cart({ cart, checkoutUrl }) {
     }
 
     if(icart.lines.edges.length === 0){window.history.pushState({}, document.title, window.location.pathname); sessionStorage.clear();}
-    if(icart.lines.edges.length === 0) return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">Empty Cart</div>
+    if(icart.lines.edges.length === 0) return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">Empty Cart: <Link className="underline text-[#0348be]" href='/products'>Continue shopping</Link></div>
    
     return (
       <>
