@@ -16,6 +16,7 @@ import Head from "next/head";
 import { getProducts, getCollections } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import CollectionCard from "@/components/CollectionCard";
+import Banner from "@/components/home/Banner";
 
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
@@ -36,7 +37,8 @@ export default function Home({data, collections}) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="mt-24">
+      <main className="mt-12 md:mt-16 pt-1.5">
+        <Banner />
         <div className="home-collections px-4 md:px-12 text-center">
           <h2 className="text-xl md:text-2xl mb-2">Browse The Range</h2>
           <p className="mb-8 md:mb-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
