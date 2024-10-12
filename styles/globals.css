@@ -306,3 +306,35 @@ h1, h2, h3, h4, h5, h6{
     justify-content: center;
   }
 }
+
+@media(max-width:1024px){
+  header{
+    & > div{
+      position: relative;
+
+      & .navigation{
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        left:0;
+        background: #fff;
+        top:-800px;
+        padding:20px;
+        transition: 0.3s ease-in;
+        z-index: 0;
+
+        & a{
+          margin-left: 0 !important;
+        }
+      }
+    }
+
+    &.active-nav{
+      & .navigation{
+        top:40px;
+        transition: 0.3s ease-in;
+      }
+    }
+  }
+}
