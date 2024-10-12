@@ -401,3 +401,34 @@ h1, h2, h3, h4, h5, h6{
     padding: 20px 20px;
   }
 }
+
+.plp-product-listing{
+  & .pagination{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    gap:10px;
+
+    & .page-item.disabled{
+      opacity: 0;
+    }
+
+    & .page-item{
+      height: 30px;
+      width: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+
+      &.active{
+        background: #0348be;
+
+        & a{
+          color: #fff;
+        }
+      }
+    }
+  }
+}
