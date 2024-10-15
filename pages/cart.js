@@ -8,9 +8,9 @@ import Head from "next/head";
 
 export default function Cart({ cart, checkoutUrl }) {
     const cartTotal = useGlobalStore((state) => state.cartTotal);
-   
+    
     if(Object.keys(cart).length === 0 && cart.constructor === Object){
-      window.history.pushState({}, document.title, window.location.pathname); sessionStorage.clear();
+      if (typeof window !== "undefined") { window.history.pushState({}, document.title, window.location.pathname); sessionStorage.clear(); }
       return (
         <>
           <Head>
