@@ -109,8 +109,8 @@ const Header = () => {
       </div>
  
       {/* Display Search Results */}
-      {searchResults.length > 0 && (
-        <div className=" searchresults grid grid-cols-1 md:grid-cols-3 gap-4 p-4 mx-auto max-w-6xl">
+      {showSearchInput && searchResults.length > 0 && (
+        <div className="md:px-12 md:pt-8 searchresults grid grid-cols-1 md:grid-cols-5 gap-4 p-4 mx-auto">
           {searchResults.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
