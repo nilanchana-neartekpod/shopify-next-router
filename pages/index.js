@@ -17,6 +17,7 @@ import { getProducts, getCollections } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import CollectionCard from "@/components/CollectionCard";
 import Banner from "@/components/home/Banner";
+import ProductCarousel from "@/components/ProductCarousel"; 
 
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
@@ -50,6 +51,7 @@ export default function Home({data, collections}) {
         </div>
 
         <h2 className="text-xl md:text-2xl text-center mt-8 md:mt-12 mb-0">Our Products</h2>
+        <ProductCarousel />
         <div className="productsList px-4 md:px-12 py-8 md:py-12">
           {products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
