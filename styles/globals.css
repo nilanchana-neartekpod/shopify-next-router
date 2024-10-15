@@ -450,8 +450,8 @@ a{
   background: #FCF8F3;
 
   & .left{
-    flex:0.45;
-    min-width: calc(45% - 20px);
+    flex:0.40;
+    min-width: calc(40% - 20px);
     display: flex;
     align-items: flex-start;
     justify-content: center;
@@ -516,9 +516,9 @@ a{
   }
 
   & .right{
-    flex:0.25;
-    min-width: calc(25% - 0px);
-    max-width: calc(25% - 0px);
+    flex:0.30;
+    min-width: calc(30% - 0px);
+    max-width: calc(30% - 0px);
 
     & .swiper-slide{
       position: relative;
