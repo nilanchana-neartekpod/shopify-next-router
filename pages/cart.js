@@ -8,8 +8,9 @@ import Head from "next/head";
 
 export default function Cart({ cart, checkoutUrl }) {
     const cartTotal = useGlobalStore((state) => state.cartTotal);
-   
+    
     if(Object.keys(cart).length === 0 && cart.constructor === Object){
+      if (typeof window !== "undefined") { window.history.pushState({}, document.title, window.location.pathname); sessionStorage.clear(); }
       return (
         <>
           <Head>
@@ -120,8 +121,7 @@ export const getServerSideProps = async (context) => {
     }
 
     const cart = await retrieveCart(cartid);
-    //Missing Cart
-    if(Object.keys(cart).length === 0 && cart.constructor === Object){
+    if(!cart){
         return {
             props: {
                 cart: {},
