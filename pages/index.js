@@ -17,6 +17,7 @@ import { getProducts, getCollections } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import CollectionCard from "@/components/CollectionCard";
 import Banner from "@/components/home/Banner";
+import ProductCarousel from "@/components/ProductCarousel"; 
 
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
@@ -55,6 +56,8 @@ export default function Home({data, collections}) {
             return <ProductCard key={product.id} product={product} />;
           })}
         </div>
+
+        <ProductCarousel />
       </main>
     </>
   );

@@ -6,6 +6,43 @@ const graphQLClient = new GraphQLClient(endpoint, {
   headers: { "X-Shopify-Storefront-Access-Token": token, "Content-Type": "application/json" }
 });
 
+export async function searchProducts(queryString) {
+  const query = gql`
+    {
+      products(first: 10, query: "${queryString}") {
+        edges {
+          node {
+            id
+            title
+            handle
+            description
+            featuredImage {
+              altText
+              url
+            }
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  `;
+ 
+  try {
+    const data = await graphQLClient.request(query);
+    return data.products;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
 export async function getProducts(count) {
     const query = gql`
         {
