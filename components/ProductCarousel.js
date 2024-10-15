@@ -65,9 +65,9 @@ const ProductCarousel = () => {
         <p className="text-gray-600 text-black mb-4">
           Our designer already made a lot of beautiful prototypes of rooms that inspire you.
         </p>
-        <button className="px-6 py-2 bg-[#B88E2F] text-white">
+        <Link href={"/products"} className="px-6 py-2 bg-[#B88E2F] text-white">
           Explore More
-        </button>
+        </Link>
       </div>
 
       <div className="middle px-4 md:px-0">
