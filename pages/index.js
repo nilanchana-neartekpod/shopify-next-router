@@ -58,8 +58,8 @@ export default function Home({data, collections}) {
           })}
         </div>
         <ProductCarousel />
-        <div className="my-10 px-24 w-full h-[750px]">
-          <img className="object-cover:fit overflow-hidden" src="/collage.svg"></img>
+        <div className="px-4 md:px-12 py-8 md:py-12">
+          <img className="object-cover:fit overflow-hidden w-full" src="/collage.svg"></img>
         </div>
       </main>
     </>
