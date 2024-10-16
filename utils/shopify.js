@@ -143,6 +143,7 @@ export const getProduct = async (id) => {
                     edges {
                         node {
                             id
+                            title
                         }
                     }
                 }

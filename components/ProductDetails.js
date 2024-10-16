@@ -10,6 +10,7 @@ const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
+    const [selectedVariant, setSelectedVariant] = useState('');
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -116,11 +117,11 @@ const ProductDetails = ({product}) => {
                                 <select
                                     value={selectedVariant}
                                     onChange={(e) => setSelectedVariant(e.target.value)}
-                                    className="border border-gray-300 rounded px-3 py-2 w-full"
+                                    className="border border-gray-300 rounded px-3 py-2 w-1/2"
                                 >
                                     {product.variants.edges.map(edge => (
                                         <option key={edge.node.id} value={edge.node.id}>
-                                            {edge.node.product.title}
+                                            {edge.node.title}
                                         </option>
                                     ))}
                                 </select>
