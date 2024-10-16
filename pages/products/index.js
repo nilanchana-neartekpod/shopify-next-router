@@ -9,17 +9,41 @@ const Product = ({products}) => {
   const [currentImages, setCurrentImages] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [imagesOffset, setImagesOffset] = useState(0);
+  const [pd, setPd] = useState(products);
+  const [fliter, setFilter] = useState("");
+
+  const filterChangeValue = (el) => {
+    setFilter(el.target.value);
+  }
 
   useEffect(() => {
-    const endOffset = imagesOffset + 8;
-    setCurrentImages(products.slice(imagesOffset, endOffset));
-    setPageCount(Math.ceil(products.length / 8));
-  }, [products, imagesOffset]);
+    let endOffset = imagesOffset + 8;
+    setCurrentImages(pd.slice(imagesOffset, endOffset));
+    setPageCount(Math.ceil(pd.length / 8));
+  }, [pd, imagesOffset]);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * 8) % products.length;
+    const newOffset = (event.selected * 8) % pd.length;
     setImagesOffset(newOffset);
   };
+
+  useEffect(() => {
+    if(fliter === 'rating'){
+      setPd(pd.sort((a, b) => { return Number(b.rating.value) - Number(a.rating.value); }));
+    } else if(fliter === 'price-low-high'){
+      setPd(pd.sort((a, b) => { return Number(a.priceRange.minVariantPrice.amount) - Number(b.priceRange.minVariantPrice.amount); }));
+    } else if(fliter === 'price-high-low'){
+      setPd(pd.sort((a, b) => { return Number(b.priceRange.minVariantPrice.amount) - Number(a.priceRange.minVariantPrice.amount); }));
+    } else if(fliter === 'alpha-a-z'){
+      setPd(pd.sort((a, b) => a.title.localeCompare(b.title)));
+    } else if(fliter === 'alpha-z-a'){
+      setPd(pd.sort((a, b) => b.title.localeCompare(a.title)));
+    }
+
+    let endOffset = imagesOffset + 8;
+    setCurrentImages(pd.slice(imagesOffset, endOffset));
+    setPageCount(Math.ceil(pd.length / 8));
+  }, [pd,fliter,imagesOffset]);
 
   if(!currentImages) return;
 
@@ -33,6 +57,18 @@ const Product = ({products}) => {
       </Head>
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
+        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-2 justify-end items-center'>
+          <label>Sort By: </label>
+          <select onChange={(el) => filterChangeValue(el)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
+            <option defaultValue="selected">Select filter</option>
+            <option value={"rating"}>Rating</option>
+            <option value={"price-low-high"}>Price, Low-to-High</option>
+            <option value={"price-high-low"}>Price, High-to-Low</option>
+            <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
+            <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
+          </select>
+        </div>
+        
         <div className="pagination px-4 md:px-12 py-8 md:py-12 plp-product-listing">
           <div className="productsList">
             {currentImages.map((product) => {

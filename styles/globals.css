@@ -23,6 +23,14 @@ body {
   font-family: "PT Sans", sans-serif;
   font-weight: 400;
   font-style: normal;
+  max-width: 1920px;
+  margin:0 auto;
+}
+
+#__next > header{
+  max-width: 1920px;
+  left:50%;
+  transform: translateX(-50%);
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -601,5 +609,15 @@ a{
       min-width: 100% !important;
       max-width: 100% !important;
     }
+  }
+}
+
+.news-letterform{
+  position: relative;
+  & button{
+    position: absolute;
+    right: 10px;
+    top:50%;
+    transform: translateY(-50%);
   }
 }

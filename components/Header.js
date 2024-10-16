@@ -81,7 +81,7 @@ const Header = () => {
           </button>
  
           {showSearchInput && (
-            <form onSubmit={handleSearch} className="hidden md:flex">
+            <form onSubmit={handleSearch} className="hidden md:flex news-letterform">
               <input
                 type="text"
                 placeholder="Search..."
@@ -90,6 +90,9 @@ const Header = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onBlur={() => setShowSearchInput(false)}
               />
+              <button type='submit' className="hidden md:flex text-gray-800">
+                <GoSearch className="w-5 h-5" />
+              </button>
             </form>
           )}
  

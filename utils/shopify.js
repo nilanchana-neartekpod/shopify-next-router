@@ -60,6 +60,9 @@ export async function getProducts(count) {
                         altText
                         url
                     }
+                    rating: metafield(key: "rating", namespace: "custom") {
+                      value
+                    }
                 }
                 pageInfo {
                     hasNextPage
@@ -96,6 +99,9 @@ export async function getCollectionProducts(handle) {
                 featuredImage {
                     altText
                     url
+                }
+                rating: metafield(key: "rating", namespace: "custom") {
+                  value
                 }
             }
         }
