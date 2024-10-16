@@ -22,10 +22,10 @@ const Footer = () => {
                 <Link href="/products" className="text-base hover:underline">Shop</Link>
               </li>
               <li>
-                <Link href="/about" className="text-base hover:underline">About</Link>
+                <Link href="/collections" className="text-base hover:underline">Our collections</Link>
               </li>
               <li>
-                <Link href="/contact" className="text-base hover:underline">Contact</Link>
+                <Link href="/" className="text-base hover:underline">Contact</Link>
               </li>
             </ul>
           </div>
@@ -35,13 +35,13 @@ const Footer = () => {
             <h3 className="text-gray-500 text-base font-medium mb-2">Help</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/help" className=" text-base  font-medium hover:underline">Payment Options</Link>
+                <Link href="/" className=" text-base  font-medium hover:underline">Payment Options</Link>
               </li>
               <li>
-                <Link href="/help" className=" text-base font-medium hover:underline">Returns</Link>
+                <Link href="/" className=" text-base font-medium hover:underline">Returns</Link>
               </li>
               <li>
-                <Link href="/help" className=" text-base font-medium hover:underline">Privacy Policies</Link>
+                <Link href="/" className=" text-base font-medium hover:underline">Privacy Policies</Link>
               </li>
             </ul>
           </div>

@@ -100,6 +100,9 @@ export async function getCollectionProducts(handle) {
                     altText
                     url
                 }
+                rating: metafield(key: "rating", namespace: "custom") {
+                  value
+                }
             }
         }
       }
