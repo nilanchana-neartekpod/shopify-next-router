@@ -60,6 +60,9 @@ export async function getProducts(count) {
                         altText
                         url
                     }
+                    rating: metafield(key: "rating", namespace: "custom") {
+                      value
+                    }
                 }
                 pageInfo {
                     hasNextPage
