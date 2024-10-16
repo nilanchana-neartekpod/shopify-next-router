@@ -51,13 +51,16 @@ export default function Home({data, collections}) {
         </div>
 
         <h2 className="text-xl md:text-2xl text-center mt-8 md:mt-12 mb-0">Our Products</h2>
+        
         <div className="productsList px-4 md:px-12 py-8 md:py-12">
           {products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
           })}
         </div>
-
         <ProductCarousel />
+        <div className="my-10 px-24 w-full h-[750px]">
+          <img className="object-cover:fit overflow-hidden" src="/collage.svg"></img>
+        </div>
       </main>
     </>
   );
