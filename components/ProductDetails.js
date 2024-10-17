@@ -10,7 +10,7 @@ const ProductDetails = ({product}) => {
     //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
-    const [selectedVariant, setSelectedVariant] = useState('');
+    const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -40,7 +40,7 @@ const ProductDetails = ({product}) => {
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartId, varId: product.variants.edges[0].node.id, quantity, type: 'UPDATE_CART' })
+                body: JSON.stringify({ cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' })
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -53,7 +53,7 @@ const ProductDetails = ({product}) => {
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ varId: product.variants.edges[0].node.id, quantity, type: 'ADD_TO_CART' })
+                body: JSON.stringify({ varId: selectedVariant, quantity, type: 'ADD_TO_CART' })
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
