@@ -38,7 +38,11 @@ const ProductDetails = ({product}) => {
         setSelectedVariant(e);
         for(let it of product.variants.edges){
             if(it.node.id === e){
-                setAvailableForSale(it.node.availableForSale);
+                if(it.node.quantityAvailable > 0 && it.node.availableForSale){
+                    setAvailableForSale(it.node.availableForSale);
+                }else{
+                    setAvailableForSale(false);
+                }
             }
         }
     }
