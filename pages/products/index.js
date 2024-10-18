@@ -11,7 +11,7 @@ const Product = ({products}) => {
   const [imagesOffset, setImagesOffset] = useState(0);
   const [pd, setPd] = useState(products);
   const [filter, setFilter] = useState("");
-  const [itemsPerPage, setItemsPerPage] = useState(16); // default to 16 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(8); // default to 16 items per page
 
   const filterChangeValue = (el) => {
     setFilter(el.target.value);
@@ -63,25 +63,37 @@ const Product = ({products}) => {
       </Head>
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
-        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-4 justify-end items-center'>
-          <div className="flex gap-4 flex-wrap">
+        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-4 justify-end items-center flex-col md:flex-row'>
+          <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
             <label>Sort By: </label>
-            <select onChange={(el) => filterChangeValue(el)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
-              <option defaultValue="selected">Select filter</option>
-              <option value={"rating"}>Rating</option>
-              <option value={"price-low-high"}>Price, Low-to-High</option>
-              <option value={"price-high-low"}>Price, High-to-Low</option>
-              <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
-              <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
-            </select>
+            <div className="relative flex-1">
+              <select onChange={(el) => filterChangeValue(el)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+                <option defaultValue>Select Option</option>
+                <option value={"rating"}>Rating</option>
+                <option value={"price-low-high"}>Price, Low-to-High</option>
+                <option value={"price-high-low"}>Price, High-to-Low</option>
+                <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
+                <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+              </svg>
+            </div>
           </div>
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
             <label>Items per page: </label>
-            <select onChange={(e) => handleItemsPerPageChange(e)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
-              <option value={8}>8</option>
-              <option value={10} selected>10</option>
-              <option value={14}>14</option>
-            </select>
+            <div className="relative flex-1">
+              <select onChange={(e) => handleItemsPerPageChange(e)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+                <option defaultValue>Select Option</option>
+                <option value={8}>8</option>
+                <option value={12}>12</option>
+                <option value={16}>16</option>
+                <option value={20}>20</option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+              </svg>
+            </div>
           </div>
         </div>
 
