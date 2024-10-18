@@ -88,7 +88,7 @@ const Product = ({products}) => {
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
         <div className='flex gap-4 md:gap-8 flex-col md:flex-row px-4 md:px-12 pt-8 md:pt-12'>
-          <div className='filters basis-full md:basis-1/5'>
+          <div className='filters hidden md:flex flex-col basis-full md:basis-1/12'>
             <h3 className='text-base md:text-xl'>Filter</h3>
 
             {(starRating != '') && (
@@ -137,7 +137,7 @@ const Product = ({products}) => {
               </div>
             </div>
           </div>
-          <div className='pageData basis-full md:basis-4/5'>
+          <div className='pageData basis-full md:basis-11/12'>
             <div className='flex gap-4 justify-end items-center flex-col md:flex-row'>
               <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
                 <label>Sort By: </label>
