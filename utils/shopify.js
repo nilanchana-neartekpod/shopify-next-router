@@ -56,6 +56,11 @@ export async function getProducts(count) {
                             amount
                         }
                     }
+                    collections(first: 50){
+                      nodes{
+                        title
+                      }
+                    }
                     featuredImage {
                         altText
                         url
