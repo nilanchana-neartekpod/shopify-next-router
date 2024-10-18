@@ -58,6 +58,8 @@ export default function Cart({ cart, checkoutUrl }) {
         </>
       )
     }
+
+    console.log(icart);
    
     return (
       <>
@@ -82,11 +84,16 @@ export default function Cart({ cart, checkoutUrl }) {
                       height={128}
                     />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 justify-items-end flex flex-col items-end">
                     <h2 className="text-xl font-semibold">{item.node.merchandise.product.title}</h2>
-                    <p className="text-lg text-gray-600 mt-2">
-                      { item.node.merchandise.product.priceRange.minVariantPrice.amount} ₹
-                    </p>
+                    <div className="text-lg text-gray-600 mt-2 flex gap-4 justify-items-end">
+                      {item.node.merchandise.title != 'Default Title' && (
+                        <>
+                          <div>{item.node.merchandise.title}</div> <div>-</div>
+                        </>
+                      )} 
+                      <div>{ item.node.merchandise.product.priceRange.minVariantPrice.amount} ₹</div>
+                    </div>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {item.node.quantity}</p>
                   </div>
                   <div className="remove-cart-item">

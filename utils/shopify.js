@@ -139,11 +139,19 @@ export const getProduct = async (id) => {
                     url
                   }
                 }
-                variants(first: 10) {
+                options(first: 100){
+                  name
+                  values
+                }
+                variants(first: 100) {
                     edges {
                         node {
                             id
                             title
+                            selectedOptions{
+                              name
+                              value
+                            }
                         }
                     }
                 }
