@@ -71,7 +71,7 @@ const ProductDetails = ({product}) => {
     return (
         <div className="mt-24">
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
-                <div className="left md:w-1/2">
+                <div className="left">
                     <Suspense fallback={"Loading data...."}>
                         <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
                     </Suspense>
