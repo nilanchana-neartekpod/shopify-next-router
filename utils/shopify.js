@@ -345,6 +345,7 @@ export async function removeFromCart(cartId, lineId) {
                 merchandise {
                   ... on ProductVariant {
                     id
+                    title
                     product {
                       id
                       title
