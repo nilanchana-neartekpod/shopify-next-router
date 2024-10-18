@@ -87,11 +87,11 @@ const Product = ({products}) => {
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
         <div className='flex gap-4 md:gap-8 flex-col md:flex-row px-4 md:px-12 pt-8 md:pt-12'>
           <div className='filters basis-full md:basis-1/5'>
-            <h3 className='text-base md:text-xl'>Filters</h3>
+            <h3 className='text-base md:text-xl'>Filter</h3>
 
             {(starRating != '') && (
               <>
-                <p className='pt-8 md:pt-12'><span className='font-bold'>Selected Filters:</span> {starRating && (<>{starRating} - Ratings </>)}</p>
+                <p className='pt-8 md:pt-12'><span className='font-bold'>Selected Filter:</span> {starRating && (<>{starRating} - Ratings </>)}</p>
                 {(starRating) &&  <p className='cursor-pointer px-2 py-1 inline-block bg-[#dc0707] uppercase font-bold text-white mt-4' onClick={() => clearAllFilters()}>ClearFilter</p>}
               </>
             )}
