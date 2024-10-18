@@ -10,7 +10,7 @@ const Product = ({products}) => {
   const [pageCount, setPageCount] = useState(0);
   const [imagesOffset, setImagesOffset] = useState(0);
   const [pd, setPd] = useState(products);
-  const [filter, setFilter] = useState("alpha-a-z");
+  const [filter, setFilter] = useState("rating");
   const [itemsPerPage, setItemsPerPage] = useState(8); // default to 16 items per page
   const [starRating, setStarRating] = useState('');
 
@@ -30,7 +30,7 @@ const Product = ({products}) => {
       return el.rating.value === star;
     }));
     setCurrentImages(null);
-    setFilter('alpha-a-z');
+    setFilter('rating');
     setPageCount(0);
     setImagesOffset(0);
     setItemsPerPage(8);
@@ -39,7 +39,7 @@ const Product = ({products}) => {
   const clearAllFilters = () => {
     setPd(products);
     setCurrentImages(null);
-    setFilter('alpha-a-z');
+    setFilter('rating');
     setPageCount(0);
     setImagesOffset(0);
     setItemsPerPage(8);
@@ -50,7 +50,8 @@ const Product = ({products}) => {
     let endOffset = imagesOffset + itemsPerPage;
     setCurrentImages(pd.slice(imagesOffset, endOffset));
     setPageCount(Math.ceil(pd.length / itemsPerPage));
-  }, [pd, imagesOffset, itemsPerPage]);
+    setStarRating(starRating);
+  }, [pd, imagesOffset, itemsPerPage, starRating]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % pd.length;
@@ -73,7 +74,8 @@ const Product = ({products}) => {
     let endOffset = imagesOffset + itemsPerPage;
     setCurrentImages(pd.slice(imagesOffset, endOffset));
     setPageCount(Math.ceil(pd.length / itemsPerPage));
-  }, [pd, filter, imagesOffset, itemsPerPage]);
+    setStarRating(starRating);
+  }, [pd, filter, imagesOffset, itemsPerPage, starRating]);
 
   return (
     <>
