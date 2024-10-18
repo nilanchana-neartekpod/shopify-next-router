@@ -10,40 +10,46 @@ const Product = ({products}) => {
   const [pageCount, setPageCount] = useState(0);
   const [imagesOffset, setImagesOffset] = useState(0);
   const [pd, setPd] = useState(products);
-  const [fliter, setFilter] = useState("");
+  const [filter, setFilter] = useState("");
+  const [itemsPerPage, setItemsPerPage] = useState(16); // default to 16 items per page
 
   const filterChangeValue = (el) => {
     setFilter(el.target.value);
-  }
+  };
+
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+    setImagesOffset(0); // Reset to the first page when items per page change
+  };
 
   useEffect(() => {
-    let endOffset = imagesOffset + 8;
+    let endOffset = imagesOffset + itemsPerPage;
     setCurrentImages(pd.slice(imagesOffset, endOffset));
-    setPageCount(Math.ceil(pd.length / 8));
-  }, [pd, imagesOffset]);
+    setPageCount(Math.ceil(pd.length / itemsPerPage));
+  }, [pd, imagesOffset, itemsPerPage]);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * 8) % pd.length;
+    const newOffset = (event.selected * itemsPerPage) % pd.length;
     setImagesOffset(newOffset);
   };
 
   useEffect(() => {
-    if(fliter === 'rating'){
+    if(filter === 'rating'){
       setPd(pd.sort((a, b) => { return Number(b.rating.value) - Number(a.rating.value); }));
-    } else if(fliter === 'price-low-high'){
+    } else if(filter === 'price-low-high'){
       setPd(pd.sort((a, b) => { return Number(a.priceRange.minVariantPrice.amount) - Number(b.priceRange.minVariantPrice.amount); }));
-    } else if(fliter === 'price-high-low'){
+    } else if(filter === 'price-high-low'){
       setPd(pd.sort((a, b) => { return Number(b.priceRange.minVariantPrice.amount) - Number(a.priceRange.minVariantPrice.amount); }));
-    } else if(fliter === 'alpha-a-z'){
+    } else if(filter === 'alpha-a-z'){
       setPd(pd.sort((a, b) => a.title.localeCompare(b.title)));
-    } else if(fliter === 'alpha-z-a'){
+    } else if(filter === 'alpha-z-a'){
       setPd(pd.sort((a, b) => b.title.localeCompare(a.title)));
     }
 
-    let endOffset = imagesOffset + 8;
+    let endOffset = imagesOffset + itemsPerPage;
     setCurrentImages(pd.slice(imagesOffset, endOffset));
-    setPageCount(Math.ceil(pd.length / 8));
-  }, [pd,fliter,imagesOffset]);
+    setPageCount(Math.ceil(pd.length / itemsPerPage));
+  }, [pd, filter, imagesOffset, itemsPerPage]);
 
   if(!currentImages) return;
 
@@ -57,18 +63,28 @@ const Product = ({products}) => {
       </Head>
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
-        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-2 justify-end items-center'>
-          <label>Sort By: </label>
-          <select onChange={(el) => filterChangeValue(el)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
-            <option defaultValue="selected">Select filter</option>
-            <option value={"rating"}>Rating</option>
-            <option value={"price-low-high"}>Price, Low-to-High</option>
-            <option value={"price-high-low"}>Price, High-to-Low</option>
-            <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
-            <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
-          </select>
+        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-4 justify-end items-center'>
+          <div className="flex gap-4 flex-wrap">
+            <label>Sort By: </label>
+            <select onChange={(el) => filterChangeValue(el)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
+              <option defaultValue="selected">Select filter</option>
+              <option value={"rating"}>Rating</option>
+              <option value={"price-low-high"}>Price, Low-to-High</option>
+              <option value={"price-high-low"}>Price, High-to-Low</option>
+              <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
+              <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
+            </select>
+          </div>
+          <div className="flex gap-4 flex-wrap">
+            <label>Items per page: </label>
+            <select onChange={(e) => handleItemsPerPageChange(e)} className='lg:flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700'>
+              <option value={8}>8</option>
+              <option value={10} selected>10</option>
+              <option value={14}>14</option>
+            </select>
+          </div>
         </div>
-        
+
         <div className="pagination px-4 md:px-12 py-8 md:py-12 plp-product-listing">
           <div className="productsList">
             {currentImages.map((product) => {
@@ -106,4 +122,4 @@ export const getServerSideProps = async () => {
   return { props: { products : data.products.nodes } };
 };
 
-export default Product
+export default Product;
