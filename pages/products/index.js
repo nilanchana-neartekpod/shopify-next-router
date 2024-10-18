@@ -51,8 +51,6 @@ const Product = ({products}) => {
     setPageCount(Math.ceil(pd.length / itemsPerPage));
   }, [pd, filter, imagesOffset, itemsPerPage]);
 
-  if(!currentImages) return;
-
   return (
     <>
       <Head>
@@ -63,66 +61,119 @@ const Product = ({products}) => {
       </Head>
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
-        <div className='px-4 md:px-12 pt-8 md:pt-12 flex gap-4 justify-end items-center flex-col md:flex-row'>
-          <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
-            <label>Sort By: </label>
-            <div className="relative flex-1">
-              <select onChange={(el) => filterChangeValue(el)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-                <option defaultValue>Select Option</option>
-                <option value={"rating"}>Rating</option>
-                <option value={"price-low-high"}>Price, Low-to-High</option>
-                <option value={"price-high-low"}>Price, High-to-Low</option>
-                <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
-                <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-              </svg>
+        <div className='flex gap-4 md:gap-8 flex-col md:flex-row px-4 md:px-12 pt-8 md:pt-12'>
+          <div className='filters basis-full md:basis-1/5'>
+            <h3 className='text-base md:text-xl'>Filters</h3>
+            <h5 className='pt-8 md:pt-12'>Ratings</h5>
+            <div className='ratings pt-4 flex flex-col gap-4'>
+              <div className='rating inline-flex gap-1 cursor-pointer'>
+                {Array.from({ length: 5 }, (_, i) => 
+                  <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                  </svg>
+                )}
+              </div>
+              <div className='rating inline-flex gap-1 cursor-pointer'>
+                {Array.from({ length: 4 }, (_, i) => 
+                  <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                  </svg>
+                )}
+              </div>
+              <div className='rating inline-flex gap-1 cursor-pointer'>
+                {Array.from({ length: 3 }, (_, i) => 
+                  <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                  </svg>
+                )}
+              </div>
+              <div className='rating inline-flex gap-1 cursor-pointer'>
+                {Array.from({ length: 2 }, (_, i) => 
+                  <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                  </svg>
+                )}
+              </div>
+              <div className='rating inline-flex gap-1 cursor-pointer'>
+                {Array.from({ length: 1 }, (_, i) => 
+                  <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
+                  </svg>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
-            <label>Items per page: </label>
-            <div className="relative flex-1">
-              <select onChange={(e) => handleItemsPerPageChange(e)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
-                <option defaultValue>Select Option</option>
-                <option value={8}>8</option>
-                <option value={12}>12</option>
-                <option value={16}>16</option>
-                <option value={20}>20</option>
-              </select>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-              </svg>
-            </div>
-          </div>
-        </div>
 
-        <div className="pagination px-4 md:px-12 py-8 md:py-12 plp-product-listing">
-          <div className="productsList">
-            {currentImages.map((product) => {
-              return <ProductCard key={product.id} product={product} />;
-            })}
+            <h5 className='pt-8 md:pt-12'>Collections</h5>
+            <div className='pt-4 flex flex-col gap-4'>
+              <div className='cursor-pointer inline'>Shoes</div>
+              <div className='cursor-pointer inline'>Electronics</div>
+              <div className='cursor-pointer inline'>Clothes</div>
+            </div>
           </div>
-          <ReactPaginate
-            breakLabel="..."
-            nextLabel={<GrNext />}
-            onPageChange={handlePageClick}
-            pageRangeDisplayed={5}
-            pageCount={pageCount}
-            previousLabel={<GrPrevious />}
-            renderOnZeroPageCount={null}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            containerClassName={"pagination"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            activeClassName={"active"}
-          />
+          <div className='pageData basis-full md:basis-4/5'>
+            <div className='flex gap-4 justify-end items-center flex-col md:flex-row'>
+              <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
+                <label>Sort By: </label>
+                <div className="relative flex-1">
+                  <select onChange={(el) => filterChangeValue(el)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+                    <option defaultValue>Select Option</option>
+                    <option value={"rating"}>Rating</option>
+                    <option value={"price-low-high"}>Price, Low-to-High</option>
+                    <option value={"price-high-low"}>Price, High-to-Low</option>
+                    <option value={"alpha-a-z"}>Alphabetically, A-Z</option>
+                    <option value={"alpha-z-a"}>Alphabetically, Z-A</option>
+                  </select>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex gap-2 flex-wrap items-center justify-stretch w-full md:w-auto">
+                <label>Items per page: </label>
+                <div className="relative flex-1">
+                  <select onChange={(e) => handleItemsPerPageChange(e)} className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-1.5 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+                    <option defaultValue>Select Option</option>
+                    <option value={8}>8</option>
+                    <option value={12}>12</option>
+                    <option value={16}>16</option>
+                    <option value={20}>20</option>
+                  </select>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="pagination py-8 md:py-12 plp-product-listing">
+              <div className="productsList">
+                {currentImages && currentImages.map((product) => {
+                  return <ProductCard key={product.id} product={product} />;
+                })}
+              </div>
+              <ReactPaginate
+                breakLabel="..."
+                nextLabel={<GrNext />}
+                onPageChange={handlePageClick}
+                pageRangeDisplayed={5}
+                pageCount={pageCount}
+                previousLabel={<GrPrevious />}
+                renderOnZeroPageCount={null}
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                containerClassName={"pagination"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
+              />
+            </div>
+          </div>
         </div>
+        
       </div>
     </>
   )
