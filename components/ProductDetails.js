@@ -96,21 +96,21 @@ const ProductDetails = ({product}) => {
                     <label className="block text-2xl font-semibold text-gray-700">Quantity:</label>
                     <div className="flex flex-col items-start mt-4">
                        <div className="flex items-center justify-between h-12 w-auto">
-                            <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2">
+                            <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2 bg-[#0348be] hover:bg-[#013396]">
                                 -
                             </button>
                             <input value={quantity} onChange={updateQuantity} type="number" min={0}  className="text-center w-12" />
-                            <button onClick={() => setQuantity(quantity + 1)} className="text-lg text-gray-400">
+                            <button onClick={() => setQuantity(quantity + 1)} className="text-lg text-gray-400 bg-[#0348be] hover:bg-[#013396]">
                                 +
                             </button>
                        </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
-                        <button onClick={handleAddToCart} className="w-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-500 justify-self-start">
-                            {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
+                        <button onClick={handleAddToCart} className={`w-auto text-white px-4 py-2 rounded hover:bg-[#013396] justify-self-start ${quantity === 0 ? 'pointer-events-none bg-[#cbd5e1]' : 'bg-[#0348be]'}`}>
+                            Add to Cart
                         </button>
                         {checkout && (
-                            <Link className="viewCartCta justify-self-start" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                            <Link className="viewCartCta justify-self-start hover:bg-[#013396]" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
                                 View Cart
                             </Link>
                         )}
