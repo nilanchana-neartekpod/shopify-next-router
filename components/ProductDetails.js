@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import ImageGallery from "react-image-gallery";
@@ -70,7 +70,9 @@ const ProductDetails = ({product}) => {
         <div className="mt-24">
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
                 <div className="left">
-                    <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
+                    <Suspense fallback={"Loading data...."}>
+                        <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
+                    </Suspense>
                 </div>
                 <div className="right md:w-1/2 md:pl-8 mt-6 md:mt-0">
                     <nav className="mb-4 text-sm text-gray-600">
