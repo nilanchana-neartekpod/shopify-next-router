@@ -21,7 +21,9 @@ const ProductDetails = ({product}) => {
             thumbnail: item.url,
             srcSet: item.url,
             originalAlt: product.title,
-            thumbnailAlt: product.title
+            thumbnailAlt: product.title,
+            loading:"lazy",
+            thumbnailLoading: "lazy"
         });
     }
 
@@ -69,12 +71,12 @@ const ProductDetails = ({product}) => {
     return (
         <div className="mt-24">
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
-                <div className="left">
+                <div className="left md:w-1/2">
                     <Suspense fallback={"Loading data...."}>
                         <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
                     </Suspense>
                 </div>
-                <div className="right md:w-1/2 md:pl-8 mt-6 md:mt-0">
+                <div className="right md:w-1/2">
                     <nav className="mb-4 text-sm text-gray-600">
                         <Link href="/">Home</Link> &gt; <Link href="/products">Products</Link> &gt; <span>{product.title}</span>
                     </nav>
