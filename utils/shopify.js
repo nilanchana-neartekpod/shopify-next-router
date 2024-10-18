@@ -153,6 +153,8 @@ export const getProduct = async (id) => {
                         node {
                             id
                             title
+                            quantityAvailable
+                            availableForSale
                             selectedOptions{
                               name
                               value

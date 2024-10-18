@@ -7,10 +7,10 @@ import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
 
 const ProductDetails = ({product}) => {
-    //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
+    const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -33,6 +33,15 @@ const ProductDetails = ({product}) => {
             if (Number(e.target.value) === 0) setCheckout(false); // Update checkout status based on quantity
         }
     };
+
+    const changeVariantValue = (e) =>{
+        setSelectedVariant(e);
+        for(let it of product.variants.edges){
+            if(it.node.id === e){
+                setAvailableForSale(it.node.availableForSale);
+            }
+        }
+    }
 
     const handleAddToCart = async () => {
         let cartId = sessionStorage.getItem("cartId");
@@ -106,9 +115,13 @@ const ProductDetails = ({product}) => {
                        </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
-                        <button onClick={handleAddToCart} className={`w-auto text-white px-4 py-2 rounded hover:bg-[#013396] justify-self-start ${quantity === 0 ? 'pointer-events-none bg-[#cbd5e1]' : 'bg-[#0348be]'}`}>
-                            Add to Cart
-                        </button>
+                        {availableForSale ? (
+                            <>
+                                <button onClick={handleAddToCart} className={`w-auto text-white px-4 py-2 rounded hover:bg-[#013396] justify-self-start ${quantity === 0 ? 'pointer-events-none bg-[#cbd5e1]' : 'bg-[#0348be]'}`}>
+                                    Add to Cart
+                                </button>
+                            </>
+                        ) : (<p className="text-[#cf0000] font-bold">Item is not available for sale</p>) }
                         {checkout && (
                             <Link className="viewCartCta justify-self-start hover:bg-[#013396]" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
                                 View Cart
@@ -120,7 +133,7 @@ const ProductDetails = ({product}) => {
                                 <label className="block text-gray-700 mb-2">Choose Variant:</label>
                                 <select
                                     value={selectedVariant}
-                                    onChange={(e) => setSelectedVariant(e.target.value)}
+                                    onChange={(e) => changeVariantValue(e.target.value)}
                                     className="border border-gray-300 rounded px-3 py-2 w-1/2"
                                 >
                                     {product.variants.edges.map(edge => (

@@ -1,8 +1,12 @@
 import ProductDetails from "@/components/ProductDetails";
 import { getProduct } from "../../utils/shopify";
 import Head from "next/head";
+import Link from "next/link";
 
 export default function Product({ product }) {
+  if(!product){
+    return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">No product found: <Link className="underline text-[#0348be]" href='/products'>Visit Products Page</Link></div>
+  }
   return (
     <>
       <Head>
