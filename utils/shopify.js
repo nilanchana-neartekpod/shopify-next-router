@@ -229,7 +229,7 @@ export async function retrieveCart(cartId) {
           totalQuantity
           createdAt
           updatedAt
-          lines(first: 10) {
+          lines(first: 100) {
             edges {
               node {
                 id
@@ -237,6 +237,7 @@ export async function retrieveCart(cartId) {
                 merchandise {
                   ... on ProductVariant {
                     id
+                    title
                     product {
                       id
                       title
