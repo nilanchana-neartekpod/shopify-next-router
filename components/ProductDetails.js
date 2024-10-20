@@ -1,15 +1,99 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
 
 const ProductDetails = ({product}) => {
-    //console.log(JSON.stringify(product,null,2));
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
+    const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
+    const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
+    const prodVariantRef = useRef(null);
+
+    const [opt1, setOpt1] = useState(null);
+    const [opt2, setOpt2] = useState(null);
+    const [opt3, setOpt3] = useState(null);
+
+    const handleVariant = (_type, _val, _optIn) => {
+        if(_optIn == 0){
+            setOpt1(_val);
+        }else if(_optIn == 1){
+            setOpt2(_val);
+        }else if(_optIn == 2){
+            setOpt3(_val);
+        }
+    }
+
+    useEffect(() => {
+        let opt1_len = prodVariantRef.current?.querySelectorAll("[name='variantOption0']");
+        let opt2_len = prodVariantRef.current?.querySelectorAll("[name='variantOption1']");
+        let opt3_len = prodVariantRef.current?.querySelectorAll("[name='variantOption2']");
+
+        if(opt1_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt1_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt1(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption0'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+        if(opt2_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt2_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt2(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption1'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+        if(opt3_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt3_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt3(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption2'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+    },[]);
+
+    useEffect(() => {
+        if(opt1 && opt2 && opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2) && variant.node.selectedOptions.some(option => option.value == opt3));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }else if(opt1 && opt2 && !opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }else if(opt1 && !opt2 && !opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }
+    },[availableForSale, selectedVariant, opt1, opt2, opt3]);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -20,7 +104,9 @@ const ProductDetails = ({product}) => {
             thumbnail: item.url,
             srcSet: item.url,
             originalAlt: product.title,
-            thumbnailAlt: product.title
+            thumbnailAlt: product.title,
+            loading:"lazy",
+            thumbnailLoading: "lazy"
         });
     }
 
@@ -31,6 +117,19 @@ const ProductDetails = ({product}) => {
         }
     };
 
+    const changeVariantValue = (e) =>{
+        setSelectedVariant(e);
+        for(let it of product.variants.edges){
+            if(it.node.id === e){
+                if(it.node.quantityAvailable > 0 && it.node.availableForSale){
+                    setAvailableForSale(it.node.availableForSale);
+                }else{
+                    setAvailableForSale(false);
+                }
+            }
+        }
+    }
+
     const handleAddToCart = async () => {
         let cartId = sessionStorage.getItem("cartId");
         if (quantity > 0) {
@@ -39,7 +138,7 @@ const ProductDetails = ({product}) => {
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartId, varId: product.variants.edges[0].node.id, quantity, type: 'UPDATE_CART' })
+                body: JSON.stringify({ cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' })
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -52,7 +151,7 @@ const ProductDetails = ({product}) => {
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ varId: product.variants.edges[0].node.id, quantity, type: 'ADD_TO_CART' })
+                body: JSON.stringify({ varId: selectedVariant, quantity, type: 'ADD_TO_CART' })
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -69,9 +168,11 @@ const ProductDetails = ({product}) => {
         <div className="mt-24">
             <div className="product-details px-4 md:px-12 py-8 md:py-12">
                 <div className="left">
-                    <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
+                    <Suspense fallback={"Loading data...."}>
+                        <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
+                    </Suspense>
                 </div>
-                <div className="right md:w-1/2 md:pl-8 mt-6 md:mt-0">
+                <div className="right md:w-1/2">
                     <nav className="mb-4 text-sm text-gray-600">
                         <Link href="/">Home</Link> &gt; <Link href="/products">Products</Link> &gt; <span>{product.title}</span>
                     </nav>
@@ -91,36 +192,69 @@ const ProductDetails = ({product}) => {
                     <label className="block text-2xl font-semibold text-gray-700">Quantity:</label>
                     <div className="flex flex-col items-start mt-4">
                        <div className="flex items-center justify-between h-12 w-auto">
-                            <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2">
+                            <button onClick={() => setQuantity(Math.max(0, quantity - 1))} className="text-lg text-gray-400 px-2 bg-[#0348be] hover:bg-[#013396]">
                                 -
                             </button>
                             <input value={quantity} onChange={updateQuantity} type="number" min={0}  className="text-center w-12" />
-                            <button onClick={() => setQuantity(quantity + 1)} className="text-lg text-gray-400">
+                            <button onClick={() => setQuantity(quantity + 1)} className="text-lg text-gray-400 bg-[#0348be] hover:bg-[#013396]">
                                 +
                             </button>
                        </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
-                        <button onClick={handleAddToCart} className="w-auto bg-black text-white px-4 py-2 rounded hover:bg-gray-500 justify-self-start">
-                            {quantity === 0 ? "Update Product Quantity" : "Add to Cart"}
-                        </button>
+                        {availableForSale && selectedVariant ? (
+                            <>
+                                <button onClick={handleAddToCart} className={`w-auto text-white px-4 py-2 rounded hover:bg-[#013396] justify-self-start ${quantity === 0 ? 'pointer-events-none bg-[#cbd5e1]' : 'bg-[#0348be]'}`}>
+                                    Add to Cart
+                                </button>
+                            </>
+                        ) : (<p className="text-[#cf0000] font-bold">Item is not available for sale</p>) }
                         {checkout && (
-                            <Link className="viewCartCta justify-self-start" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                            <Link className="viewCartCta justify-self-start hover:bg-[#013396]" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
                                 View Cart
                             </Link>
                         )}
                     </div>
+
+                    {product.options.length > 0 && (
+                        <div className="gap-4 flex flex-col" ref={prodVariantRef}>
+                            {product.options.map((edge,i) => (
+                                <div key={i}>
+                                    {edge.name != 'Title' && (
+                                        <>
+                                            <h5 className={`${i == 0 ? 'mt-4 capitalize' : 'capitalize'}`}>{edge.name}:</h5>
+                                            <div className="flex gap-4 mt-4">
+                                                {edge.optionValues.map((opt,ind) => (
+                                                    <div key={ind}>
+                                                        {opt.name != 'Default Title' && (
+                                                            <>
+                                                                <input className="hidden" id={`radio_${ind}_${edge.name}`} value={opt.name} data-opname={edge.name} type="radio" name={`variantOption${i}`}/>
+                                                                <label onClick={() => handleVariant(edge.name, opt.name, i)} className="flex flex-col p-4 border-2 border-gray-400 cursor-pointer" htmlFor={`radio_${ind}_${edge.name}`}>
+                                                                    <span className="text-xs font-semibold uppercase">{opt.name}</span>
+                                                                </label>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {product.variants.edges.length > 1 && (
-                            <div className="mb-4">
+                            <div className="mb-4 mt-4 hidden">
                                 <label className="block text-gray-700 mb-2">Choose Variant:</label>
                                 <select
                                     value={selectedVariant}
-                                    onChange={(e) => setSelectedVariant(e.target.value)}
-                                    className="border border-gray-300 rounded px-3 py-2 w-full"
+                                    onChange={(e) => changeVariantValue(e.target.value)}
+                                    className="border border-gray-300 rounded px-3 py-2 w-1/2"
                                 >
                                     {product.variants.edges.map(edge => (
                                         <option key={edge.node.id} value={edge.node.id}>
-                                            {edge.node.product.title}
+                                            {edge.node.title}
                                         </option>
                                     ))}
                                 </select>
