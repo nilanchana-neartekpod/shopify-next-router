@@ -146,7 +146,9 @@ export const getProduct = async (id) => {
                 }
                 options(first: 100){
                   name
-                  values
+                  optionValues{
+                    name
+                  }
                 }
                 variants(first: 100) {
                     edges {
