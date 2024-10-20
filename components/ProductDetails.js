@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import ImageGallery from "react-image-gallery";
@@ -11,6 +11,89 @@ const ProductDetails = ({product}) => {
     const [checkout, setCheckout] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
     const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
+    const prodVariantRef = useRef(null);
+
+    const [opt1, setOpt1] = useState(null);
+    const [opt2, setOpt2] = useState(null);
+    const [opt3, setOpt3] = useState(null);
+
+    const handleVariant = (_type, _val, _optIn) => {
+        if(_optIn == 0){
+            setOpt1(_val);
+        }else if(_optIn == 1){
+            setOpt2(_val);
+        }else if(_optIn == 2){
+            setOpt3(_val);
+        }
+    }
+
+    useEffect(() => {
+        let opt1_len = prodVariantRef.current?.querySelectorAll("[name='variantOption0']");
+        let opt2_len = prodVariantRef.current?.querySelectorAll("[name='variantOption1']");
+        let opt3_len = prodVariantRef.current?.querySelectorAll("[name='variantOption2']");
+
+        if(opt1_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt1_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt1(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption0'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+        if(opt2_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt2_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt2(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption1'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+        if(opt3_len.length > 0){
+            let {node} = product.variants.edges[0];
+            let _op1 = opt3_len[0].getAttribute('data-opname');
+            let opVal = node.selectedOptions.find(o => o.name == _op1);
+            setOpt3(opVal.value);
+            if(opVal){
+                let _el = prodVariantRef.current?.querySelector(`[name='variantOption2'][value='${opVal.value}']`); 
+                if(_el) _el.checked = true;
+            }
+        }
+    },[]);
+
+    useEffect(() => {
+        if(opt1 && opt2 && opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2) && variant.node.selectedOptions.some(option => option.value == opt3));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }else if(opt1 && opt2 && !opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }else if(opt1 && !opt2 && !opt3){
+            let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1));
+            if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
+                setAvailableForSale(true);
+            }else{
+                setAvailableForSale(false);
+            }
+            if(variant) setSelectedVariant(variant.node.id);
+            console.log(variant);
+        }
+    },[availableForSale, selectedVariant, opt1, opt2, opt3]);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -119,7 +202,7 @@ const ProductDetails = ({product}) => {
                        </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
-                        {availableForSale ? (
+                        {availableForSale && selectedVariant ? (
                             <>
                                 <button onClick={handleAddToCart} className={`w-auto text-white px-4 py-2 rounded hover:bg-[#013396] justify-self-start ${quantity === 0 ? 'pointer-events-none bg-[#cbd5e1]' : 'bg-[#0348be]'}`}>
                                     Add to Cart
@@ -132,8 +215,37 @@ const ProductDetails = ({product}) => {
                             </Link>
                         )}
                     </div>
+
+                    {product.options.length > 0 && (
+                        <div className="gap-4 flex flex-col" ref={prodVariantRef}>
+                            {product.options.map((edge,i) => (
+                                <div key={i}>
+                                    {edge.name != 'Title' && (
+                                        <>
+                                            <h5 className={`${i == 0 ? 'mt-4 capitalize' : 'capitalize'}`}>{edge.name}:</h5>
+                                            <div className="flex gap-4 mt-4">
+                                                {edge.optionValues.map((opt,ind) => (
+                                                    <div key={ind}>
+                                                        {opt.name != 'Default Title' && (
+                                                            <>
+                                                                <input className="hidden" id={`radio_${ind}_${edge.name}`} value={opt.name} data-opname={edge.name} type="radio" name={`variantOption${i}`}/>
+                                                                <label onClick={() => handleVariant(edge.name, opt.name, i)} className="flex flex-col p-4 border-2 border-gray-400 cursor-pointer" htmlFor={`radio_${ind}_${edge.name}`}>
+                                                                    <span className="text-xs font-semibold uppercase">{opt.name}</span>
+                                                                </label>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     {product.variants.edges.length > 1 && (
-                            <div className="mb-4 mt-4">
+                            <div className="mb-4 mt-4 hidden">
                                 <label className="block text-gray-700 mb-2">Choose Variant:</label>
                                 <select
                                     value={selectedVariant}
