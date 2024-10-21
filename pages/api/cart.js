@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     
     let {cartId} = req.body;
     let cartData = await retrieveCart(cartId);
-    res.status(200).json({qty:cartData.totalQuantity});
+    res.status(200).json({cart:cartData});
 
   } else if(req.method === 'POST' && req.body.type === 'REMOVE_QTY'){
     
