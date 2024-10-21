@@ -2,25 +2,40 @@
   "name": "nxt-sho-pwa",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev ",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@openai/realtime-api-beta": "github:openai/openai-realtime-api-beta",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "fuse.js": "^7.0.0",
     "graphql-request": "^7.1.0",
+    "install": "^0.13.0",
+    "leaflet": "^1.9.4",
     "next": "14.2.14",
+    "npm": "^10.9.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-feather": "^2.0.10",
     "react-icons": "^5.3.0",
     "react-image-gallery": "^1.3.0",
+    "react-leaflet": "^4.2.1",
     "react-paginate": "^8.2.0",
+    "sass": "^1.80.1",
     "swiper": "^9.4.1",
+    "ws": "^8.18.0",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
+    "@types/node": "22.7.6",
+    "@types/react": "18.3.11",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "typescript": "5.6.3"
   }
 }

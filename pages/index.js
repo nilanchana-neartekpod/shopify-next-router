@@ -14,20 +14,23 @@ const geistMono = localFont({
 
 import Head from "next/head";
 import { getProducts, getCollections } from "../utils/shopify";
-import ProductCard from "@/components/ProductCard";
-import CollectionCard from "@/components/CollectionCard";
-import Banner from "@/components/home/Banner";
-import ProductCarousel from "@/components/ProductCarousel"; 
+import ProductCard from "../components/ProductCard";
+import CollectionCard from "../components/CollectionCard";
+import Banner from "../components/home/Banner";
+import ProductCarousel from "../components/ProductCarousel";
 
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
+  // const data = await fetch("api/get-products.js");
+  console.log(data, "data");
   const collections = await getCollections();
+  console.log(data, collections);
   return {
-    props: { data, collections }, 
+    props: { data, collections },
   };
 };
 
-export default function Home({data, collections}) {
+export default function Home({ data, collections }) {
   const products = data.products.nodes;
   const collectionList = collections.collections.nodes;
   return (
@@ -42,24 +45,33 @@ export default function Home({data, collections}) {
         <Banner />
         <div className="home-collections px-4 md:px-12 text-center">
           <h2 className="text-xl md:text-2xl mb-2">Browse The Range</h2>
-          <p className="mb-8 md:mb-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p className="mb-8 md:mb-12">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          </p>
           <div className="collectionList">
             {collectionList.map((collection) => {
-              return <CollectionCard key={collection.id} collection={collection} />;
+              return (
+                <CollectionCard key={collection.id} collection={collection} />
+              );
             })}
           </div>
         </div>
 
-        <h2 className="text-xl md:text-2xl text-center mt-8 md:mt-12 mb-0">Our Products</h2>
-        
+        <h2 className="text-xl md:text-2xl text-center mt-8 md:mt-12 mb-0">
+          Our Products
+        </h2>
+
         <div className="productsList px-4 md:px-12 py-8 md:py-12">
           {products.map((product) => {
             return <ProductCard key={product.id} product={product} />;
           })}
         </div>
-        <ProductCarousel />
+        {/* <ProductCarousel /> */}
         <div className="px-4 md:px-12 py-8 md:py-12">
-          <img className="object-cover:fit overflow-hidden w-full" src="/collage.svg"></img>
+          <img
+            className="object-cover:fit overflow-hidden w-full"
+            src="/collage.svg"
+          ></img>
         </div>
       </main>
     </>

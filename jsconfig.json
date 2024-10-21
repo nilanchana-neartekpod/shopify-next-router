@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"] // Root-level mapping if `components` is directly under the root
     }
   }
 }
