@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 const useStore = (set, get) => ({
     quantity: 0,
+    cartItems: [],
     cartTotal: async (cartId) => {
         if(cartId){
             let settings = {
@@ -11,7 +12,8 @@ const useStore = (set, get) => ({
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
-            set({ quantity: data.qty });
+            set({ quantity: data.cart.totalQuantity });
+            set({cartItems: data.cart.lines.edges});
         }
     }
 });
