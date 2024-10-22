@@ -26,6 +26,7 @@ import getProducts, {
   retrieveCart,
   updateCart,
 } from "../../utils/voiceShopify";
+import convertAudioToText from "../../components/convertorAudiotoText.js";
 // import Products from "../components/Products";
 // import "../components/Products.scss";
 // import "./ConsolePage.scss";
@@ -260,6 +261,7 @@ export default function ConsolePage() {
     try {
       console.log("Connecting with API Key2:", apiKey);
       const client = clientRef.current;
+      console.log(client, "connectConversation");
       const wavRecorder = wavRecorderRef.current;
       const wavStreamPlayer = wavStreamPlayerRef.current;
 
@@ -280,7 +282,8 @@ export default function ConsolePage() {
       ]);
 
       if (client.getTurnDetectionType() === "server_vad") {
-        await wavRecorder.record((data) => client.appendInputAudio(data.mono));
+        await wavRecorder.record((data) => console.log(data.mono, "audio"));
+        // await wavRecorder.record((data) => client.appendInputAudio(data.mono));
       }
     } catch (error) {
       console.error("Connection error:", error);
@@ -322,7 +325,8 @@ export default function ConsolePage() {
       await client.cancelResponse(trackId, offset);
     }
     await wavRecorder.record((data) => {
-      console.log("recording", data);
+      console.log("recording", data.momo);
+      // console.log(first)
       client.appendInputAudio(data.mono);
     });
   };
@@ -330,10 +334,41 @@ export default function ConsolePage() {
   const stopRecording = async () => {
     setIsRecording(false);
     const client = clientRef.current;
+
     const wavRecorder = wavRecorderRef.current;
     await wavRecorder.pause();
+
     client.createResponse();
   };
+
+  // Import your audio-to-text converter function
+
+  // const [isRecording, setIsRecording] = useState(false);
+
+  // const startRecording = async () => {
+  //   setIsRecording(true);
+  //   const client = clientRef.current;
+  //   const wavRecorder = wavRecorderRef.current;
+  //   const wavStreamPlayer = wavStreamPlayerRef.current;
+  //   const trackSampleOffset = await wavStreamPlayer.interrupt();
+  //   if (trackSampleOffset?.trackId) {
+  //     const { trackId, offset } = trackSampleOffset;
+  //     await client.cancelResponse(trackId, offset);
+  //   }
+  //   await wavRecorder.record(async (data) => {
+  //     console.log("recording", data.mono);
+  //     const text = await convertAudioToText(data.mono); // Convert audio to text
+  //     client.appendInputText(text); // Send text to OpenAI
+  //   });
+  // };
+
+  // const stopRecording = async () => {
+  //   setIsRecording(false);
+  //   const client = clientRef.current;
+  //   const wavRecorder = wavRecorderRef.current;
+  //   await wavRecorder.pause();
+  //   client.createResponse();
+  // };
 
   const changeTurnEndType = async (value) => {
     const client = clientRef.current;
@@ -759,15 +794,18 @@ export default function ConsolePage() {
             {product && product.length > 0 ? (
               <div data-component="Products">
                 {product.map((item, index) => (
-                  <div key={item.id || index}>
+                  <div
+                    key={item.id || index}
+                    className="max-w-xs border border-gray-300 rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105 m-4"
+                  >
                     <img
                       src={item.featuredImage}
                       alt={item.title}
-                      style={{ width: "100%" }}
+                      className="w-full h-auto"
                     />
-                    <div className="product-info">
-                      <h4>{item.title}</h4>
-                      <p>Price: ${item.unit_price}</p>
+                    <div className="p-4 text-center">
+                      <h4 className="text-lg font-semibold">{item.title}</h4>
+                      <p className="text-gray-700">Price: ${item.unit_price}</p>
                     </div>
                   </div>
                 ))}
@@ -877,7 +915,7 @@ export default function ConsolePage() {
             <div className="content-block-title">Carts</div>
             <div className="content-block-body content-kv">
               {product && product.length > 0 ? (
-                <ul className="product-list">
+                <ul className="product-list ">
                   {product.map((item, index) => (
                     <li key={item.id || index} className="product-item">
                       <img

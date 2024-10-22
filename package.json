@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@openai/realtime-api-beta": "github:openai/openai-realtime-api-beta",
+    "assemblyai": "^4.7.1",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "fuse.js": "^7.0.0",

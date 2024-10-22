@@ -5,14 +5,17 @@ import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { RiVoiceprintFill } from "react-icons/ri";
 import useGlobalStore from "../store/store";
-import ProductCard from "./ProductCard"; // Import ProductCard component
+import ProductCard from "./ProductCard";
+import { useRouter } from "next/router";
+// import ProductCard from "./ProductCard"; // Import ProductCard component
 
 const Header = () => {
+  const router = useRouter();
   let [cartId, setCartId] = useState(null);
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [showNav, setShowNav] = useState(false);
+  const [showNav, setShowNav] = useState(true);
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
 
@@ -49,7 +52,13 @@ const Header = () => {
       console.error("Error fetching search results:", error);
     }
   };
-
+  const handleVoiceShoppingClick = () => {
+    setShowNav(false); // Hide navigation and search form
+  };
+  const handleBackToHomeClick = () => {
+    setShowNav(true); // Show navigation and search form
+    router.push("/");
+  };
   const hideShowNav = () => {
     setShowNav(!showNav);
   };
@@ -76,79 +85,92 @@ const Header = () => {
         </div>
 
         {/* Center: Navigation */}
-        <nav className="flex space-x-6 gap-4 lg:gap-10 navigation">
-          <Link href="/" className="text-gray-800">
-            Home
-          </Link>
-          <Link href="/products" className="text-gray-800">
-            Shop
-          </Link>
-          <Link href="/collections/shoes" className="text-gray-800">
-            Shoes
-          </Link>
-          <Link href="/collections/electronics" className="text-gray-800">
-            Electronics
-          </Link>
-          <Link href="/collections/clothes" className="text-gray-800">
-            Clothes
-          </Link>
-        </nav>
+        {showNav && (
+          <nav className="flex space-x-6 gap-4 lg:gap-10 navigation">
+            <Link href="/" className="text-gray-800">
+              Home
+            </Link>
+            <Link href="/products" className="text-gray-800">
+              Shop
+            </Link>
+            <Link href="/collections/shoes" className="text-gray-800">
+              Shoes
+            </Link>
+            <Link href="/collections/electronics" className="text-gray-800">
+              Electronics
+            </Link>
+            <Link href="/collections/clothes" className="text-gray-800">
+              Clothes
+            </Link>
+          </nav>
+        )}
         <Link
           href="/voiceAssistance"
           className="text-gray-800 bg-sky-400 p-3 rounded-lg flex text-slate-50 font-bold"
+          onClick={handleVoiceShoppingClick}
         >
           <RiVoiceprintFill color="white" className="mr-2" size="1.5em" />
           Voice Shoping
         </Link>
 
         {/* Right: Icons */}
-        <div className="flex items-center space-x-6 gap-1 md:gap-5">
-          {/* Search Form */}
+        {showNav && (
+          <div className="flex items-center space-x-6 gap-1 md:gap-5">
+            {/* Search Form */}
+            <button
+              onClick={toggleSearchInput}
+              className="hidden md:flex text-gray-800"
+            >
+              <GoSearch className="w-5 h-5" />
+            </button>
+
+            {showSearchInput && (
+              <form
+                onSubmit={handleSearch}
+                className="hidden md:flex news-letterform"
+              >
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className="border rounded-md px-2 py-1"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onBlur={() => setShowSearchInput(false)}
+                />
+                <button type="submit" className="hidden md:flex text-gray-800">
+                  <GoSearch className="w-5 h-5" />
+                </button>
+              </form>
+            )}
+
+            {cartId ? (
+              <Link
+                href={`/cart?cartid=${cartId}`}
+                className="text-gray-800 shoppingCartIcon"
+              >
+                <BsCart3 className="w-5 h-5" />
+                <span>{quantity}</span>
+              </Link>
+            ) : (
+              <Link href="/cart" className="text-gray-800">
+                <BsCart3 className="w-5 h-5" />
+              </Link>
+            )}
+
+            <HiMiniBars3
+              className="flex lg:hidden cursor-pointer"
+              onClick={hideShowNav}
+            />
+          </div>
+        )}
+        {!showNav && (
           <button
-            onClick={toggleSearchInput}
-            className="hidden md:flex text-gray-800"
+            onClick={handleBackToHomeClick}
+            className="text-gray-800 bg-sky-400 p-3 rounded-lg flex text-slate-50 font-bold mt-5"
           >
-            <GoSearch className="w-5 h-5" />
+            Back to Home
           </button>
-
-          {showSearchInput && (
-            <form
-              onSubmit={handleSearch}
-              className="hidden md:flex news-letterform"
-            >
-              <input
-                type="text"
-                placeholder="Search..."
-                className="border rounded-md px-2 py-1"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onBlur={() => setShowSearchInput(false)}
-              />
-              <button type="submit" className="hidden md:flex text-gray-800">
-                <GoSearch className="w-5 h-5" />
-              </button>
-            </form>
-          )}
-
-          {cartId ? (
-            <Link
-              href={`/cart?cartid=${cartId}`}
-              className="text-gray-800 shoppingCartIcon"
-            >
-              <BsCart3 className="w-5 h-5" />
-              <span>{quantity}</span>
-            </Link>
-          ) : (
-            <Link href="/cart" className="text-gray-800">
-              <BsCart3 className="w-5 h-5" />
-            </Link>
-          )}
-
-          <HiMiniBars3
-            className="flex lg:hidden cursor-pointer"
-            onClick={hideShowNav}
-          />
-        </div>
+        )}
       </div>
 
       {/* Display Search Results */}

@@ -12,23 +12,28 @@ export default function ProductCard({ product }) {
               product.id.split("gid://shopify/Product/")[1]
             }`}
           >
-            {/* {product.featuredImage?.url ? (
+            {product.featuredImage?.url ? (
               <>
-                <Image
+                {/* <Image
                   src={product.featuredImage?.url}
                   alt={product.title}
                   fill={true}
-                />
+                /> */}
+                {/* <img src={product.featuredImage.url} alt={product.title} /> */}
               </>
             ) : (
               <>
-                <Image
+                {/* <Image
                   src="https://dummyimage.com/1200/09f/fff.png"
                   alt={product.title}
                   fill={true}
+                /> */}
+                <img
+                  src="https://dummyimage.com/1200/09f/fff.png"
+                  alt={product.title}
                 />
               </>
-            )} */}
+            )}
           </Link>
         </div>
         <div>
