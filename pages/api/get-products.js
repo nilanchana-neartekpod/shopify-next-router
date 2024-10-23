@@ -15,7 +15,7 @@ const graphQLClient = new GraphQLClient(endpoint, {
 });
 
 export default async function handler(req, res) {
-  console.log("first");
+  // console.log("first");
   const query = gql`
     {
       products(first: 20) {
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
 
   try {
     const data = await graphQLClient.request(query);
-    console.log(data, "data");
+    // console.log(data, "data");
     res.status(200).send(data.products.nodes);
   } catch (error) {
     res.status(500).json({ error: error.message });

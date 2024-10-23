@@ -22,9 +22,9 @@ import ProductCarousel from "../components/ProductCarousel";
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
   // const data = await fetch("api/get-products.js");
-  console.log(data, "data");
+  // console.log(data, "data");
   const collections = await getCollections();
-  console.log(data, collections);
+  // console.log(data, collections);
   return {
     props: { data, collections },
   };

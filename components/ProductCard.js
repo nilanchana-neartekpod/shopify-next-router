@@ -19,7 +19,7 @@ export default function ProductCard({ product }) {
                   alt={product.title}
                   fill={true}
                 /> */}
-                {/* <img src={product.featuredImage.url} alt={product.title} /> */}
+                <img src={product.featuredImage.url} alt={product.title} />
               </>
             ) : (
               <>

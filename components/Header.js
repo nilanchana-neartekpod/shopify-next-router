@@ -47,7 +47,7 @@ const Header = () => {
 
       const data = await response.json();
       setSearchResults(data.products);
-      console.log("Search results:", data.products);
+      // console.log("Search results:", data.products);
     } catch (error) {
       console.error("Error fetching search results:", error);
     }

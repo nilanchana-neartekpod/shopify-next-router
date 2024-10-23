@@ -54,7 +54,7 @@ export default async function getProducts() {
 
   try {
     const data = await graphQLClient.request(products);
-    console.log("data", data);
+    // console.log("data", data);
     return data.products.nodes;
   } catch (error) {
     throw new Error(
@@ -281,6 +281,9 @@ const initialize = async () => {
     products = await getProducts(); // Fetch products asynchronously
     fuse = new Fuse(products, {
       keys: ["title"], // Adjust based on your product structure
+      minMatchCharLength: 4, // Minimum length of words to match
+      includeScore: true,
+      // threshold: 0.2,
     });
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -290,13 +293,26 @@ initialize();
 
 export const product_search = (query) => {
   console.log("Searching for:", query);
+
+  if (!fuse) {
+    console.error("Fuse has not been initialized");
+    return []; // Return an empty array if Fuse is not initialized
+  }
+
   const results = fuse.search(query);
+
   console.log("Search results:", results);
-  return results.map((result) => ({
-    title: result.item.title,
-    itemId: result.item.id,
-    unit_price: result.item.priceRange.minVariantPrice.amount,
-    featuredImage: result.item.featuredImage.url,
-    product_varient_id: result.item.variants.edges[0].node.id,
-  }));
+
+  // Check if there are any results
+  if (results.length > 0) {
+    return results.map((result) => ({
+      title: result.item.title,
+      itemId: result.item.id,
+      unit_price: result.item.priceRange.minVariantPrice.amount,
+      featuredImage: result.item.featuredImage.url,
+      product_variant_id: result.item.variants.edges[0].node.id,
+    }));
+  } else {
+    return [{ message: "No data found" }];
+  }
 };

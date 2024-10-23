@@ -4,7 +4,7 @@ import Link from "next/link";
 import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 
 const CollectionCard = ({ collection }) => {
-  console.log(collection, "collection");
+  // console.log(collection, "collection");
   return (
     <div className="collection relative w-full h-80">
       <Link href={`/collections/${collection.handle}`}>

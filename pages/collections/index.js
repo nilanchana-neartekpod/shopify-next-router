@@ -4,7 +4,7 @@ import CollectionCard from "../../components/CollectionCard";
 import Head from "next/head";
 
 const Collections = ({ collections }) => {
-  console.log(collections, "collections");
+  // console.log(collections, "collections");
   const collectionList = collections.collections.nodes;
   return (
     <>

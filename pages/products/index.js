@@ -94,11 +94,11 @@ const Product = ({ products }) => {
 
         <div className="pagination px-4 md:px-12 py-8 md:py-12 plp-product-listing">
           <div className="productsList">
-            {/* {currentImages.map((product) => {
+            {currentImages.map((product) => {
               return <ProductCard key={product.id} product={product} />;
-            })} */}
+            })}
           </div>
-          <ReactPaginate
+          {/* <ReactPaginate
             breakLabel="..."
             nextLabel={<GrNext />}
             onPageChange={handlePageClick}
@@ -116,7 +116,7 @@ const Product = ({ products }) => {
             nextClassName={"page-item"}
             nextLinkClassName={"page-link"}
             activeClassName={"active"}
-          />
+          /> */}
         </div>
       </div>
     </>

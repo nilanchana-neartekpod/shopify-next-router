@@ -103,6 +103,7 @@ export default function ConsolePage() {
   const [fuse, setFuse] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
   const [query, setQuery] = useState("");
+  const [retrieveCarts, setRetriviewCart] = useState();
 
   useEffect(() => {
     if (typeof window != "undefined") {
@@ -118,32 +119,26 @@ export default function ConsolePage() {
         // const data = await getProducts();
         let products = await getProducts().then((data) => data);
         console.log(products, "products");
-        // const results = await product_search("ocean blue");
-        // console.log(results, "search data");
-
-        // const itemId = results[0].product_varient_id;
-        // const quantity = 1;
-
-        // const addtocart = await addToCart(itemId, quantity).then(
-        //   (res) => res.cartCreate.cart.id
-        // );
-        // console.log(addtocart, "added to cart");
-
-        // if (addtocart) {
-        //   const cartdata = await retrieveCart(addtocart);
-        //   console.log(cartdata, "cart data");
-        // } else {
-        //   console.log("cartId is null");
-        // }
-
+        const results = await product_search("shoes");
+        console.log(results, "search data");
+        const itemId = results[0].product_variant_id;
+        const quantity = 1;
+        const addtocart = await addToCart(itemId, quantity).then(
+          (res) => res.cartCreate.cart.id
+        );
+        console.log(addtocart, "added to cart");
+        if (addtocart) {
+          const cartdata = await retrieveCart(addtocart);
+          console.log(cartdata, "cart data");
+        } else {
+          console.log("cartId is null");
+        }
         // const itemIds = results[1].product_varient_id;
         // const quantitys = 1;
         // const updateCarts = await updateCart(addtocart, itemIds, quantitys);
         // console.log(updateCarts, "updateCarts");
-
         // const cartdata = await retrieveCart(addtocart);
         // console.log(cartdata, "cart data");
-
         // const cartLength = cartdata.productDetails;
         // const datass = [];
         // for (let i = 0; i < cartLength.length; i++) {
@@ -154,7 +149,6 @@ export default function ConsolePage() {
         // //  data.push(...datass);
         // const createCheckouts = await createCheckout(datass);
         // console.log(createCheckouts, "finallyyy");
-
         // console.log(cartId, 'productData');
       } catch (error) {
         console.error("Error fetching product data:", error);
@@ -185,7 +179,7 @@ export default function ConsolePage() {
   useEffect(() => {
     const client = clientRef.current;
     if (client) {
-      console.log("Registered tools: ", client.tools);
+      // console.log("Registered tools: ", client.tools);
     }
   }, []);
 
@@ -257,11 +251,11 @@ export default function ConsolePage() {
   //   }
   // }, []);
   const connectConversation = useCallback(async () => {
-    console.log("Connecting with API Key:", apiKey);
+    // console.log("Connecting with API Key:", apiKey);
     try {
-      console.log("Connecting with API Key2:", apiKey);
+      // console.log("Connecting with API Key2:", apiKey);
       const client = clientRef.current;
-      console.log(client, "connectConversation");
+      // console.log(client, "connectConversation");
       const wavRecorder = wavRecorderRef.current;
       const wavStreamPlayer = wavStreamPlayerRef.current;
 
@@ -325,7 +319,7 @@ export default function ConsolePage() {
       await client.cancelResponse(trackId, offset);
     }
     await wavRecorder.record((data) => {
-      console.log("recording", data.momo);
+      // console.log("recording", data.momo);
       // console.log(first)
       client.appendInputAudio(data.mono);
     });
@@ -517,8 +511,10 @@ export default function ConsolePage() {
       },
       async ({ query }) => {
         // const results = await searchProducts(query);
+
         const results = await product_search(query);
         setProduct(results);
+
         return results;
       }
     );
@@ -620,7 +616,7 @@ export default function ConsolePage() {
 
       async () => {
         try {
-          console.log(localStorage.getItem("cartID"), "88888888888888");
+          // console.log(localStorage.getItem("cartID"), "88888888888888");
           const checkoutCartlines = []; // Define the type of checkoutCartlines as a string array
           const cartDatas = await retrieveCart(localStorage.getItem("cartID")); // Make sure cartId is defined or passed into the function
           cartDatas.productDetails.forEach((lineItem) => {
@@ -628,13 +624,13 @@ export default function ConsolePage() {
               checkoutCartlines.push(lineItem.productVarientId); // Push the matched cartLineId to checkoutCartlines
             }
           });
-          console.log(checkoutCartlines, " checkoutCartlines");
+          // console.log(checkoutCartlines, " checkoutCartlines");
           if (checkoutCartlines.length === 0) {
             throw new Error("Item not found in cart");
           }
 
           const checkoutCall = await createCheckout(checkoutCartlines); // Call createCheckout with the cartLineIds
-          console.log(checkoutCall, " finally");
+          // console.log(checkoutCall, " finally");
           setCheckoutURL(checkoutCall?.checkoutCreate?.checkout?.webUrl);
           return {
             message: "Product moved to checkout",
@@ -690,7 +686,7 @@ export default function ConsolePage() {
     };
   }, []);
   useEffect(() => {
-    console.log("addddddddd");
+    // console.log("addddddddd");
     if (!product) {
       return;
     }
@@ -701,7 +697,7 @@ export default function ConsolePage() {
     try {
       client.removeTool("add_to_cart");
     } catch (e) {
-      console.log("no tool to remove");
+      // console.log("no tool to remove");
     }
     client.addTool(
       {
@@ -735,30 +731,35 @@ export default function ConsolePage() {
             return { message: "no data in product" };
           }
         }
-        const itemId = item.product_varient_id;
-        console.log(item, "voice ----- items");
-        console.log(itemId, "voice ----- items1");
+        console.log(item, " add to cart item");
+        const productId = item.product_variant_id;
+        console.log(productId, " add to cart item id");
+
         quantity = 1;
-        // const cartsId
-        //   'gid://shopify/Cart/Z2NwLWFzaWEtc291dGhlYXN0MTowMUpBODFTNDdDV1Y5NzBKWVg0OVJDUTRBTQ?key=58a2989ea83aae061764539182edec3d';
-        console.log(localStorage.getItem("cartID"));
+
         if (!localStorage.getItem("cartID")) {
-          const cartCreatevalue = await addToCart(itemId, quantity).then(
+          const cartCreatevalue = await addToCart(productId, quantity).then(
             (res) => {
               setCartId(res.cartCreate.cart.id);
               localStorage.setItem("cartID", res.cartCreate.cart.id);
             }
           );
-
-          console.log(cartCreatevalue, "Voice ==== cartCreatevalue ");
+          const retrivewCartss = await retrieveCart(
+            localStorage.getItem("cartID").then((res) => setRetriviewCart(res))
+          );
+          // console.log(cartCreatevalue, "Voice ==== cartCreatevalue ");
           // const getCartId = cartCreatevalue.cartCreate.cart.id;
         } else {
+          console.log(localStorage.getItem("cartID"), "cartId");
           const updateCartValue = await updateCart(
             localStorage.getItem("cartID"),
-            itemId,
+            productId,
             quantity
           );
           console.log(updateCartValue, "Voice ==== updateCartValue");
+          const retrivewCartss = await retrieveCart(
+            localStorage.getItem("cartID").then((res) => setRetriviewCart(res))
+          );
         }
 
         return {
@@ -789,14 +790,17 @@ export default function ConsolePage() {
       </div>
       <div className="content-main">
         <div className="content-logs">
-          <div className="content-block events">
+          <div className="content-block events ">
             {/* <Products /> */}
             {product && product.length > 0 ? (
-              <div data-component="Products">
+              <div
+                data-component="Products"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+              >
                 {product.map((item, index) => (
                   <div
                     key={item.id || index}
-                    className="max-w-xs border border-gray-300 rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105 m-4"
+                    className="border border-gray-300 rounded-lg shadow-md overflow-hidden transition-transform duration-300 transform hover:scale-105"
                   >
                     <img
                       src={item.featuredImage}
@@ -811,8 +815,11 @@ export default function ConsolePage() {
                 ))}
               </div>
             ) : (
-              <p>No products found</p>
+              <div className="h-28">
+                <p>No products found</p>
+              </div>
             )}
+
             {checkoutURL ? (
               <a href={checkoutURL} style={{ width: "200px", padding: "10px" }}>
                 Checkout
@@ -914,18 +921,19 @@ export default function ConsolePage() {
           <div className="content-block kv">
             <div className="content-block-title">Carts</div>
             <div className="content-block-body content-kv">
-              {product && product.length > 0 ? (
+              {retrieveCarts?.productDetails &&
+              retrieveCarts?.productDetails.length > 0 ? (
                 <ul className="product-list ">
-                  {product.map((item, index) => (
+                  {retrieveCarts?.productDetails.map((item, index) => (
                     <li key={item.id || index} className="product-item">
                       <img
                         src={item.featuredImage}
-                        alt={item.title}
+                        alt={item.productName}
                         className="product-thumbnail"
                       />
                       <div className="product-info">
-                        <h4>{item.title}</h4>
-                        <p>Price: ${item.unit_price}</p>
+                        <h4>{item.productName}</h4>
+                        <p>Price: ${item.price}</p>
                       </div>
                     </li>
                   ))}

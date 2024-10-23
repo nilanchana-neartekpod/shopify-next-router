@@ -120,7 +120,8 @@ export async function getCollectionProducts(handle) {
 
   try {
     const data = await graphQLClient.request(query);
-    return JSON.stringify(data);
+    console.log(data, "data query ");
+    return data;
   } catch (error) {
     throw new Error(error);
   }
@@ -193,7 +194,8 @@ export const getProduct = async (id) => {
 
   try {
     const data = await graphQLClient.request(productQuery, variables);
-    return data.product;
+    const datas = data.product;
+    return datas;
   } catch (error) {
     throw new Error(error);
   }
