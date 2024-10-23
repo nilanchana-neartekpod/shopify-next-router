@@ -15,21 +15,21 @@ const ProductCarousel = () => {
   const data = [
     { 
       id:0,
-      "img": "/SlideImg1.png",
+      "img": "/men 1.svg",
       "heading": "Shoes",
-      "sub_heading": "Mens Shoes",
+      "sub_heading": "Mens Shirts",
       "cta_link": "/collections/shoes"
     },
     {
       id:1,
-      "img": "/SlideImg2.png",
+      "img": "/electronics.svg",
       "heading": "Electronics",
       "sub_heading": "Smart Phones",
       "cta_link": "/collections/electronics"
     },
     {
       id:2,
-      "img": "/SlideImg3.png",
+      "img": "/women.svg",
       "heading": "Clothes",
       "sub_heading": "Womens Clothes",
       "cta_link": "/collections/clothes"
