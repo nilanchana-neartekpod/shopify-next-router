@@ -16,11 +16,11 @@ const Product = ({products}) => {
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
 
   const priceRanges = [
-    { label: 'Under ₹1,000', min: 0, max: 1000 },
-    { label: '₹1,000 - ₹5,000', min: 1000, max: 5000 },
-    { label: '₹5,000 - ₹10,000', min: 5000, max: 10000 },
-    { label: '₹10,000 - ₹20,000', min: 10000, max: 20000 },
-    { label: 'Over ₹20,000', min: 20000, max: Infinity },
+    { label: 'Under $10', min: 0, max: 10 },
+    { label: '$11 - $50', min: 11, max: 50 },
+    { label: '$51 - $100', min: 51, max: 100 },
+    { label: '$101 - $200', min: 101, max: 200 },
+    { label: 'Over $201', min: 201, max: Infinity },
   ];
 
   const handlePriceFilter = (range) => {
@@ -63,6 +63,7 @@ const Product = ({products}) => {
     setImagesOffset(0);
     setItemsPerPage(8);
     setStarRating('');
+    setSelectedPriceRange(null);
   }
 
   useEffect(() => {
@@ -107,7 +108,7 @@ const Product = ({products}) => {
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
         <div className='flex gap-4 md:gap-8 flex-col md:flex-row px-4 md:px-12 pt-8 md:pt-12'>
-        <div className='filters hidden md:flex flex-col basis-full md:basis-1/6 min-w-[120px] bg-gray-100'>
+        <div className='filters hidden md:flex flex-col basis-full md:basis-1/6 min-w-[120px]'>
             <h3 className='text-base md:text-xl'>Filter</h3>
 
             {(starRating != '') && (
@@ -166,12 +167,14 @@ const Product = ({products}) => {
                   {range.label}
                 </div>
               ))}
-              <button
-                onClick={clearAllFilters}
-                className="bg-red-500 text-white px-2 py-1 rounded text-sm w-20 mt-2"
-              >
-                Clear All
-              </button>
+              {selectedPriceRange && (
+                <button
+                  onClick={clearAllFilters}
+                  className="bg-red-500 text-white px-2 py-1 rounded text-sm w-20 mt-2"
+                >
+                  Clear All
+                </button>
+              )}
             </div>
           </div>
           <div className='pageData basis-full md:basis-11/12'>

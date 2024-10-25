@@ -92,7 +92,7 @@ export default function Cart({ cart, checkoutUrl }) {
                           <div>{item.node.merchandise.title}</div> <div>-</div>
                         </>
                       )} 
-                      <div>{ item.node.merchandise.product.priceRange.minVariantPrice.amount} ₹</div>
+                      <div>$ { item.node.merchandise.product.priceRange.minVariantPrice.amount}</div>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {item.node.quantity}</p>
                   </div>
