@@ -13,6 +13,25 @@ const Product = ({products}) => {
   const [filter, setFilter] = useState("rating");
   const [itemsPerPage, setItemsPerPage] = useState(8); // default to 16 items per page
   const [starRating, setStarRating] = useState('');
+  const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+
+  const priceRanges = [
+    { label: 'Under ₹1,000', min: 0, max: 1000 },
+    { label: '₹1,000 - ₹5,000', min: 1000, max: 5000 },
+    { label: '₹5,000 - ₹10,000', min: 5000, max: 10000 },
+    { label: '₹10,000 - ₹20,000', min: 10000, max: 20000 },
+    { label: 'Over ₹20,000', min: 20000, max: Infinity },
+  ];
+
+  const handlePriceFilter = (range) => {
+    setSelectedPriceRange(range);
+    setPd(products.filter(product => {
+      const price = Number(product.priceRange.minVariantPrice.amount);
+      return price >= range.min && price <= range.max;
+    }));
+    setCurrentImages(null);
+    setImagesOffset(0); // Reset pagination when filtering
+  };
 
   const filterChangeValue = (el) => {
     setFilter(el.target.value);
@@ -58,7 +77,7 @@ const Product = ({products}) => {
     setImagesOffset(newOffset);
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     if(filter === 'rating'){
       setPd(pd.sort((a, b) => { return Number(b.rating.value) - Number(a.rating.value); }));
     } else if(filter === 'price-low-high'){
@@ -88,7 +107,7 @@ const Product = ({products}) => {
       <div className='mt-20'>
         <h2 className="text-xl md:text-2xl text-center mt-24 md:mt-32 mb-0">Our Products</h2>
         <div className='flex gap-4 md:gap-8 flex-col md:flex-row px-4 md:px-12 pt-8 md:pt-12'>
-          <div className='filters hidden md:flex flex-col basis-full md:basis-1/12'>
+        <div className='filters hidden md:flex flex-col basis-full md:basis-1/6 min-w-[120px] bg-gray-100'>
             <h3 className='text-base md:text-xl'>Filter</h3>
 
             {(starRating != '') && (
@@ -135,6 +154,24 @@ const Product = ({products}) => {
                   </svg>
                 )}
               </div>
+            </div>
+            <h5 className='pt-8 md:pt-12'>Price</h5>
+            <div className='flex flex-col gap-2'>
+              {priceRanges.map((range, index) => (
+                <div
+                  key={index}
+                  className={`cursor-pointer ${selectedPriceRange === range ? 'font-bold' : ''}`}
+                  onClick={() => handlePriceFilter(range)}
+                >
+                  {range.label}
+                </div>
+              ))}
+              <button
+                onClick={clearAllFilters}
+                className="bg-red-500 text-white px-2 py-1 rounded text-sm w-20 mt-2"
+              >
+                Clear All
+              </button>
             </div>
           </div>
           <div className='pageData basis-full md:basis-11/12'>

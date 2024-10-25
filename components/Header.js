@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { GoSearch } from "react-icons/go";
 import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
+import { HiOutlineUserCircle } from "react-icons/hi2"; // Import profile icon
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';  // Import ProductCard component
  
@@ -14,6 +16,8 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false);
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
+  const router = useRouter();
+  const isLoginPage = router.pathname === '/auth/login';
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -22,7 +26,7 @@ const Header = () => {
       cartTotal(cartId);
     }
   }, [cartId, quantity]);
- 
+
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev);
   };
@@ -106,7 +110,11 @@ const Header = () => {
               <BsCart3 className="w-5 h-5" />
             </Link>
           )}
- 
+
+          {/* Profile Icon */}
+          <Link href="/login" className="text-gray-800">
+            <HiOutlineUserCircle className="w-5 h-5" />
+          </Link>
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
       </div>
