@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { GoSearch } from "react-icons/go";
 import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
@@ -18,6 +19,7 @@ const Header = () => {
 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
+
   const cartItems = useGlobalStore((state) => state.cartItems);
   const router = useRouter();
   const isLoginPage = router.pathname === '/auth/login'; // Check if it's login page
@@ -34,12 +36,15 @@ const Header = () => {
     } else {
       console.warn('No Cart ID found in sessionStorage.');
     }
+
   }, [cartId, cartTotal]);
 
   useEffect(() => {
     console.log('Quantity updated:', quantity);
     console.log('Cart Items:', cartItems);
   }, [quantity, cartItems]);
+
+  }, [cartId, quantity]);
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev);
@@ -126,6 +131,7 @@ const Header = () => {
             >
               <BsCart3 className="w-5 h-5" />
               <span>{quantity}</span>
+
             </button>
 
              {/* Cart Dropdown */}

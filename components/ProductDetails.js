@@ -178,7 +178,7 @@ const ProductDetails = ({product}) => {
                     </nav>
                     <div>
                         <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
-                        <h3 className="text-xl text-gray-700 mb-4">{product.priceRange.minVariantPrice.amount} {product.priceRange.minVariantPrice.currencyCode}</h3> 
+                        <h3 className="text-xl text-gray-700 mb-4">$ {product.priceRange.minVariantPrice.amount}</h3> 
 
                         <div className="mb-4 flex">
                             {Array.from({ length: Number(product.rating.value) }, (_, i) => 

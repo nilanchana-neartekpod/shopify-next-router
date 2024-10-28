@@ -23,7 +23,7 @@ const ProductCard = ({product}) => {
                 <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
                     <h5>{product.title}</h5>
                 </Link>
-                <div>{product.priceRange.minVariantPrice.amount} ₹</div>
+                <div>$ {product.priceRange.minVariantPrice.amount}</div>
                 <div className='flex items-center justify-center'>
                     {Array.from({ length: Number(product.rating?.value) }, (_, i) => 
                         <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
