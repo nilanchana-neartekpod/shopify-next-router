@@ -5,7 +5,6 @@ import { GoSearch } from "react-icons/go";
 import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { HiOutlineUserCircle } from 'react-icons/hi';
-import { useRouter } from 'next/router';
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';
 
@@ -22,9 +21,8 @@ const Header = () => {
 
   const cartItems = useGlobalStore((state) => state.cartItems);
   const router = useRouter();
-  const isLoginPage = router.pathname === '/auth/login'; // Check if it's login page
+  const isLoginPage = router.pathname === '/auth/login';
   const isSignUpPage = router.pathname === '/auth/signup';
-
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -32,19 +30,16 @@ const Header = () => {
     
     if (_cartId) {
       setCartId(_cartId);
-      cartTotal(_cartId);  // Fetch cart data
+      cartTotal(_cartId);
     } else {
       console.warn('No Cart ID found in sessionStorage.');
     }
-
   }, [cartId, cartTotal]);
 
   useEffect(() => {
     console.log('Quantity updated:', quantity);
     console.log('Cart Items:', cartItems);
   }, [quantity, cartItems]);
-
-  }, [cartId, quantity]);
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev);
@@ -83,7 +78,6 @@ const Header = () => {
   return (
     <header className={`w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50 ${showNav ? 'active-nav' : ''}`}>
       <div className="px-4 md:px-12 mx-auto flex items-center justify-between">
-        {/* Left: Logo and Title */}
         <div className="flex items-center space-x-3">
           <Link className={'flex items-center gap-4 cursor-pointer'} href="/">
             <img src="/House.svg" alt="Furniro" className="w-[40px] h-[24px] md:w-[64px] md:h-[40px]" />
@@ -91,7 +85,6 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Center: Navigation */}
         <nav className="flex space-x-6 gap-4 lg:gap-10 navigation">
           <Link href="/" className="text-gray-800">Home</Link>
           <Link href="/products" className="text-gray-800">Shop</Link>
@@ -100,9 +93,7 @@ const Header = () => {
           <Link href="/collections/clothes" className="text-gray-800">Clothes</Link>
         </nav>
 
-        {/* Right: Icons */}
         <div className="flex items-center space-x-6 gap-1 md:gap-5">
-          {/* Search Form */}
           <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
             <GoSearch className="w-5 h-5" />
           </button>
@@ -123,7 +114,6 @@ const Header = () => {
             </form>
           )}
 
-          {/* Cart Icon with Dropdown */}
           <div className="relative">
             <button
               onClick={toggleCartDropdown}
@@ -131,11 +121,9 @@ const Header = () => {
             >
               <BsCart3 className="w-5 h-5" />
               <span>{quantity}</span>
-
             </button>
 
-             {/* Cart Dropdown */}
-             {showCartDropdown && (
+            {showCartDropdown && (
               <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
                 {cartItems.length > 0 ? (
                   <div>
@@ -145,7 +133,6 @@ const Header = () => {
 
                       return (
                         <div key={item.node.id} className="flex justify-between items-center mb-2">
-                          {/* Check if imageUrl exists */}
                           {imageUrl ? (
                             <img
                               src={imageUrl}
@@ -154,7 +141,6 @@ const Header = () => {
                             />
                           ) : (
                             <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                              {/* Placeholder if no image */}
                               <span className="text-gray-500">No Image</span>
                             </div>
                           )}
@@ -181,17 +167,15 @@ const Header = () => {
                 )}
               </div>
             )}
-
           </div>
           <Link href="/login" className="text-gray-800">
             <HiOutlineUserCircle className="w-5 h-5" />
           </Link>
- 
+
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
       </div>
 
-      {/* Display Search Results */}
       {showSearchInput && searchResults.length > 0 && (
         <div className="md:px-12 md:pt-8 searchresults grid grid-cols-1 md:grid-cols-5 gap-4 p-4 mx-auto">
           {searchResults.map((product) => (
