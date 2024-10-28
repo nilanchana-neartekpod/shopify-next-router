@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { GoSearch } from "react-icons/go";
 import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
+import { HiOutlineUserCircle } from 'react-icons/hi';
+import { useRouter } from 'next/router';
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';
 
@@ -17,6 +19,10 @@ const Header = () => {
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
+  const router = useRouter();
+  const isLoginPage = router.pathname === '/auth/login'; // Check if it's login page
+  const isSignUpPage = router.pathname === '/auth/signup';
+
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -171,6 +177,9 @@ const Header = () => {
             )}
 
           </div>
+          <Link href="/login" className="text-gray-800">
+            <HiOutlineUserCircle className="w-5 h-5" />
+          </Link>
  
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
