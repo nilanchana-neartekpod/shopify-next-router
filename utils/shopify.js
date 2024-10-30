@@ -43,6 +43,78 @@ export async function searchProducts(queryString) {
     throw new Error(error);
   }
 }
+export async function createCustomer(input) {
+  const mutation = gql`
+    mutation customerCreate($input: CustomerCreateInput!) {
+      customerCreate(input: $input) {
+        customer {
+          firstName
+          lastName
+          email
+        }
+        customerUserErrors {
+          field
+          message
+          code
+        }
+      }
+    }
+  `;
+
+  try {
+    const variables = {input};
+    const data = await graphQLClient.request(mutation, variables);
+
+    if (data.customerCreate.customerUserErrors.length > 0) {
+      throw new Error(
+        `Error creating customer: ${data.customerCreate.customerUserErrors[0].message}`
+      );
+    }
+
+    // Return the created customer data
+    return data.customerCreate.customer;
+  } catch (error) {
+    throw new Error(error.message || "Error creating customer");
+  }
+}
+export async function customerLogin(email, password) {
+  const mutation = gql`
+    mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
+      customerAccessTokenCreate(input: $input) {
+        customerAccessToken {
+          accessToken
+          expiresAt
+        }
+        customerUserErrors {
+          field
+          message
+          code
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      email,
+      password,
+    },
+  };
+
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+
+    if (data.customerAccessTokenCreate.customerUserErrors.length > 0) {
+      throw new Error(
+        `Error logging in: ${data.customerAccessTokenCreate.customerUserErrors[0].message}`
+      );
+    }
+
+    return data.customerAccessTokenCreate.customerAccessToken;
+  } catch (error) {
+    throw new Error(error.message || 'Error logging in customer');
+  }
+}
 export async function getProducts(count) {
     const query = gql`
         {
