@@ -20,15 +20,18 @@ const geistMono = localFont({
 });
 
 export const getServerSideProps = async (context) => {
-  const { req } = context;
+  const { req, resolvedUrl } = context;
   console.log(req.cookies);
+  
+  // Set optionalAuth flag for pages where authentication is not required
+  const optionalAuth = resolvedUrl === "/"; // No auth needed for home page
   
   // Check if user is authenticated
   const auth = await isAuthenticated(req);
   console.log('User authenticated:', auth);
   
-  // If not authenticated, redirect to login page
-  if (!auth) {
+  // Redirect to login if required and user is not authenticated
+  if (!auth && !optionalAuth) {
     return {
       redirect: {
         destination: "/login",
@@ -37,7 +40,7 @@ export const getServerSideProps = async (context) => {
     };
   }
 
-  // Fetch products and collections if authenticated
+  // Fetch products and collections
   const data = await getProducts(8);
   const collections = await getCollections();
   
@@ -49,6 +52,7 @@ export const getServerSideProps = async (context) => {
 export default function Home({ data, collections }) {
   const products = data.products.nodes;
   const collectionList = collections.collections.nodes;
+  
   
   return (
     <>
