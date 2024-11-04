@@ -66,7 +66,7 @@ export default function Home({ data, collections }) {
         <Banner />
         <div className="home-collections px-4 md:px-12 text-center">
           <h2 className="text-xl md:text-2xl mb-2">Browse The Range</h2>
-          <p className="mb-8 md:mb-12">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p className="mb-8 md:mb-12">Discover a variety of top-quality products! Shop our selection of shoes, electronics, and clothing to find your perfect match.</p>
           <div className="collectionList">
             {collectionList.map((collection) => (
               <CollectionCard key={collection.id} collection={collection} />
