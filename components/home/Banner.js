@@ -6,9 +6,9 @@ const Banner = () => {
     <div className='home-banner'>
         <div className='inner'>
             <div className='content'>
-                <span>New Arrival</span>
+                <span>New Arrivals</span>
                 <h1>Discover Our New Collections</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis.</p>
+                <p>Explore the latest trends and must-have items that just hit our shelves. From stylish shoes to cutting-edge electronics and fashionable clothing, we have something for everyone.</p>
                 <Link href="/collections" className='text-sm uppercase text-white bg-[#B88E2F] font-bold px-12 py-4 inline-flex'>BUY Now</Link>
             </div>
         </div>

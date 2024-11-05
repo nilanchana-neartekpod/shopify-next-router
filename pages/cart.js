@@ -104,7 +104,7 @@ export default function Cart({ cart, checkoutUrl }) {
             })}
           </ul>
           <div className="checkout-section mt-10 flex justify-between items-center">
-            <h2 className="text-2xl font-semibold">Total - {icart.estimatedCost.totalAmount.amount} ₹</h2>
+            <h2 className="text-2xl font-semibold">Total - {icart.estimatedCost.totalAmount.amount} $</h2>
             <a className="checkout-button" href={curl}>
               Checkout
             </a>
