@@ -18,7 +18,11 @@ const Header = () => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
+
+  const { user, logout } = useAuth();
+
   const { user, logout } = useAuth(); 
+
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
@@ -166,6 +170,22 @@ const Header = () => {
             </button>
 
             {showProfileDropdown && (
+
+              <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+                {user ? (
+                  <>
+                    <p className="text-gray-800 font-semibold">Welcome, {user?.Name || "Guest"}</p>
+                    <Link href="/customer" className="block text-gray-700 hover:text-blue-500">
+                    User Profile
+                    </Link>
+                    <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
+                  </>
+                ) : (
+                  <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
+                )}
+              </div>
+            )}
+
             <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
               <button 
                 className="absolute top-0 right-0 mt-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
@@ -183,6 +203,7 @@ const Header = () => {
               )}
             </div>
           )}
+
           </div>
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
