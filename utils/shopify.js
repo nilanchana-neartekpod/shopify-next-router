@@ -110,7 +110,11 @@ export async function customerLogin(email, password) {
       );
     }
 
-    return data.customerAccessTokenCreate.customerAccessToken;
+    return {
+      accessToken: data.customerAccessTokenCreate.customerAccessToken.accessToken,
+      expiresAt: data.customerAccessTokenCreate.customerAccessToken.expiresAt,
+      email: email,
+    };
   } catch (error) {
     throw new Error(error.message || 'Error logging in customer');
   }
@@ -157,6 +161,45 @@ export async function getProducts(count) {
       throw new Error(error);
     }
 }
+
+export async function fetchCustomerAddresses(accessToken) {
+  const query = gql`
+    query getCustomerAddresses($customerAccessToken: String!) {
+      customer(customerAccessToken: $customerAccessToken) {
+        id
+        firstName
+        lastName
+        email
+        addresses(first: 10) {
+          nodes {
+            id
+            firstName
+            lastName
+            address1
+            address2
+            city
+            province
+            country
+            zip
+            phone
+          }
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    customerAccessToken: accessToken,
+  };
+
+  try {
+    const data = await graphQLClient.request(query, variables);
+    return data.customer.addresses.nodes;  // Returns the list of addresses
+  } catch (error) {
+    throw new Error(error.message || 'Error fetching customer addresses');
+  }
+}
+
 
 export async function getCollectionProducts(handle) {
   const query = gql`

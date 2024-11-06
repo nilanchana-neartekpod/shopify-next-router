@@ -49,15 +49,15 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const result = await response.json();
+      const userData = await response.json();
 
-      if (!response.ok) throw new Error(result.message || 'Error during login');
+    if (!response.ok) throw new Error(userData.message || 'Error during login');
 
-      login(result);
-      router.push('/');
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
+    login(userData); 
+    router.push('/customer');
+  } catch (error) {
+    setErrorMessage(error.message);
+  }
   };
 
   return (

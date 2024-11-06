@@ -7,7 +7,7 @@ import { HiMiniBars3 } from "react-icons/hi2";
 import { HiOutlineUserCircle } from 'react-icons/hi';
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';
-import { useAuth } from '../context/AuthContext'; // Import useAuth
+import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
   const [cartId, setCartId] = useState(null);
@@ -18,7 +18,7 @@ const Header = () => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
-  const { user, logout } = useAuth(); // Access user and logout
+  const { user, logout } = useAuth();
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
@@ -138,7 +138,10 @@ const Header = () => {
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
                 {user ? (
                   <>
-                    <p className="text-gray-800 font-semibold">Welcome, {user?.displayName || user.displayName}</p>
+                    <p className="text-gray-800 font-semibold">Welcome, {user?.Name || "Guest"}</p>
+                    <Link href="/customer" className="block text-gray-700 hover:text-blue-500">
+                    User Profile
+                    </Link>
                     <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
                   </>
                 ) : (

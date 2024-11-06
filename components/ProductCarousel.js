@@ -62,7 +62,7 @@ const ProductCarousel = () => {
       
       <div className="left pl-4 md:pl-12 pr-4 md:pr-0">
         <h2 className="font-bold mb-2">50+ Beautiful Rooms Inspiration</h2>
-        <p className="text-gray-600 text-black mb-4">
+        <p className="text-gray-600 mb-4">
           Our designer already made a lot of beautiful prototypes of rooms that inspire you.
         </p>
         <Link href={"/products"} className="px-6 py-2 bg-[#B88E2F] text-white">
