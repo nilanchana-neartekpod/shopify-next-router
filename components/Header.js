@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';  
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { GoSearch } from "react-icons/go";
@@ -18,7 +18,11 @@ const Header = () => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
+
   const { user, logout } = useAuth();
+
+  const { user, logout } = useAuth(); 
+
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
@@ -34,11 +38,32 @@ const Header = () => {
 
   const toggleSearchInput = () => setShowSearchInput((prev) => !prev);
   const hideShowNav = () => setShowNav(!showNav);
-  const toggleCartDropdown = () => setShowCartDropdown((prev) => !prev);
-  const toggleProfileDropdown = () => setShowProfileDropdown((prev) => !prev);
 
-  const handleSearch = async (event) => {
-    event.preventDefault();
+  const toggleCartDropdown = () => {
+    setShowProfileDropdown(false); // Close profile dropdown when cart is opened
+    setShowCartDropdown((prev) => !prev);
+  };
+
+  const toggleProfileDropdown = () => {
+    setShowCartDropdown(false); // Close cart dropdown when profile is opened
+    setShowProfileDropdown((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (searchQuery) {
+        handleSearch();
+      } else {
+        setSearchResults([]);
+      }
+    }, 30);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
+
+  const handleSearch = async () => {
     try {
       const response = await fetch('/api/search', {
         method: 'POST',
@@ -74,7 +99,7 @@ const Header = () => {
           </button>
 
           {showSearchInput && (
-            <form onSubmit={handleSearch} className="hidden md:flex news-letterform">
+            <form className="hidden md:flex news-letterform">
               <input
                 type="text"
                 placeholder="Search..."
@@ -83,8 +108,12 @@ const Header = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onBlur={() => setShowSearchInput(false)}
               />
-              <button type='submit' className="hidden md:flex text-gray-800">
-                <GoSearch className="w-5 h-5" />
+              <button 
+                type="button"
+                className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
+                onClick={() => setShowSearchInput(false)}
+              >
+                &times;
               </button>
             </form>
           )}
@@ -96,37 +125,43 @@ const Header = () => {
             </button>
 
             {showCartDropdown && (
-              <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
-                {cartItems.length > 0 ? (
-                  cartItems.map((item) => (
-                    <div key={item.node.id} className="flex justify-between items-center mb-2">
-                      {item.node.merchandise.product.featuredImage?.url ? (
-                        <img
-                          src={item.node.merchandise.product.featuredImage.url}
-                          alt={item.node.merchandise.product.title || "Product image"}
-                          className="w-12 h-12 object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-500">No Image</span>
-                        </div>
-                      )}
-                      <div className="ml-4">
-                        <h4 className="text-sm font-semibold">{item.node.merchandise.product.title}</h4>
-                        <p className="text-gray-600 text-sm">
-                          ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
-                        </p>
+            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <div key={item.node.id} className="flex justify-between items-center mb-2">
+                    {item.node.merchandise.product.featuredImage?.url ? (
+                      <img
+                        src={item.node.merchandise.product.featuredImage.url}
+                        alt={item.node.merchandise.product.title || "Product image"}
+                        className="w-12 h-12 object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500">No Image</span>
                       </div>
+                    )}
+                    <div className="ml-4">
+                      <h4 className="text-sm font-semibold">{item.node.merchandise.product.title}</h4>
+                      <p className="text-gray-600 text-sm">
+                        ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center">
-                    <p className="text-gray-600">No products in the cart.</p>
-                    <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
                   </div>
-                )}
-              </div>
-            )}
+                ))
+              ) : (
+                <div className="text-center relative">
+                  <button 
+                    className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
+                    onClick={() => setShowCartDropdown(false)}
+                  >
+                    &times; {/* Close icon */}
+                  </button>
+                  <p className="text-gray-600">No products in the cart.</p>
+                  <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
+                </div>
+              )}
+            </div>
+          )}
           </div>
 
           <div className="relative">
@@ -135,6 +170,7 @@ const Header = () => {
             </button>
 
             {showProfileDropdown && (
+
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
                 {user ? (
                   <>
@@ -149,8 +185,26 @@ const Header = () => {
                 )}
               </div>
             )}
-          </div>
 
+            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+              <button 
+                className="absolute top-0 right-0 mt-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
+                onClick={() => setShowProfileDropdown(false)}
+              >
+                &times; {/* Close icon */}
+              </button>
+              {user ? (
+                <>
+                  <p className="text-gray-800 font-semibold">Welcome, {user?.displayName || user.displayName}</p>
+                  <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
+                </>
+              ) : (
+                <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
+              )}
+            </div>
+          )}
+
+          </div>
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
       </div>

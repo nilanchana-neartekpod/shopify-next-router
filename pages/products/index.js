@@ -114,7 +114,7 @@ const Product = ({products}) => {
             {(starRating != '') && (
               <>
                 <p className='pt-8 md:pt-12'><span className='font-bold'>Selected Filter:</span> {starRating && (<>{starRating} - Ratings </>)}</p>
-                {(starRating) &&  <p className='cursor-pointer px-2 py-1 inline-block bg-[#dc0707] uppercase font-bold text-white mt-4' onClick={() => clearAllFilters()}>ClearFilter</p>}
+                {(starRating) &&  <p className='cursor-pointer px-2 py-1 inline-block bg-red-500 uppercase font-bold text-white mt-4 w-30 text-center' onClick={() => clearAllFilters()}>ClearFilter</p>}
               </>
             )}
 
