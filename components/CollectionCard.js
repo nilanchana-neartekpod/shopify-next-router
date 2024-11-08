@@ -17,13 +17,13 @@ const CollectionCard = ({ collection }) => {
             />
           </div>
 
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 flex flex-col text-center text-white">
-            <h2 className="text-xl font-bold">{collection.title}</h2>
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 flex flex-col text-center text-white mt-10">
+            <h2 className="text-2xl font-bold  ">{collection.title}</h2>
             <p className="mt-2 text-base">{collection.description}</p>
           </div>
 
           {/* Button appears only on hover */}
-          <div className="absolute bottom-14 left-1/2 transform -translate-x-1/2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button className="mt-2 bg-white text-black px-6 py-2 rounded-full hover:bg-gray-200 transition">
               Shop Now →
             </button>
