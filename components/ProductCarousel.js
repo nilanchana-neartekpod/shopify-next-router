@@ -58,6 +58,7 @@ const ProductCarousel = () => {
   }
 
   return (
+    
     <div className="customSwiperSliderContainer py-8 md:py-12">
       
       <div className="left pl-4 md:pl-12 pr-4 md:pr-0">
