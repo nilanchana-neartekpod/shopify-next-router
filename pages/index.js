@@ -135,7 +135,27 @@ export default function Home({ data, collections }) {
         </div>
         </div>
         </div>
-        
+
+        {/* Static image above "Our Products" */}
+        <section className="image-section relative px-4 md:px-12 mt-12">
+        <div className="relative">
+          <Image
+            src="/static.avif" 
+            alt="Featured"
+            width={1200}
+            height={400} 
+            className="rounded-lg shadow-md"
+          />
+          {/* Overlay content */}
+          <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center text-white bg-black/50 rounded-lg">
+            <h1 className="text-2xl md:text-2xl font-bold mb-2">We Make Better Things In A Better Way</h1>
+            <p className="text-lg md:text-xl mb-4 text-center max-w-2xl">Explore a curated collection of top-quality clothes, shoes, and electronics designed to enhance your lifestyle with style and innovation.</p>
+            <h2 className="text-xl md:text-2xl font-semibold">Shop Smarter</h2>
+            <p className="text-md md:text-lg">By Nature</p>
+          </div>
+        </div>
+      </section>
+
         </div>
         <div className="text-center mt-1 md:mt-14 mb-8">
         <h2 className="text-xl md:text-3xl mb-8">Our Products</h2>
