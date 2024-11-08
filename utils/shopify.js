@@ -119,6 +119,34 @@ export async function customerLogin(email, password) {
     throw new Error(error.message || 'Error logging in customer');
   }
 }
+export async function getMetaobjectById(metaobjectId) {
+  const query = gql`
+    query getMetaobject($id: ID!) {
+      metaobject(id: $id) {
+        id
+        handle
+        fields {
+          key
+          value
+          
+        }
+      }
+    }
+  `;
+
+  const variables = { id: metaobjectId };
+
+  try {
+    const data = await graphQLClient.request(query, variables);
+    return data.metaobject;
+  } catch (error) {
+    throw new Error(error.message || "Error retrieving metaobject");
+  }
+}
+
+
+
+
 export async function getProducts(count) {
     const query = gql`
         {
@@ -428,6 +456,7 @@ export async function getCollections() {
         collections(first: 3) {
           nodes{
               title
+              description
               id
               handle
               image {
