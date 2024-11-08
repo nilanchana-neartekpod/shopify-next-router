@@ -106,12 +106,14 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-6 gap-1 md:gap-5">
-          <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
-            <GoSearch className="w-5 h-5" />
-          </button>
+        {!showSearchInput && (
+            <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
+              <GoSearch className="w-5 h-5" />
+            </button>
+          )}
 
           {showSearchInput && (
-            <form className="hidden md:flex news-letterform">
+            <form className="hidden md:flex news-letterform" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="text"
                 placeholder="Search..."
@@ -123,12 +125,29 @@ const Header = () => {
               <button
                 type="button"
                 className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl"
-                onClick={() => setShowSearchInput(false)}
+                onClick={() => setShowSearchInput(false)} // Close search input when clicked
               >
-                &times;
+                &times; {/* Close icon */}
               </button>
             </form>
           )}
+          {/* Search Results Display */}
+          {showSearchInput && searchQuery && (
+            <div className="absolute top-full mt-2 bg-white border rounded-md shadow-lg w-full md:w-64 p-2">
+              {searchResults.length > 0 ? (
+                <ul>
+                  {searchResults.map((product, index) => (
+                    <li key={index} className="py-1 border-b last:border-none">
+                      {product.name}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">The product is not available.</p>
+              )}
+            </div>
+          )}
+
 
           <div className="relative">
             <button onClick={toggleCartDropdown} className="text-gray-800 shoppingCartIcon relative">
@@ -137,43 +156,49 @@ const Header = () => {
             </button>
 
             {showCartDropdown && (
-              <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
-                {cartItems.length > 0 ? (
-                  cartItems.map((item) => (
-                    <div key={item.node.id} className="flex justify-between items-center mb-2">
-                      {item.node.merchandise.product.featuredImage?.url ? (
-                        <img
-                          src={item.node.merchandise.product.featuredImage.url}
-                          alt={item.node.merchandise.product.title || "Product image"}
-                          className="w-12 h-12 object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                          <span className="text-gray-500">No Image</span>
-                        </div>
-                      )}
-                      <div className="ml-4">
-                        <h4 className="text-sm font-semibold">{item.node.merchandise.product.title}</h4>
-                        <p className="text-gray-600 text-sm">
-                          ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
-                        </p>
+            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
+              <button 
+                    className="absolute top-0 right-0 mb-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
+                    onClick={() => setShowCartDropdown(false)}
+                  >
+                    &times; {/* Close icon */}
+                  </button>
+              {cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <div key={item.node.id} className="flex justify-between items-center mb-2">
+                    {item.node.merchandise.product.featuredImage?.url ? (
+                      <img
+                        src={item.node.merchandise.product.featuredImage.url}
+                        alt={item.node.merchandise.product.title || "Product image"}
+                        className="w-12 h-12 object-cover"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
+                        <span className="text-gray-500">No Image</span>
                       </div>
+                    )}
+                    <div className="ml-4">
+                      <h4 className="text-sm font-semibold">{item.node.merchandise.product.title}</h4>
+                      <p className="text-gray-600 text-sm">
+                        ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <div className="text-center relative">
-                    <button
-                      className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl"
-                      onClick={() => setShowCartDropdown(false)}
-                    >
-                      &times;
-                    </button>
-                    <p className="text-gray-600">No products in the cart.</p>
-                    <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
                   </div>
-                )}
-              </div>
-            )}
+                ))
+              ) : (
+                <div className="text-center relative">
+                  <button 
+                    className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
+                    onClick={() => setShowCartDropdown(false)}
+                  >
+                    &times; {/* Close icon */}
+                  </button>
+                  <p className="text-gray-600">No products in the cart.</p>
+                  <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
+                </div>
+              )}
+            </div>
+          )}
           </div>
 
           <div className="relative" ref={profileDropdownRef}>
@@ -211,8 +236,8 @@ const Header = () => {
               </button>
               {user ? (
                 <>
-                  <p className="text-gray-800 font-semibold">Welcome, {user?.Name || user.Name}</p>
-                  <Link href="/customer" className="block text-gray-700 hover:text-blue-500">
+                   <p className="text-gray-800 font-semibold">Welcome, {user?.Name || user.Name}</p>
+                  <Link href="/customer" className="block  text-blue-400 hover:text-blue-800">
                     User Profile
                     </Link>
                   <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>

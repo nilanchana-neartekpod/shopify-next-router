@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       path: '/',
     });
     setUser(userData);
-    router.push('/');
+    router.push('/customer');
   };
 
   const logout = () => {
