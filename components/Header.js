@@ -18,10 +18,7 @@ const Header = () => {
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
-
-  const { user, logout } = useAuth();
-
-  const { user, logout } = useAuth(); 
+ const { user, logout } = useAuth(); 
 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
@@ -195,15 +192,16 @@ const Header = () => {
               </button>
               {user ? (
                 <>
-                  <p className="text-gray-800 font-semibold">Welcome, {user?.displayName || user.displayName}</p>
+                  <p className="text-gray-800 font-semibold">Welcome, {user?.Name || user.Name}</p>
+                  <Link href="/customer" className="block text-gray-700 hover:text-blue-500">
+                    User Profile
+                    </Link>
                   <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
                 </>
               ) : (
                 <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
               )}
             </div>
-          )}
-
           </div>
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
