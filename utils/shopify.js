@@ -159,7 +159,7 @@ export async function getProducts(count) {
                         minVariantPrice {
                             amount
                         }
-                    }
+                     }
                     collections(first: 50){
                       nodes{
                         title
@@ -199,7 +199,7 @@ export async function fetchCustomerAddresses(accessToken) {
         lastName
         email
         addresses(first: 10) {
-          nodes {
+         nodes {
             id
             firstName
             lastName
@@ -211,6 +211,12 @@ export async function fetchCustomerAddresses(accessToken) {
             zip
             phone
           }
+        }
+          orders(first: 50){
+             nodes {
+              id
+
+           }
         }
       }
     }
@@ -225,6 +231,56 @@ export async function fetchCustomerAddresses(accessToken) {
     return data.customer.addresses.nodes;  // Returns the list of addresses
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
+  }
+}
+export async function updateCustomerInfo(accessToken, customerInput) {
+  const mutation = gql`
+    mutation customerUpdate($customer: CustomerUpdateInput!, $customerAccessToken: String!) {
+      customerUpdate(customer: $customer, customerAccessToken: $customerAccessToken) {
+        customer {
+          addresses(first: 10) {
+            nodes {
+              address1
+              address2
+              city
+              country
+              firstName
+              lastName
+              phone
+              zip
+            }
+          }
+        }
+        customerAccessToken {
+          accessToken
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    customer: customerInput,            // CustomerUpdateInput containing customer information
+    customerAccessToken: accessToken     // Access token for authentication
+  };
+
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+    // Handle user errors if there are any
+    if (data.customerUpdate.customerUserErrors.length > 0) {
+      throw new Error(data.customerUpdate.customerUserErrors[0].message);
+    }
+    return data.customerUpdate.customer;
+  } catch (error) {
+    throw new Error(error.message || 'Error updating customer information');
   }
 }
 
