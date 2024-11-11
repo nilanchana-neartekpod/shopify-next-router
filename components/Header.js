@@ -187,12 +187,12 @@ const Header = () => {
                 ))
               ) : (
                 <div className="text-center relative">
-                  <button 
+                  {/* <button 
                     className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
                     onClick={() => setShowCartDropdown(false)}
                   >
-                    &times; {/* Close icon */}
-                  </button>
+                    &times; 
+                  </button> */}
                   <p className="text-gray-600">No products in the cart.</p>
                   <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
                 </div>
