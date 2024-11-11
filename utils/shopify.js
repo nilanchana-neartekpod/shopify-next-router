@@ -120,15 +120,20 @@ export async function customerLogin(email, password) {
   }
 }
 export async function getMetaobjectById(metaobjectId) {
-  const query = gql`
-    query getMetaobject($id: ID!) {
-      metaobject(id: $id) {
+  const query = gql`{
+    metaobject(id: "gid://shopify/Metaobject/${metaobjectId}") {
         id
         handle
         fields {
           key
           value
-          
+          reference{
+            ... on MediaImage{
+              image{
+                url
+              }
+            }
+          }
         }
       }
     }
