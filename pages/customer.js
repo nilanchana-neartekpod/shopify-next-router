@@ -5,6 +5,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 const CustomerPage = () => {
   const { user } = useAuth();
   const [addresses, setAddresses] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
@@ -43,7 +44,16 @@ const CustomerPage = () => {
         }
 
         const data = await response.json();
-        setAddresses(data.addresses);
+        console.log("alldata:", data);
+        const addresses = data.addresses.customer.addresses.nodes;
+        const orders = data.addresses.customer.orders.edges.map(orderEdge => orderEdge.node);
+
+      console.log("Addresses:", addresses);
+      console.log("Orders:", orders);
+
+      // Set extracted addresses and orders in the state
+      setAddresses(addresses);
+      setOrders(orders);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -112,11 +122,34 @@ const CustomerPage = () => {
       </div>
 
       <div className='my-8'>
+        <h2 className='text-xl font-semibold'>Your Orders</h2>
+        {orders.length === 0 ? (
+          <p className='text-gray-500'>No orders found.</p>
+        ) : (
+          orders.map((order, index) => (
+            <div key={order.id} className="my-4 p-4 border rounded-md shadow-sm">
+              <h3 className="text-lg font-semibold">Order #{order.orderNumber}</h3>
+              <p>Placed on: {new Date(order.processedAt).toLocaleDateString()}</p>
+              <p>Total Price: {order.currentTotalPrice.amount} {order.currentTotalPrice.currencyCode}</p>
+              <p>Items:</p>
+              <ul className='pl-4 list-disc'>
+                {order.lineItems.edges.map((item, idx) => (
+                  <li key={idx}>
+                    {item.node.title} - {item.node.variant.price.amount} {item.node.variant.price.currencyCode} (Quantity: {item.node.currentQuantity})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className='my-8'>
         <h2 className='text-xl font-semibold'>Your Addresses</h2>
         {addresses.length === 0 ? (
           <p className='text-gray-500'>No addresses found.</p>
         ) : (
-          addresses.map((address, index) => (
+          addresses?.map((address, index) => (
             <div key={index} className="my-4 p-4 border rounded-md shadow-sm flex justify-between items-start">
               <div>
                 <h3 className="text-lg font-semibold">{address.firstName} {address.lastName}</h3>

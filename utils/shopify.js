@@ -288,11 +288,8 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    return {
-      addresses: data.customer.addresses.nodes,
-      orders: data.customer.orders.edges.map(orderEdge => orderEdge.node) // Extracts the 'node' from each order edge
-  };
-
+    console.log("Shopify Response Data:", data);
+    return data;  // Returns the list of addresses
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }

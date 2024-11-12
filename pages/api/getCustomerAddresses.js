@@ -1,17 +1,20 @@
-// pages/api/getCustomerAddresses.js
 import { fetchCustomerAddresses } from '../../utils/shopify'; // Import the correct function
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { customerAccessToken } = req.body;
+    const { accessToken } = req.body;
 
-    if (!customerAccessToken) {
+    if (!accessToken) {
       return res.status(400).json({ message: 'Access token is required' });
     }
 
     try {
       // Fetch addresses using the access token
-      const addressData = await fetchCustomerAddresses(customerAccessToken);
-      console.log( "data ", addressData); 
+      const addressData = await fetchCustomerAddresses(accessToken);
+      
+      // Log the data structure for inspection
+      console.log('Address Data Structure:', JSON.stringify(addressData, null, 2));
+
       // Send the data as the response
       return res.status(200).json({ addresses: addressData });
     } catch (error) {
