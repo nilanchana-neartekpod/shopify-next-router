@@ -222,6 +222,7 @@ export async function fetchCustomerAddresses(accessToken) {
               id
               name
               orderNumber
+              processedAt
               billingAddress {
                 name
                 address1
@@ -231,16 +232,41 @@ export async function fetchCustomerAddresses(accessToken) {
                 zip
                 phone
               }
+              totalShippingPrice{
+                amount
+                currencyCode
+              }
+              currentTotalTax{
+                amount
+                currencyCode
+              }
               currencyCode
               currentSubtotalPrice {
                 amount
                 currencyCode
               }
-               lineItems(first: 10) {
+              financialStatus
+              lineItems(first: 10) {
                 edges {
                   node {
                     currentQuantity
                     title
+                    variant{
+                      title
+                      sku
+                      price{
+                        amount
+                        currencyCode
+                      }
+                      product{
+                        featuredImage{
+                          url
+                        }
+                      }
+                      image{
+                        url
+                      }
+                    }
                   }
                 }
               }
