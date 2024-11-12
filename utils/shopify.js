@@ -144,9 +144,6 @@ export async function getMetaobjectById(metaobjectId) {
   }
 }
 
-
-
-
 export async function getProducts(count) {
     const query = gql`
         {
@@ -198,6 +195,8 @@ export async function fetchCustomerAddresses(accessToken) {
         firstName
         lastName
         email
+        createdAt
+        updatedAt
         addresses(first: 10) {
          nodes {
             id
@@ -212,11 +211,41 @@ export async function fetchCustomerAddresses(accessToken) {
             phone
           }
         }
-          orders(first: 50){
-             nodes {
+        orders(first: 10) {
+          edges {
+            node {
               id
+              name
+              orderNumber
+              billingAddress {
+                name
+                address1
+                city
+                province
+                country
+                zip
+                phone
+              }
+              currencyCode
+              currentSubtotalPrice {
+                amount
+                currencyCode
+              }
+               lineItems(first: 10) {
+                edges {
+                  node {
+                    currentQuantity
+                    title
+                  }
+                }
+              }
+              currentTotalPrice {
+                amount
+                currencyCode
+              }
 
-           }
+            }
+          }
         }
       }
     }
@@ -228,7 +257,11 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    return data.customer.addresses.nodes;  // Returns the list of addresses
+    return {
+      addresses: data.customer.addresses.nodes,
+      orders: data.customer.orders.edges.map(orderEdge => orderEdge.node) // Extracts the 'node' from each order edge
+  };
+
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }
