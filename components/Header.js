@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';  
+import React, { useEffect, useState, useRef } from 'react';  
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { GoSearch } from "react-icons/go";
@@ -23,6 +23,8 @@ const Header = () => {
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
   const router = useRouter();
+  const profileDropdownRef = useRef(null);
+  const cartDropdownRef = useRef(null); 
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -31,6 +33,22 @@ const Header = () => {
       cartTotal(_cartId);
     }
   }, [cartId, cartTotal]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setShowProfileDropdown(false);
+      }
+      if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
+        setShowCartDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const toggleSearchInput = () => setShowSearchInput((prev) => !prev);
   const hideShowNav = () => setShowNav(!showNav);
@@ -52,7 +70,7 @@ const Header = () => {
       } else {
         setSearchResults([]);
       }
-    }, 30);
+    }, 300); // 300ms debounce delay
 
     return () => {
       clearTimeout(handler);
@@ -90,7 +108,7 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-6 gap-1 md:gap-5">
-        {!showSearchInput && (
+          {!showSearchInput && (
             <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
               <GoSearch className="w-5 h-5" />
             </button>
@@ -131,22 +149,20 @@ const Header = () => {
               )}
             </div>
           )}
-
-
-          <div className="relative">
+           <div className="relative">
             <button onClick={toggleCartDropdown} className="text-gray-800 shoppingCartIcon relative">
               <BsCart3 className="w-5 h-5" />
               <span>{quantity}</span>
             </button>
 
             {showCartDropdown && (
-            <div className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
-              <button 
+            <div ref={cartDropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
+              {/* <button 
                     className="absolute top-0 right-0 mb-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
                     onClick={() => setShowCartDropdown(false)}
                   >
-                    &times; {/* Close icon */}
-                  </button>
+                    &times; 
+                  </button> */}
               {cartItems.length > 0 ? (
                 cartItems.map((item) => (
                   <div key={item.node.id} className="flex justify-between items-center mb-2">
@@ -171,12 +187,12 @@ const Header = () => {
                 ))
               ) : (
                 <div className="text-center relative">
-                  {/* <button 
+                  <button 
                     className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
                     onClick={() => setShowCartDropdown(false)}
                   >
-                    &times; 
-                  </button> */}
+                    &times; {/* Close icon */}
+                  </button>
                   <p className="text-gray-600">No products in the cart.</p>
                   <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
                 </div>
@@ -184,34 +200,35 @@ const Header = () => {
             </div>
           )}
           </div>
-
+          
           <div className="relative">
             <button onClick={toggleProfileDropdown} className="text-gray-800">
               <HiOutlineUserCircle className="w-5 h-5" />
             </button>
 
             {showProfileDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
-              <button 
-                className="absolute top-0 right-0 mt-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
-                onClick={() => setShowProfileDropdown(false)}
-              >
-                &times; {/* Close icon */}
-              </button>
-              {user ? (
-                <>
-                   <p className="text-gray-800 font-semibold">Welcome, {user?.Name || user.Name}</p>
-                  <Link href="/customer" className="block  text-blue-400 hover:text-blue-800">
-                    User Profile
+              <div ref={profileDropdownRef} className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
+                <button 
+                  className="absolute top-0 right-0 mt-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
+                  onClick={() => setShowProfileDropdown(false)}
+                >
+                  &times; {/* Close icon */}
+                </button>
+                {user ? (
+                  <>
+                    <p className="text-gray-800 font-semibold">Welcome, {user?.Name || user.Name}</p>
+                    <Link href="/customer" className="block text-blue-400 hover:text-blue-800">
+                      User Profile
                     </Link>
-                  <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
-                </>
-              ) : (
-                <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
-              )}
-            </div>
-          )}
+                    <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
+                  </>
+                ) : (
+                  <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
+                )}
+              </div>
+            )}
           </div>
+          
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
       </div>
@@ -228,5 +245,3 @@ const Header = () => {
 };
 
 export default Header;
-
-
