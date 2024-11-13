@@ -1,6 +1,4 @@
-
 import React, { useEffect, useState, useRef } from 'react';  
-
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { GoSearch } from "react-icons/go";
@@ -19,16 +17,14 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const { user, logout } = useAuth();
-
+  
+  const { user, logout } = useAuth(); 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
   const router = useRouter();
   const profileDropdownRef = useRef(null);
-  const cartDropdownRef = useRef(null); 
-
-  const profileDropdownRef = useRef(null); // Ref for profile dropdown
+  const cartDropdownRef = useRef(null);
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -44,7 +40,7 @@ const Header = () => {
         setShowProfileDropdown(false);
       }
       if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
-        setShowCartDropdown(false);
+        setShowCartDropdown(false);  // Close the cart dropdown if clicked outside
       }
     };
 
@@ -58,12 +54,12 @@ const Header = () => {
   const hideShowNav = () => setShowNav(!showNav);
 
   const toggleCartDropdown = () => {
-    setShowProfileDropdown(false);
+    setShowProfileDropdown(false); // Close profile dropdown when cart is opened
     setShowCartDropdown((prev) => !prev);
   };
 
   const toggleProfileDropdown = () => {
-    setShowCartDropdown(false);
+    setShowCartDropdown(false); // Close cart dropdown when profile is opened
     setShowProfileDropdown((prev) => !prev);
   };
 
@@ -95,20 +91,6 @@ const Header = () => {
     }
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
-        setShowProfileDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
     <header className={`w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50 ${showNav ? 'active-nav' : ''}`}>
       <div className="px-4 md:px-12 mx-auto flex items-center justify-between">
@@ -116,7 +98,7 @@ const Header = () => {
           <img src="/House.svg" alt="Furniro" className="w-[40px] h-[24px] md:w-[64px] md:h-[40px]" />
           <span className="text-gray-800 text-base md:text-xl font-semibold">Shop Smarter</span>
         </Link>
-
+        
         <nav className="flex space-x-6 gap-4 lg:gap-10 navigation">
           <Link href="/" className="text-gray-800">Home</Link>
           <Link href="/products" className="text-gray-800">Shop</Link>
@@ -218,16 +200,13 @@ const Header = () => {
             </div>
           )}
           </div>
-
-
-          <div className="relative" ref={profileDropdownRef}>
-
+          
+          <div className="relative">
             <button onClick={toggleProfileDropdown} className="text-gray-800">
               <HiOutlineUserCircle className="w-5 h-5" />
             </button>
 
             {showProfileDropdown && (
-
               <div ref={profileDropdownRef} className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md p-4">
                 <button 
                   className="absolute top-0 right-0 mt-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
@@ -248,15 +227,23 @@ const Header = () => {
                 )}
               </div>
             )}
-
-             
           </div>
           
           <HiMiniBars3 className='flex lg:hidden cursor-pointer' onClick={hideShowNav} />
         </div>
       </div>
+
+      {showSearchInput && searchResults.length > 0 && (
+        <div className="md:px-12 md:pt-8 searchresults grid grid-cols-1 md:grid-cols-5 gap-4 p-4 mx-auto">
+          {searchResults.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
     </header>
   );
 };
 
 export default Header;
+
+
