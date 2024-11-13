@@ -1,4 +1,3 @@
-// pages/api/getCustomerAddresses.js
 import { fetchCustomerAddresses } from '../../utils/shopify'; // Import the correct function
 
 export default async function handler(req, res) {

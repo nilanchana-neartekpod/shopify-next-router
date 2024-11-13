@@ -120,15 +120,20 @@ export async function customerLogin(email, password) {
   }
 }
 export async function getMetaobjectById(metaobjectId) {
-  const query = gql`
-    query getMetaobject($id: ID!) {
-      metaobject(id: $id) {
+  const query = gql`{
+    metaobject(id: "gid://shopify/Metaobject/${metaobjectId}") {
         id
         handle
         fields {
           key
           value
-          
+          reference{
+            ... on MediaImage{
+              image{
+                url
+              }
+            }
+          }
         }
       }
     }
@@ -144,9 +149,6 @@ export async function getMetaobjectById(metaobjectId) {
   }
 }
 
-
-
-
 export async function getProducts(count) {
     const query = gql`
         {
@@ -159,7 +161,7 @@ export async function getProducts(count) {
                         minVariantPrice {
                             amount
                         }
-                    }
+                     }
                     collections(first: 50){
                       nodes{
                         title
@@ -198,8 +200,10 @@ export async function fetchCustomerAddresses(accessToken) {
         firstName
         lastName
         email
+        createdAt
+        updatedAt
         addresses(first: 10) {
-          nodes {
+         nodes {
             id
             firstName
             lastName
@@ -212,6 +216,68 @@ export async function fetchCustomerAddresses(accessToken) {
             phone
           }
         }
+        orders(first: 10) {
+          edges {
+            node {
+              id
+              name
+              orderNumber
+              processedAt
+              billingAddress {
+                name
+                address1
+                city
+                province
+                country
+                zip
+                phone
+              }
+              totalShippingPrice{
+                amount
+                currencyCode
+              }
+              currentTotalTax{
+                amount
+                currencyCode
+              }
+              currencyCode
+              currentSubtotalPrice {
+                amount
+                currencyCode
+              }
+              financialStatus
+              lineItems(first: 10) {
+                edges {
+                  node {
+                    currentQuantity
+                    title
+                    variant{
+                      title
+                      sku
+                      price{
+                        amount
+                        currencyCode
+                      }
+                      product{
+                        featuredImage{
+                          url
+                        }
+                      }
+                      image{
+                        url
+                      }
+                    }
+                  }
+                }
+              }
+              currentTotalPrice {
+                amount
+                currencyCode
+              }
+
+            }
+          }
+        }
       }
     }
   `;
@@ -222,9 +288,60 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    return data.customer.addresses.nodes;  // Returns the list of addresses
+    console.log("Shopify Response Data:", data);
+    return data;  // Returns the list of addresses
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
+  }
+}
+export async function updateCustomerInfo(accessToken, customerInput) {
+  const mutation = gql`
+    mutation customerUpdate($customer: CustomerUpdateInput!, $customerAccessToken: String!) {
+      customerUpdate(customer: $customer, customerAccessToken: $customerAccessToken) {
+        customer {
+          addresses(first: 10) {
+            nodes {
+              address1
+              address2
+              city
+              country
+              firstName
+              lastName
+              phone
+              zip
+            }
+          }
+        }
+        customerAccessToken {
+          accessToken
+        }
+        customerUserErrors {
+          code
+          field
+          message
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    customer: customerInput,            // CustomerUpdateInput containing customer information
+    customerAccessToken: accessToken     // Access token for authentication
+  };
+
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+    // Handle user errors if there are any
+    if (data.customerUpdate.customerUserErrors.length > 0) {
+      throw new Error(data.customerUpdate.customerUserErrors[0].message);
+    }
+    return data.customerUpdate.customer;
+  } catch (error) {
+    throw new Error(error.message || 'Error updating customer information');
   }
 }
 

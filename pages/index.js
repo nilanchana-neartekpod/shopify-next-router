@@ -1,7 +1,7 @@
 import Image from "next/image";
 import localFont from "next/font/local";
 import Head from "next/head";
-import { getProducts, getCollections } from "../utils/shopify";
+import { getProducts, getCollections, getMetaobjectById } from "../utils/shopify";
 import ProductCard from "@/components/ProductCard";
 import CollectionCard from "@/components/CollectionCard";
 import Banner from "@/components/home/Banner";
@@ -43,6 +43,8 @@ export const getServerSideProps = async (context) => {
   // Fetch products and collections
   const data = await getProducts(8);
   const collections = await getCollections();
+
+  const metaobject =  await getMetaobjectById('79607005434');
   
   return {
     props: { data, collections },
