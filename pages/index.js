@@ -113,7 +113,7 @@ export default function Home({ data, collections }) {
         <div className="px-4 md:px-12 py-8 md:py-12">
           <img className="object-cover:fit overflow-hidden w-full" src="/collage.svg" alt="Collage" />
         </div>
-        <div className="flex flex-wrap space-x-4 mt-2 items-stretch justify-between"> {/* Flex container to align cards side by side */}
+        <div className="flex flex-wrap space-x-4 mt-2 items-stretch md:px-12 justify-between"> {/* Flex container to align cards side by side */}
         {/* Shipping Information Card */}
         <div className="flex items-center p-4 border rounded-lg shadow-md flex-1 h-16 mt-5 sm:w-1/2 lg:w-1/4 bg-slate-200"> 
           <div className="mr-2 ">
