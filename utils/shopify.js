@@ -294,31 +294,20 @@ export async function fetchCustomerAddresses(accessToken) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }
 }
-export async function updateCustomerInfo(accessToken, customerInput) {
-  const mutation = gql`
-    mutation customerUpdate($customer: CustomerUpdateInput!, $customerAccessToken: String!) {
-      customerUpdate(customer: $customer, customerAccessToken: $customerAccessToken) {
-        customer {
-          addresses(first: 10) {
-            nodes {
-              address1
-              address2
-              city
-              country
-              firstName
-              lastName
-              phone
-              zip
-            }
-          }
-        }
-        customerAccessToken {
-          accessToken
-        }
-        customerUserErrors {
-          code
-          field
-          message
+export async function updateAddress(customerAccessToken, addressId, addressInput) {
+  const updateAddressMutation = gql`
+    mutation customerAddressUpdate($customerAccessToken: String!, $addressId: ID!, $address: CustomerAddressInput!) {
+      customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $addressId, address: $address) {
+        customerAddress {
+          id
+          firstName
+          lastName
+          address1
+          address2
+          city
+          province
+          country
+          zip
         }
         userErrors {
           field
@@ -327,24 +316,22 @@ export async function updateCustomerInfo(accessToken, customerInput) {
       }
     }
   `;
-
+  
   const variables = {
-    customer: customerInput,            // CustomerUpdateInput containing customer information
-    customerAccessToken: accessToken     // Access token for authentication
+    customerAccessToken: customerAccessToken,
+    addressId: addressId,
+    address: addressInput,
   };
 
   try {
-    const data = await graphQLClient.request(mutation, variables);
-    // Handle user errors if there are any
-    if (data.customerUpdate.customerUserErrors.length > 0) {
-      throw new Error(data.customerUpdate.customerUserErrors[0].message);
-    }
-    return data.customerUpdate.customer;
+    const data = await graphQLClient.request(updateAddressMutation, variables, {
+      Authorization: `Bearer ${customerAccessToken}`, // Ensure the token is included in the headers
+    });
+    return data;
   } catch (error) {
-    throw new Error(error.message || 'Error updating customer information');
+    throw new Error(error);
   }
 }
-
 
 export async function getCollectionProducts(handle) {
   const query = gql`
