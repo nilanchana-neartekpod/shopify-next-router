@@ -135,7 +135,7 @@ const Header = () => {
           )}
           {/* Search Results Display */}
           {showSearchInput && searchQuery && (
-            <div className="absolute top-full mt-2 bg-white border rounded-md shadow-lg w-full md:w-64 p-2">
+            <div className="absolute top-full mt-2 bg-white">
               {searchResults.length > 0 ? (
                 <ul>
                   {searchResults.map((product, index) => (
