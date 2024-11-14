@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-
+ 
 const CustomerPage = () => {
   const { user } = useAuth();
+  const router = useRouter();
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,12 +26,12 @@ const CustomerPage = () => {
     phone: '',
     default: false,
   });
-
+ 
   // Fetch addresses when the user is available
   useEffect(() => {
     const fetchAddresses = async () => {
       if (!user || !user.accessToken) return;
-
+ 
       try {
         const response = await fetch('/api/getCustomerAddresses', {
           method: 'POST',
@@ -38,19 +40,19 @@ const CustomerPage = () => {
           },
           body: JSON.stringify({ accessToken: user.accessToken }),
         });
-
+ 
         if (!response.ok) {
           throw new Error('Failed to fetch addresses');
         }
-
+ 
         const data = await response.json();
         console.log("alldata:", data);
         const addresses = data.addresses.customer.addresses.nodes;
         const orders = data.addresses.customer.orders.edges.map(orderEdge => orderEdge.node);
-
+ 
       console.log("Addresses:", addresses);
       console.log("Orders:", orders);
-
+ 
       // Set extracted addresses and orders in the state
       setAddresses(addresses);
       setOrders(orders);
@@ -60,27 +62,34 @@ const CustomerPage = () => {
         setLoading(false);
       }
     };
-
+ 
     fetchAddresses();
   }, [user]);
-
+ 
+  const handleOrderClick = (order) => {
+    router.push({
+      pathname: '/order', 
+      query: { order: JSON.stringify(order) }, 
+    });
+  };
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAddress({ ...newAddress, [name]: value });
   };
-
+ 
   const handleEdit = (index) => {
     setCurrentEditIndex(index);
     setNewAddress(addresses[index]);
     setShowAddressForm(true);
     setEditMode(true);
   };
-
+ 
   const handleDelete = (index) => {
     const updatedAddresses = addresses.filter((_, i) => i !== index);
     setAddresses(updatedAddresses);
   };
-
+ 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editMode) {
@@ -93,7 +102,7 @@ const CustomerPage = () => {
     } else {
       setAddresses([...addresses, newAddress]);
     }
-
+ 
     setNewAddress({
       firstName: '',
       lastName: '',
@@ -109,41 +118,48 @@ const CustomerPage = () => {
     });
     setShowAddressForm(false);
   };
-
+ 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!user) return <p>Please log in to view your account.</p>;
-
+ 
   return (
     <div className='max-w-4xl mx-auto mt-24 p-6 bg-white rounded-md shadow-md'>
       <div className='text-center'>
         <h1 className='text-3xl font-semibold'>Welcome, {user?.Name || 'Guest'}!</h1>
         <p className='text-gray-600 mt-2'>We are glad to have you here.</p>
       </div>
-
+ 
       <div className='my-8'>
-        <h2 className='text-xl font-semibold'>Your Orders</h2>
         {orders.length === 0 ? (
           <p className='text-gray-500'>No orders found.</p>
         ) : (
-          orders.map((order, index) => (
-            <div key={order.id} className="my-4 p-4 border rounded-md shadow-sm">
-              <h3 className="text-lg font-semibold">Order #{order.orderNumber}</h3>
-              <p>Placed on: {new Date(order.processedAt).toLocaleDateString()}</p>
-              <p>Total Price: {order.currentTotalPrice.amount} {order.currentTotalPrice.currencyCode}</p>
-              <p>Items:</p>
-              <ul className='pl-4 list-disc'>
-                {order.lineItems.edges.map((item, idx) => (
-                  <li key={idx}>
-                    {item.node.title} - {item.node.variant.price.amount} {item.node.variant.price.currencyCode} (Quantity: {item.node.currentQuantity})
-                  </li>
-                ))}
-              </ul>
-            </div>
+          orders.map((order) => (
+            order ? (
+              <div
+                key={order.id}
+                className="my-4 p-4 border rounded-md shadow-sm cursor-pointer"
+                onClick={() => handleOrderClick(order)}
+              >
+                <p className="text-lg font-semibold text-blue-500 underline">
+                  Order #{order.orderNumber}
+                </p>
+                <p>Placed on: {new Date(order.processedAt).toLocaleDateString()}</p>
+                <p>Total Price: {order.currentTotalPrice.amount} {order.currentTotalPrice.currencyCode}</p>
+                <p>Items:</p>
+                <ul className='pl-4 list-disc'>
+                  {order.lineItems.edges.map((item, idx) => (
+                    <li key={idx}>
+                      {item.node.title} - {item.node.variant.price.amount} {item.node.variant.price.currencyCode} (Quantity: {item.node.currentQuantity})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null
           ))
         )}
       </div>
-
+ 
       <div className='my-8'>
         <h2 className='text-xl font-semibold'>Your Addresses</h2>
         {addresses.length === 0 ? (
@@ -173,7 +189,7 @@ const CustomerPage = () => {
             </div>
           ))
         )}
-
+ 
         <button
           className='mt-4 bg-blue-500 text-white px-4 py-2 rounded-md'
           onClick={() => {
@@ -196,7 +212,7 @@ const CustomerPage = () => {
         >
           {showAddressForm ? 'Cancel' : 'Add New Address'}
         </button>
-
+ 
         {showAddressForm && (
           <form className='mt-4' onSubmit={handleSubmit}>
             <div className='grid grid-cols-2 gap-4'>
@@ -291,7 +307,7 @@ const CustomerPage = () => {
             <button type='submit' className='mt-4 bg-blue-500 text-white px-4 py-2 rounded-md'>
               {editMode ? 'Update Address' : 'Add Address'}
             </button>
-            
+           
  
           </form>
         )}
@@ -299,5 +315,6 @@ const CustomerPage = () => {
     </div>
   );
 };
-
+ 
 export default CustomerPage;
+ 
