@@ -1,10 +1,14 @@
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import useGlobalStore from '../store/store';
 
 const Order = () => {
   const router = useRouter();
   const { order } = router.query; // Accessing the order query parameter
   const [parsedOrder, setParsedOrder] = useState(null);
+  const customerOrders = useGlobalStore((state) => state.customerOrders);
+
+  console.log("CA: " + JSON.stringify(customerOrders,null,2));
 
   useEffect(() => {
     if (order) {

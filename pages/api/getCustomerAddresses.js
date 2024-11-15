@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       const addressData = await fetchCustomerAddresses(accessToken);
       
       // Log the data structure for inspection
-      console.log('Address Data Structure:', JSON.stringify(addressData, null, 2));
+      //console.log('Address Data Structure:', JSON.stringify(addressData, null, 2));
 
       // Send the data as the response
       return res.status(200).json({ addresses: addressData });

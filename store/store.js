@@ -3,6 +3,7 @@ import { create } from 'zustand';
 const useStore = (set, get) => ({
   quantity: 0,
   cartItems: [],
+  customerOrders: [],
   cartTotal: async (cartId) => {
     if (cartId) {
       console.log('Fetching cart data for cart ID:', cartId);
@@ -27,6 +28,9 @@ const useStore = (set, get) => ({
       console.warn('No cart ID provided to fetch cart data.');
     }
   },
+  setCustomerOrders: (data) => {
+    set({customerOrders: data});
+  }
 });
 
 const useGlobalStore = create(useStore);
