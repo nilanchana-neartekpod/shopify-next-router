@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import useGlobalStore from '../store/store';
  
 const CustomerPage = () => {
   const { user } = useAuth();
@@ -26,6 +27,8 @@ const CustomerPage = () => {
     phone: '',
     default: false,
   });
+
+  const setCustomerOrders = useGlobalStore((state) => state.setCustomerOrders);
  
   // Fetch addresses when the user is available
   useEffect(() => {
@@ -69,7 +72,7 @@ const CustomerPage = () => {
   const handleOrderClick = (order) => {
     router.push({
       pathname: '/order', 
-      query: { order: JSON.stringify(order) }, 
+      query: { orderId: order.id, order: JSON.stringify(order) }, 
     });
   };
  
@@ -118,6 +121,8 @@ const CustomerPage = () => {
     });
     setShowAddressForm(false);
   };
+
+  if(orders.length > 0)setCustomerOrders(orders);
  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
