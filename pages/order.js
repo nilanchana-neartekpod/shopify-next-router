@@ -1,57 +1,46 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-import useGlobalStore from '../store/store';
+import { useEffect, useState } from 'react';
 
 const Order = () => {
   const router = useRouter();
-  const { order } = router.query; // Accessing the order query parameter
-  const [parsedOrder, setParsedOrder] = useState(null);
-  const customerOrders = useGlobalStore((state) => state.customerOrders);
-
-  console.log("CA: " + JSON.stringify(customerOrders,null,2));
+  const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (order) {
-      try {
-        const parsed = JSON.parse(order); // Parse the order from query
-        setParsedOrder(parsed); // Store the parsed order in state
-      } catch (error) {
-        console.error("Error parsing order data:", error);
+    // Access the order data passed as state
+    if (router.query && router.query.order) {
+      setOrder(router.query.order);
+    } else if (router.query && router.asPath.includes('order')) {
+      const state = window.history.state?.options?.state;
+      if (state && state.order) {
+        setOrder(state.order);
       }
     }
-  }, [order]); // Re-run effect when order changes
+  }, [router.query]);
 
-  if (!parsedOrder) {
-    return <p>Loading...</p>; // Show loading until the order data is parsed
+  if (!order) {
+    return <p>Loading...</p>;
   }
 
   return (
     <div className="max-w-4xl mx-auto mt-24 p-6  rounded-md shadow-md">
+      {/* Render order details as before */}
       <h1 className="text-2xl font-bold mb-4">Order Details</h1>
       <div className="my-4 p-4 border rounded-md shadow-sm">
-        <h2 className="text-lg font-semibold">Order #{parsedOrder.orderNumber}</h2>
-        <p>Placed on: {new Date(parsedOrder.processedAt).toLocaleDateString()}</p>
-        <p>Status: {parsedOrder.financialStatus}</p>
-        <p>
-          Total Price: {parsedOrder.currentTotalPrice.amount} {parsedOrder.currentTotalPrice.currencyCode}
-        </p>
-        <p>
-          Subtotal: {parsedOrder.currentSubtotalPrice.amount} {parsedOrder.currentSubtotalPrice.currencyCode}
-        </p>
-        <p>
-          Total Tax: {parsedOrder.currentTotalTax.amount} {parsedOrder.currentTotalTax.currencyCode}
-        </p>
+        <h2 className="text-lg font-semibold">Order #{order.orderNumber}</h2>
+        <p>Placed on: {new Date(order.processedAt).toLocaleDateString()}</p>
+        <p>Status: {order.financialStatus}</p>
+        <p>Total Price: {order.currentTotalPrice.amount} {order.currentTotalPrice.currencyCode}</p>
+        <p>Subtotal: {order.currentSubtotalPrice.amount} {order.currentSubtotalPrice.currencyCode}</p>
+        <p>Total Tax: {order.currentTotalTax.amount} {order.currentTotalTax.currencyCode}</p>
 
         <h3 className="text-lg font-semibold mt-4">Billing Address:</h3>
-        <p>{parsedOrder.billingAddress?.name}</p>
-        <p>{parsedOrder.billingAddress?.address1}</p>
-        <p>
-          {parsedOrder.billingAddress?.city}, {parsedOrder.billingAddress?.province}, {parsedOrder.billingAddress?.country}
-        </p>
+        <p>{order.billingAddress?.name}</p>
+        <p>{order.billingAddress?.address1}</p>
+        <p>{order.billingAddress?.city}, {order.billingAddress?.province}, {order.billingAddress?.country}</p>
 
         <h3 className="text-lg font-semibold mt-4">Items:</h3>
         <ul className='pl-4 list-disc'>
-          {parsedOrder.lineItems.edges.map((item, idx) => (
+          {order.lineItems.edges.map((item, idx) => (
             <li key={idx}>
               {item.node.title} - {item.node.variant.price.amount} {item.node.variant.price.currencyCode} (Quantity: {item.node.currentQuantity})
             </li>

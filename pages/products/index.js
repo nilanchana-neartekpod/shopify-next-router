@@ -14,6 +14,7 @@ const Product = ({ products }) => {
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [starRating, setStarRating] = useState('');
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+  const [colorFilter, setColorFilter] = useState('');
 
   const priceRanges = [
     { label: 'Under $10', min: 0, max: 10 },
@@ -21,6 +22,9 @@ const Product = ({ products }) => {
     { label: '$51 - $100', min: 51, max: 100 },
     { label: '$101 - $200', min: 101, max: 200 },
     { label: 'Over $201', min: 201, max: Infinity },
+  ];
+  const colors = [
+    'Pink', 'Blue', 'Green', 'Red', 'Black', 'White', 'Yellow', 'Purple', 'Orange', 'Brown'
   ];
 
   const handlePriceFilter = (range) => {
@@ -64,6 +68,17 @@ const Product = ({ products }) => {
     setItemsPerPage(8);
     setStarRating('');
     setSelectedPriceRange(null);
+    setColorFilter('');
+  };
+  const handleColorFilter = (color) => {
+    setColorFilter(color);
+    if (color) {
+      setPd(products.filter(product => product.color?.toLowerCase() === color.toLowerCase()));
+    } else {
+      setPd(products); // Reset filter
+    }
+    setCurrentImages(null);
+    setImagesOffset(0);
   };
 
   useEffect(() => {
@@ -150,6 +165,26 @@ const Product = ({ products }) => {
                 </button>
               )}
             </div>
+            
+            <h5 className="pt-8 md:pt-12">Color</h5>
+          <div className="colors pt-4 flex flex-wrap gap-4">
+            {colors.map(color => (
+              <label key={color} className="flex items-center cursor-pointer gap-2">
+                <input
+                  type="checkbox"
+                  checked={colorFilter === color}
+                  onChange={() => handleColorFilter(color)}
+                  className="hidden"
+                />
+                <div
+                  className={`w-6 h-6 rounded-full border ${colorFilter === color ? 'border-black' : 'border-gray-300'}`}
+                  style={{ backgroundColor: color }}
+                />
+                <span className="text-sm">{color}</span>
+              </label>
+            ))}
+          </div>
+
           </div>
 
           <div className='pageData basis-full md:basis-11/12'>
