@@ -7,18 +7,19 @@ const CollectionCard = ({ collection }) => {
     <div className="collection relative group">
       <Link href={`/collections/${collection.handle}`}>
         <div className="relative">
-          <div className="relative w-full h-80 rounded-xl overflow-hidden">
+          <div className="relative w-full h-96 rounded-2xl overflow-hidden">
+            {/* Apply rounded corners to the image container */}
             <Image
               src={collection.image?.url || "https://dummyimage.com/1200/09f/fff.png"}
               alt={collection.title}
               layout="fill"
               objectFit="cover"
-              className="transition-opacity duration-300 ease-in-out group-hover:opacity-90"
+              className="transition-opacity duration-300 ease-in-out group-hover:opacity-90 rounded-2xl"
             />
           </div>
 
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 flex flex-col text-center text-white mt-10">
-            <h2 className="text-2xl font-bold  ">{collection.title}</h2>
+            <h2 className="text-3xl font-semibold leading-tight text-shadow-md">{collection.title}</h2>
             <p className="mt-2 text-base">{collection.description}</p>
           </div>
 
