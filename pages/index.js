@@ -113,21 +113,24 @@ export default function Home({ data, collections }) {
         </div>
 
         <div className="px-4 md:px-12 py-8 md:py-12">
+        <h2 className="text-xl md:text-3xl mb-6 text-center">Shop by Category</h2>
           <img className="object-cover:fit overflow-hidden w-full" src="/collage.svg" alt="Collage" />
-        </div>
-        {/* <div className="px-4 md:px-12 py-8 md:py-12">
-      <div className="grid grid-cols-2 gap-4">
-        
-        <div className="col-span-1">
-          <img className="w-full h-auto object-cover" src="/p1.jpg" alt="First Image" />
+     
         </div>
 
-       
-        <div className="col-span-1">
-          <img className="w-full h-auto object-cover" src="/p-2.jpg" alt="Second Image" />
+        {/* <div class=" flex flex-col md:flex-row space-x-4 mt-24">
+        <div class="relative w-full md:w-2/3">
+          <img src="image1.jpg" alt="Large Image" class="w-full h-auto"/>
         </div>
-      </div>
-    </div> */}
+        <div class="w-full md:w-1/3 space-y-4">
+          <div class="w-full">
+            <img src="image2.jpg" alt="Small Image 1" class="w-full h-auto"/>
+          </div>
+          <div class="w-full">
+            <img src="image3.jpg" alt="Small Image 2" class="w-full h-64"/>
+          </div>
+        </div>
+      </div> */}
 
         <div className="flex flex-wrap space-x-4 mt-2 items-stretch md:px-12 justify-between"> 
           {/* Shipping Information Card */}
