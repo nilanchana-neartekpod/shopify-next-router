@@ -288,40 +288,17 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    console.log("Shopify Response Data:", data);
-    return data;  // Returns the list of addresses
+    return data;  
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }
 }
-export async function updateCustomerInfo(accessToken, customerInput) {
+export async function deleteCustomerAddress(accessToken, addressId) {
   const mutation = gql`
-    mutation customerUpdate($customer: CustomerUpdateInput!, $customerAccessToken: String!) {
-      customerUpdate(customer: $customer, customerAccessToken: $customerAccessToken) {
-        customer {
-          addresses(first: 10) {
-            nodes {
-              address1
-              address2
-              city
-              country
-              firstName
-              lastName
-              phone
-              zip
-            }
-          }
-        }
-        customerAccessToken {
-          accessToken
-        }
+    mutation deleteCustomerAddress($customerAccessToken: String!, $id: ID!) {
+      customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
+        deletedCustomerAddressId
         customerUserErrors {
-          code
-          field
-          message
-        }
-        userErrors {
-          field
           message
         }
       }
@@ -329,22 +306,84 @@ export async function updateCustomerInfo(accessToken, customerInput) {
   `;
 
   const variables = {
-    customer: customerInput,            // CustomerUpdateInput containing customer information
-    customerAccessToken: accessToken     // Access token for authentication
+    customerAccessToken: accessToken,
+    id: addressId,
   };
-
+  console.log('GraphQL Variables:', variables);
   try {
     const data = await graphQLClient.request(mutation, variables);
-    // Handle user errors if there are any
-    if (data.customerUpdate.customerUserErrors.length > 0) {
-      throw new Error(data.customerUpdate.customerUserErrors[0].message);
+
+    // Check for user errors
+    if (data.customerAddressDelete.customerUserErrors.length > 0) {
+      console.error('GraphQL User Errors:', data.customerAddressDelete.customerUserErrors);
+      throw new Error(
+        `Error deleting customer address: ${data.customerAddressDelete.customerUserErrors[0].message}`
+      );
     }
-    return data.customerUpdate.customer;
+
+    // Return the ID of the deleted address
+    return data.customerAddressDelete.deletedCustomerAddressId;
   } catch (error) {
-    throw new Error(error.message || 'Error updating customer information');
+    throw new Error(error.message || "Error deleting customer address");
   }
 }
 
+export async function updateCustomerAddress(customerAccessToken, addressId, addressInput) {
+  const updateAddressMutation = gql`
+    mutation customerAddressUpdate(
+      $address: MailingAddressInput!,
+      $customerAccessToken: String!,
+      $id: ID!
+    ) {
+      customerAddressUpdate(
+        address: $address,
+        customerAccessToken: $customerAccessToken,
+        id: $id
+      ) {
+        customerAddress {
+          address1
+          address2
+          city
+          company
+          country
+          firstName
+          lastName
+          phone
+          province
+          zip
+        }
+        customerUserErrors {
+          field
+          message
+          code
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    address: addressInput,
+    customerAccessToken,
+    id: addressId,
+  };
+
+  try {
+    const data = await graphQLClient.request(updateAddressMutation, variables);
+    console.log("GraphQL response:", data);  // Add logging to capture the response
+
+    if (data.customerAddressUpdate.customerUserErrors.length > 0) {
+      console.log("User errors:", data.customerAddressUpdate.customerUserErrors);  // Log the errors
+      throw new Error(
+        `Error updating address: ${data.customerAddressUpdate.customerUserErrors[0].message}`
+      );
+    }
+
+    return data.customerAddressUpdate.customerAddress;
+  } catch (error) {
+    console.error("Error during address update:", error.message);  // Log the full error
+    throw new Error(error.message);
+  }
+}
 
 export async function getCollectionProducts(handle) {
   const query = gql`
