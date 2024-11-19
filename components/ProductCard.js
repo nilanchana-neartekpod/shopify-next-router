@@ -20,15 +20,16 @@ const ProductCard = ({product}) => {
                     )}
                   </Link>
                     {/* Icons container, positioned at the bottom and visible only on hover */}
-                    {/* <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200  py-2">
+                    <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200  py-2">
                     <button className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800 ">
                         <FiShoppingCart size={18} />
                     </button>
                     <button className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800">
                         <FiHeart size={18} />
                     </button>
-                    </div> */}
+                    </div>
                 </div>
+                
                 <div>
                 <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
                     <h5>{product.title}</h5>

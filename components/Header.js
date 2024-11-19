@@ -168,12 +168,12 @@ const Header = () => {
 
             {showCartDropdown && (
             <div ref={cartDropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
-              {/* <button 
+              <button 
                     className="absolute top-0 right-0 mb-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
                     onClick={() => setShowCartDropdown(false)}
                   >
                     &times; 
-                  </button> */}
+                  </button>
               {cartItems.length > 0 ? (
                 cartItems.map((item) => (
                   <div key={item.node.id} className="flex justify-between items-center mb-2">
