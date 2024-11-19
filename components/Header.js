@@ -5,6 +5,7 @@ import { GoSearch } from "react-icons/go";
 import { BsCart3 } from "react-icons/bs";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { HiOutlineUserCircle } from 'react-icons/hi';
+import { AiOutlineHeart } from 'react-icons/ai'; 
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +18,7 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
   
   const { user, logout } = useAuth(); 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
@@ -25,6 +27,7 @@ const Header = () => {
   const router = useRouter();
   const profileDropdownRef = useRef(null);
   const cartDropdownRef = useRef(null);
+  const wishlistDropdownRef = useRef(null);
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -41,6 +44,9 @@ const Header = () => {
       }
       if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
         setShowCartDropdown(false);  // Close the cart dropdown if clicked outside
+      }
+      if (wishlistDropdownRef.current && !wishlistDropdownRef.current.contains(event.target)) {
+        setShowWishlistDropdown(false); // Close wishlist dropdown if clicked outside
       }
     };
 
@@ -61,6 +67,11 @@ const Header = () => {
   const toggleProfileDropdown = () => {
     setShowCartDropdown(false); // Close cart dropdown when profile is opened
     setShowProfileDropdown((prev) => !prev);
+  };
+
+  const toggleWishlistDropdown = () => {
+    setShowCartDropdown(false); // Close cart dropdown when wishlist is opened
+    setShowWishlistDropdown((prev) => !prev); // Toggle wishlist dropdown visibility
   };
 
   useEffect(() => {
@@ -199,6 +210,20 @@ const Header = () => {
               )}
             </div>
           )}
+          </div>
+
+          {/* Wishlist Dropdown */}
+          <div className="relative">
+            <button onClick={toggleWishlistDropdown} className="text-gray-800">
+              <AiOutlineHeart className="w-5 h-5" />
+            </button>
+
+            {showWishlistDropdown && (
+              <div ref={wishlistDropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
+                {/* Wishlist content goes here */}
+                <p className="text-center text-gray-600">Your wishlist is empty.</p>
+              </div>
+            )}
           </div>
           
           <div className="relative">
