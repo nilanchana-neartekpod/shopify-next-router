@@ -288,48 +288,100 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    console.log("Shopify Response Data:", data);
-    return data;  // Returns the list of addresses
+    return data;  
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }
 }
-export async function updateAddress(customerAccessToken, addressId, addressInput) {
-  const updateAddressMutation = gql`
-    mutation customerAddressUpdate($customerAccessToken: String!, $addressId: ID!, $address: CustomerAddressInput!) {
-      customerAddressUpdate(customerAccessToken: $customerAccessToken, id: $addressId, address: $address) {
-        customerAddress {
-          id
-          firstName
-          lastName
-          address1
-          address2
-          city
-          province
-          country
-          zip
-        }
-        userErrors {
-          field
+export async function deleteCustomerAddress(accessToken, addressId) {
+  const mutation = gql`
+    mutation deleteCustomerAddress($customerAccessToken: String!, $id: ID!) {
+      customerAddressDelete(customerAccessToken: $customerAccessToken, id: $id) {
+        deletedCustomerAddressId
+        customerUserErrors {
           message
         }
       }
     }
   `;
-  
+
   const variables = {
-    customerAccessToken: customerAccessToken,
-    addressId: addressId,
+    customerAccessToken: accessToken,
+    id: addressId,
+  };
+  console.log('GraphQL Variables:', variables);
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+
+    // Check for user errors
+    if (data.customerAddressDelete.customerUserErrors.length > 0) {
+      console.error('GraphQL User Errors:', data.customerAddressDelete.customerUserErrors);
+      throw new Error(
+        `Error deleting customer address: ${data.customerAddressDelete.customerUserErrors[0].message}`
+      );
+    }
+
+    // Return the ID of the deleted address
+    return data.customerAddressDelete.deletedCustomerAddressId;
+  } catch (error) {
+    throw new Error(error.message || "Error deleting customer address");
+  }
+}
+
+export async function updateCustomerAddress(customerAccessToken, addressId, addressInput) {
+  const updateAddressMutation = gql`
+    mutation customerAddressUpdate(
+      $address: MailingAddressInput!,
+      $customerAccessToken: String!,
+      $id: ID!
+    ) {
+      customerAddressUpdate(
+        address: $address,
+        customerAccessToken: $customerAccessToken,
+        id: $id
+      ) {
+        customerAddress {
+          address1
+          address2
+          city
+          company
+          country
+          firstName
+          lastName
+          phone
+          province
+          zip
+        }
+        customerUserErrors {
+          field
+          message
+          code
+        }
+      }
+    }
+  `;
+
+  const variables = {
     address: addressInput,
+    customerAccessToken,
+    id: addressId,
   };
 
   try {
-    const data = await graphQLClient.request(updateAddressMutation, variables, {
-      Authorization: `Bearer ${customerAccessToken}`, // Ensure the token is included in the headers
-    });
-    return data;
+    const data = await graphQLClient.request(updateAddressMutation, variables);
+    console.log("GraphQL response:", data);  // Add logging to capture the response
+
+    if (data.customerAddressUpdate.customerUserErrors.length > 0) {
+      console.log("User errors:", data.customerAddressUpdate.customerUserErrors);  // Log the errors
+      throw new Error(
+        `Error updating address: ${data.customerAddressUpdate.customerUserErrors[0].message}`
+      );
+    }
+
+    return data.customerAddressUpdate.customerAddress;
   } catch (error) {
-    throw new Error(error);
+    console.error("Error during address update:", error.message);  // Log the full error
+    throw new Error(error.message);
   }
 }
 

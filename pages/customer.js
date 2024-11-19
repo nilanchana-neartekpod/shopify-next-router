@@ -85,10 +85,31 @@ const CustomerPage = () => {
     setEditMode(true);
   };
  
-  const handleDelete = (index) => {
-    const updatedAddresses = addresses.filter((_, i) => i !== index);
-    setAddresses(updatedAddresses);
+  const handleDelete = async (id) => {
+    if (!user || !user.accessToken) return;
+  
+    try {
+      const response = await fetch('/api/deleteCustomerAddress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken: user.accessToken, addressId: id }),
+      });
+      const data = await response.json();
+      console.log('Delete API response:', data);  
+  
+      if (!response.ok) {
+        throw new Error('Failed to delete address');
+      }
+  
+      // Remove the deleted address from state
+      setAddresses(addresses.filter((address) => address.id !== id));
+    } catch (err) {
+      console.error('Error deleting address:', err);
+    }
   };
+  
  
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -182,7 +203,7 @@ const CustomerPage = () => {
                 />
                 <FaTrash
                   className="text-red-500 cursor-pointer"
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(address.id)} 
                   title="Delete Address"
                 />
               </div>
