@@ -16,9 +16,10 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showNav, setShowNav] = useState(false);
-  const [showCartDropdown, setShowCartDropdown] = useState(false);
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
+  
   
   const { user, logout } = useAuth(); 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
@@ -28,6 +29,8 @@ const Header = () => {
   const profileDropdownRef = useRef(null);
   const cartDropdownRef = useRef(null);
   const wishlistDropdownRef = useRef(null);
+  const [showCartDropdown, setShowCartDropdown] = useState(false); 
+  const cartDrawerRef = useRef(null);
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
@@ -39,11 +42,11 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
-        setShowProfileDropdown(false);
+      if (cartDrawerRef.current && !cartDrawerRef.current.contains(event.target)) {
+        setShowCartDrawer(false); // Close the drawer
       }
-      if (cartDropdownRef.current && !cartDropdownRef.current.contains(event.target)) {
-        setShowCartDropdown(false);  // Close the cart dropdown if clicked outside
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setShowProfileDropdown(false); // Close the dropdown
       }
       if (wishlistDropdownRef.current && !wishlistDropdownRef.current.contains(event.target)) {
         setShowWishlistDropdown(false); // Close wishlist dropdown if clicked outside
@@ -56,13 +59,25 @@ const Header = () => {
     };
   }, []);
 
-  const toggleSearchInput = () => setShowSearchInput((prev) => !prev);
-  const hideShowNav = () => setShowNav(!showNav);
+    const toggleSearchInput = () => setShowSearchInput((prev) => !prev);
+    const hideShowNav = () => setShowNav(!showNav);
 
-  const toggleCartDropdown = () => {
-    setShowProfileDropdown(false); // Close profile dropdown when cart is opened
-    setShowCartDropdown((prev) => !prev);
+    const toggleCartDrawer = () => {
+    setShowWishlistDropdown(false); 
+    setShowCartDrawer((prev) => !prev);
   };
+  const handleProductClick = (product) => {
+    
+    const productId = product.id.split('gid://shopify/Product/')[1];
+    const productHandle = product.handle;
+  
+    // Construct the product page URL
+    const productUrl = `/products/${productHandle}?id=${productId}`;
+  
+    // Redirect to the product page
+    router.push(productUrl);
+  };
+
 
   const toggleProfileDropdown = () => {
     setShowCartDropdown(false); // Close cart dropdown when profile is opened
@@ -160,57 +175,57 @@ const Header = () => {
               )}
             </div>
           )}
-           <div className="relative">
-            <button onClick={toggleCartDropdown} className="text-gray-800 shoppingCartIcon relative">
+            <div className="relative">
+            <button onClick={toggleCartDrawer} className="text-gray-800 shoppingCartIcon relative">
               <BsCart3 className="w-5 h-5" />
               <span>{quantity}</span>
             </button>
-
-            {showCartDropdown && (
-            <div ref={cartDropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
-              <button 
-                    className="absolute top-0 right-0 mb-2 mr-2 text-gray-600 hover:text-gray-800 text-2xl" 
-                    onClick={() => setShowCartDropdown(false)}
-                  >
-                    &times; 
-                  </button>
-              {cartItems.length > 0 ? (
-                cartItems.map((item) => (
-                  <div key={item.node.id} className="flex justify-between items-center mb-2">
-                    {item.node.merchandise.product.featuredImage?.url ? (
-                      <img
-                        src={item.node.merchandise.product.featuredImage.url}
-                        alt={item.node.merchandise.product.title || "Product image"}
-                        className="w-12 h-12 object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-500">No Image</span>
-                      </div>
-                    )}
-                    <div className="ml-4">
-                      <h4 className="text-sm font-semibold">{item.node.merchandise.product.title}</h4>
-                      <p className="text-gray-600 text-sm">
-                        ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center relative">
-                  <button 
-                    className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl" 
-                    onClick={() => setShowCartDropdown(false)}
-                  >
-                    &times; {/* Close icon */}
-                  </button>
-                  <p className="text-gray-600">No products in the cart.</p>
-                  <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
-                </div>
-              )}
-            </div>
-          )}
           </div>
+
+            {/* Cart Drawer */}
+            {showCartDrawer && (
+              <div ref={cartDrawerRef} className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out mt-20">
+                <button 
+                  onClick={() => setShowCartDrawer(false)} 
+                  className="absolute top-4 left-72 text-gray-600 hover:text-gray-800 text-2xl"
+                >
+                  &times;
+                </button>
+                <div className="p-4 bg-gray-100">
+                  <h2 className="text-xl font-semibold">Your Cart</h2>
+                  {cartItems.length > 0 ? (
+                    cartItems.map((item) => (
+                      <div key={item.node.id} className="flex justify-between items-center mb-2 cursor-pointer" onClick={() => handleProductClick(item.node.merchandise.product)}>
+                        {item.node.merchandise.product.featuredImage?.url ? (
+                          <img
+                            src={item.node.merchandise.product.featuredImage.url}
+                            alt={item.node.merchandise.product.title || "Product image"}
+                            className="w-12 h-12 object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 flex items-center justify-center">
+                            <span className="text-gray-500">No Image</span>
+                          </div>
+                        )}
+                        <div className="ml-4 bg-white p-4 rounded-lg shadow-md">
+                        <h4 className="text-sm font-semibold text-gray-800">{item.node.merchandise.product.title}</h4>
+                        <p className="text-xs text-gray-500">
+                        ${item.node.merchandise.product.priceRange.minVariantPrice.amount || 'Price not available'}
+                        </p>
+                      </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No items in your cart</p>
+                  )}
+                  <div className="flex justify-between pt-4">
+                    
+                  {/* <p className="text-gray-600">No products in the cart.</p> */}
+                  <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
+                  </div>
+                </div>
+              </div>
+            )}
 
           {/* Wishlist Dropdown */}
           <div className="relative">
