@@ -24,7 +24,6 @@ const CustomerPage = () => {
     country: '',
     zip: '',
     phone: '',
-    default: false,
   });
  
   // Fetch addresses when the user is available
@@ -84,6 +83,46 @@ const CustomerPage = () => {
     setShowAddressForm(true);
     setEditMode(true);
   };
+  const handleUpdate = async (id) => {
+    if (!user?.accessToken || !newAddress) return;
+  
+    // Remove the `id` from `newAddress` if it exists (the id should be passed separately)
+    const { id: _, ...addressInput } = newAddress;
+  
+    try {
+      const response = await fetch('/api/updateAddress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'UPDATE_ADDRESS',
+          customerAccessToken: user.accessToken,
+          addressId: id, // Pass id separately
+          addressInput,  // Pass the address data without `id`
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+  
+      const { updatedAddress } = await response.json();
+  
+      setAddresses((prevAddresses) =>
+        prevAddresses.map((address) =>
+          address.id === id ? { ...address, ...updatedAddress } : address
+        )
+      );
+  
+      setShowAddressForm(false);
+      setEditMode(false);
+      setNewAddress('');
+      fetchAddresses();
+    } catch (err) {
+      console.error('Error updating address:', err.message);
+    }
+  };
+  
  
   const handleDelete = async (id) => {
     if (!user || !user.accessToken) return;
@@ -111,34 +150,69 @@ const CustomerPage = () => {
   };
   
  
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editMode) {
-      const updatedAddresses = addresses.map((address, index) =>
-        index === currentEditIndex ? newAddress : address
-      );
-      setAddresses(updatedAddresses);
-      setEditMode(false);
-      setCurrentEditIndex(null);
-    } else {
-      setAddresses([...addresses, newAddress]);
+  
+    if (!user || !user.accessToken) {
+      console.error("User is not authenticated.");
+      return;
     }
- 
-    setNewAddress({
-      firstName: '',
-      lastName: '',
-      companyName: '',
-      address1: '',
-      address2: '',
-      city: '',
-      province: '',
-      country: '',
-      zip: '',
-      phone: '',
-      default: false,
-    });
-    setShowAddressForm(false);
+  
+    console.log("New Address Data:", newAddress);
+    if (!newAddress.firstName || !newAddress.lastName || !newAddress.address1 || !newAddress.city || !newAddress.country || !newAddress.zip) {
+      console.error("All required address fields must be filled.");
+      return;
+    }
+  
+    console.log("Access Token:", user.accessToken);
+    console.log("New Address Payload:", newAddress);
+  
+    try {
+      // Make API call to create a new address
+      const response = await fetch('/api/customerAddress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerAccessToken: user.accessToken, // Corrected field name
+          addressInput: newAddress,
+        }),
+      });
+  
+      // Log the API response
+      const data = await response.json();
+      console.log("Create Address API Response:", data);
+  
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create address');
+      }
+  
+      // Add the new address to the state
+      setAddresses((prevAddresses) => [...prevAddresses, data.address]);
+      console.log("Updated Addresses:", [...addresses, data.address]);
+  
+      // Reset the form state
+      setNewAddress({
+        firstName: '',
+        lastName: '',
+        companyName: '',
+        address1: '',
+        address2: '',
+        city: '',
+        province: '',
+        country: '',
+        zip: '',
+        phone: '',
+      });
+      setShowAddressForm(false);
+      fetchAddresses();
+
+    } catch (err) {
+      console.error("Error creating address:", err);
+    }
   };
+  
  
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -189,11 +263,11 @@ const CustomerPage = () => {
           addresses?.map((address, index) => (
             <div key={index} className="my-4 p-4 border rounded-md shadow-sm flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-semibold">{address.firstName} {address.lastName}</h3>
-                <p>{address.address1}{address.address2 ? `, ${address.address2}` : ''}</p>
-                <p>{address.city}, {address.province} {address.zip}</p>
-                <p>{address.country}</p>
-                <p>{address.phone}</p>
+                <h3 className="text-lg font-semibold">{address?.firstName} {address?.lastName}</h3>
+                <p>{address?.address1}{address?.address2 ? `, ${address?.address2}` : ''}</p>
+                <p>{address?.city}, {address?.province} {address?.zip}</p>
+                <p>{address?.country}</p>
+                <p>{address?.phone}</p>
               </div>
               <div className="flex space-x-2">
                 <FaEdit
@@ -226,8 +300,7 @@ const CustomerPage = () => {
               province: '',
               country: '',
               zip: '',
-              phone: '',
-              default: false,
+              phone: ''
             });
           }}
         >
@@ -235,7 +308,18 @@ const CustomerPage = () => {
         </button>
  
         {showAddressForm && (
-          <form className='mt-4' onSubmit={handleSubmit}>
+            <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (editMode && currentEditIndex !== null && addresses[currentEditIndex]) {
+                handleUpdate(addresses[currentEditIndex].id); // Editing an existing address
+              } else {
+                handleSubmit(e); // Adding a new address
+              }           
+            }}
+            className="address-form mt-4"
+          >
+            <h3 className="text-lg font-semibold">{editMode ? 'Edit Address' : 'Add New Address'}</h3>
             <div className='grid grid-cols-2 gap-4'>
               <input
                 type='text'

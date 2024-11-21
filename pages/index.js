@@ -28,7 +28,7 @@ export const getServerSideProps = async (context) => {
   
   // Check if user is authenticated
   const auth = await isAuthenticated(req);
-  console.log('User authenticated:', auth);
+
   
   // Redirect to login if required and user is not authenticated
   if (!auth && !optionalAuth) {

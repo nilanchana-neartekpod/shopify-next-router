@@ -293,6 +293,53 @@ export async function fetchCustomerAddresses(accessToken) {
     throw new Error(error.message || 'Error fetching customer addresses');
   }
 }
+export async function createCustomerAddress(customerAccessToken, addressInput) {
+  const mutation = gql`
+    mutation customerAddressCreate($customerAccessToken: String!, $address: MailingAddressInput!) {
+      customerAddressCreate(customerAccessToken: $customerAccessToken, address: $address) {
+        customerAddress {
+          id
+          name
+          address1
+          address2
+          city
+          province
+          country
+          zip
+          firstName
+          lastName
+          phone
+        }
+        customerUserErrors {
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    customerAccessToken,
+    address: addressInput,
+  };
+  
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+    console.log("GraphQL Create Address Response:", data); // Log the response for debugging
+
+    if (data.customerAddressCreate.customerUserErrors.length > 0) {
+      console.error(
+        "GraphQL Create Address Errors:",
+        data.customerAddressCreate.customerUserErrors
+      );
+      throw new Error(data.customerAddressCreate.customerUserErrors[0].message);
+    }
+
+    return data.customerAddressCreate.customerAddress;
+  } catch (error) {
+    console.error("Error creating customer address:", error.message);
+    throw new Error(error.message || "Failed to create customer address");
+  }
+}
 export async function deleteCustomerAddress(accessToken, addressId) {
   const mutation = gql`
     mutation deleteCustomerAddress($customerAccessToken: String!, $id: ID!) {
