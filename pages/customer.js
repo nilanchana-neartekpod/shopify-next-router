@@ -321,24 +321,33 @@ const CustomerPage = () => {
           >
             <h3 className="text-lg font-semibold">{editMode ? 'Edit Address' : 'Add New Address'}</h3>
             <div className='grid grid-cols-2 gap-4'>
-              <input
-                type='text'
-                name='firstName'
-                placeholder='First name'
-                value={newAddress.firstName}
-                onChange={handleInputChange}
-                required
-                className='border p-2 rounded-md'
-              />
-              <input
-                type='text'
-                name='lastName'
-                placeholder='Last name'
-                value={newAddress.lastName}
-                onChange={handleInputChange}
-                required
-                className='border p-2 rounded-md'
-              />
+            <input
+            type="text"
+            name="firstName"
+            placeholder="First name"
+            value={newAddress.firstName}
+            onChange={handleInputChange}
+            required
+            pattern="[A-Za-z\s]+" 
+            title="First name must only contain letters and spaces."
+            inputMode="text" 
+            className="border p-2 rounded-md"
+            onInput={(e) => e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '')} 
+          />
+
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last name"
+            value={newAddress.lastName}
+            onChange={handleInputChange}
+            required
+            pattern="[A-Za-z\s]+" 
+            title="Last name must only contain letters and spaces."
+            inputMode="text"
+            className="border p-2 rounded-md"
+            onInput={(e) => e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '')} 
+            />
               {/* <input
                 type='text'
                 name='companyName'
@@ -365,48 +374,67 @@ const CustomerPage = () => {
                 className='border p-2 rounded-md'
               />
               <input
-                type='text'
-                name='city'
-                placeholder='City'
+                type="text"
+                name="city"
+                placeholder="City"
                 value={newAddress.city}
                 onChange={handleInputChange}
                 required
-                className='border p-2 rounded-md'
+                pattern="[A-Za-z\s]+" 
+                title="City must only contain letters and spaces."
+                inputMode="text"
+                className="border p-2 rounded-md"
+                onInput={(e) => e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '')} 
               />
               <input
-                type='text'
-                name='province'
-                placeholder='Province/State'
+                type="text"
+                name="province"
+                placeholder="Province/State"
                 value={newAddress.province}
                 onChange={handleInputChange}
                 required
-                className='border p-2 rounded-md'
+                pattern="[A-Za-z\s]+" 
+                title="Province/State must only contain letters and spaces."
+                inputMode="text"
+                className="border p-2 rounded-md"
+                onInput={(e) => e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '')} 
               />
               <input
-                type='text'
-                name='zip'
-                placeholder='ZIP/Postal Code'
+                type="text"
+                name="zip"
+                placeholder="ZIP/Postal Code"
                 value={newAddress.zip}
                 onChange={handleInputChange}
                 required
-                className='border p-2 rounded-md'
+                pattern="[A-Za-z0-9\s]+" 
+                title="ZIP/Postal code must contain alphanumeric characters and spaces."
+                inputMode="text"
+                className="border p-2 rounded-md"
               />
-              <input
-                type='text'
-                name='country'
-                placeholder='Country'
+               <input
+                type="text"
+                name="country"
+                placeholder="Country"
                 value={newAddress.country}
                 onChange={handleInputChange}
                 required
-                className='border p-2 rounded-md'
+                pattern="[A-Za-z\s]+" 
+                title="Country must only contain letters and spaces."
+                inputMode="text"
+                className="border p-2 rounded-md"
+                onInput={(e) => e.target.value = e.target.value.replace(/[^A-Za-z\s]/g, '')} 
               />
               <input
-                type='text'
-                name='phone'
-                placeholder='Phone'
+                type="text"
+                name="phone"
+                placeholder="Phone"
                 value={newAddress.phone}
                 onChange={handleInputChange}
-                className='border p-2 rounded-md'
+                className="border p-2 rounded-md"
+                pattern="\d+" 
+                title="Phone number must contain only digits."
+                inputMode="tel"
+                onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')} 
               />
             </div>
             <button type='submit' className='mt-4 bg-blue-500 text-white px-4 py-2 rounded-md'>
