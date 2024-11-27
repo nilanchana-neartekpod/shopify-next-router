@@ -202,6 +202,10 @@ export async function fetchCustomerAddresses(accessToken) {
         email
         createdAt
         updatedAt
+        wishlist: metafield(key: "wishlist", namespace: "custom") {
+          value
+          id
+        }
         addresses(first: 10) {
          nodes {
             id
