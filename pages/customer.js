@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
  
 const CustomerPage = () => {
-  const { user } = useAuth() || {};
+  const { user } = useAuth() ;
   const router = useRouter();
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -64,7 +64,7 @@ const CustomerPage = () => {
     };
  
     fetchAddresses();
-  }, []);
+  }, [user]);
  
   const handleOrderClick = (order) => {
     router.push({
@@ -215,7 +215,7 @@ const CustomerPage = () => {
   };
   
  
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className='mt-20'>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!user) return <p>Please log in to view your account.</p>;
  

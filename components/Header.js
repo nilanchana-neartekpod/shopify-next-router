@@ -23,7 +23,7 @@ const Header = () => {
   const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
   
   
-  const { user } = useAuth() || {};
+  const { user,logout } = useAuth();
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
