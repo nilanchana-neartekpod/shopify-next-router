@@ -1,10 +1,11 @@
+"use client"
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
  
 const CustomerPage = () => {
-  const { user } = useAuth();
+  const { user } = useAuth() || {};
   const router = useRouter();
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -63,7 +64,7 @@ const CustomerPage = () => {
     };
  
     fetchAddresses();
-  }, [user]);
+  }, []);
  
   const handleOrderClick = (order) => {
     router.push({

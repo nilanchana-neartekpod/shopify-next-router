@@ -1,3 +1,4 @@
+import { log } from "console";
 import { gql, GraphQLClient } from "graphql-request";
 const token = process.env.TOKEN;
 const endpoint = process.env.SHOPURL;
@@ -103,6 +104,8 @@ export async function customerLogin(email, password) {
 
   try {
     const data = await graphQLClient.request(mutation, variables);
+    console.log("backend", data);
+    
 
     if (data.customerAccessTokenCreate.customerUserErrors.length > 0) {
       throw new Error(

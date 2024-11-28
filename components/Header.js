@@ -9,6 +9,8 @@ import { AiOutlineHeart } from 'react-icons/ai';
 import useGlobalStore from '../store/store';
 import ProductCard from './ProductCard';
 import { useAuth } from '../context/AuthContext';
+import { GiShoppingBag } from "react-icons/gi";
+import { RiVoiceprintFill } from "react-icons/ri";
 
 const Header = () => {
   const [cartId, setCartId] = useState(null);
@@ -21,7 +23,7 @@ const Header = () => {
   const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
   
   
-  const { user, logout } = useAuth(); 
+  const { user } = useAuth() || {};
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
@@ -116,21 +118,53 @@ const Header = () => {
       console.error('Error fetching search results:', error);
     }
   };
+  const handleBackToHomeClick = () => {
+    setShowNav(true); // Show navigation and search form
+    router.push("/");
+  };
+  const handleVoiceShoppingClick = () => {
+    setShowNav(false); // Hide navigation and search form
+    router.push("/voiceAssistance");
+  };
 
   return (
     <header className={`w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50 ${showNav ? 'active-nav' : ''}`}>
       <div className="px-4 md:px-12 mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4 cursor-pointer">
           <img src="/House.svg" alt="Furniro" className="w-[40px] h-[24px] md:w-[64px] md:h-[40px]" />
-          <span className="text-gray-800 text-base md:text-xl font-semibold">Shop Smarter</span>
+          <span className="text-gray-800 text-base md:text-xl font-semibold">NearTekPod</span>
         </Link>
+
+        <div className="flex md:order-2 space-x-3 md:space-x-0 gap-5 rtl:space-x-reverse rounded-lg ">
+          {showNav && (
+            <button
+              type="button"
+              className="text-white bg-sky-500 flex  hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 md:flex-col lg:flex-row"
+              onClick={handleVoiceShoppingClick}
+            >
+              <RiVoiceprintFill color="white" className="mr-2" size="1.5em" />
+              Voice Shopping
+            </button>
+          )}
+
+          {!showNav && (
+            <button
+              type="button"
+              className="text-white bg-sky-500 flex hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-semibold rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={handleBackToHomeClick}
+            >
+              <GiShoppingBag color="white" className="mr-2" size="1.5em" />
+              Shop Manually
+            </button>
+          )}
+        </div>
         
-        <nav className="flex space-x-6 gap-4 lg:gap-10 navigation">
-          <Link href="/" className="text-gray-800">Home</Link>
-          <Link href="/products" className="text-gray-800">Shop</Link>
-          <Link href="/collections/shoes" className="text-gray-800">Shoes</Link>
-          <Link href="/collections/electronics" className="text-gray-800">Electronics</Link>
-          <Link href="/collections/clothes" className="text-gray-800">Clothes</Link>
+        <nav className="flex space-x-6 gap-1 navigation md:flex">
+          <Link href="/" className="text-black hover:text-white hover:bg-blue-700 rounded md:bg-transparent md:text-black md:hover:bg-transparent md:hover:text-blue-700 md:active:text-blue-700 md:focus:text-blue-800 lg:focus:text-blue-800 lg:active:text-blue-700">Home</Link>
+          <Link href="/products" className="text-black hover:text-white hover:bg-blue-700 rounded md:bg-transparent md:text-black md:hover:bg-transparent md:hover:text-blue-700 md:active:text-blue-700 md:focus:text-blue-800 lg:focus:text-blue-800 lg:active:text-blue-700">Shop</Link>
+          <Link href="/collections/shoes" className="text-black hover:text-white hover:bg-blue-700 rounded md:bg-transparent md:text-black md:hover:bg-transparent md:hover:text-blue-700 md:active:text-blue-700 md:focus:text-blue-800 lg:focus:text-blue-800 lg:active:text-blue-700">Shoes</Link>
+          <Link href="/collections/electronics" className="text-black hover:text-white hover:bg-blue-700 rounded md:bg-transparent md:text-black md:hover:bg-transparent md:hover:text-blue-700 md:active:text-blue-700 md:focus:text-blue-800 lg:focus:text-blue-800 lg:active:text-blue-700">Electronics</Link>
+          <Link href="/collections/clothes" className="text-black hover:text-white hover:bg-blue-700 rounded md:bg-transparent md:text-black md:hover:bg-transparent md:hover:text-blue-700 md:active:text-blue-700 md:focus:text-blue-800 lg:focus:text-blue-800 lg:active:text-blue-700">Clothes</Link>
         </nav>
 
         <div className="flex items-center space-x-6 gap-1 md:gap-5">
@@ -262,6 +296,7 @@ const Header = () => {
                     </Link>
                     <button onClick={logout} className="mt-2 w-full text-left text-red-500 hover:text-red-600">Logout</button>
                   </>
+                  
                 ) : (
                   <Link href="/login" className="block text-blue-500 hover:underline mt-2">Login</Link>
                 )}

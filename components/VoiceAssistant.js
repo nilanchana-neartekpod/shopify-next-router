@@ -1,66 +1,67 @@
-import React from 'react'
+"use client";
+import React, { useState, useEffect } from "react";
 
 const VoiceAssistant = () => {
-    const [isRecording, setIsRecording] = useState(false);
-    const [recordingComplete, setRecordingComplete] = useState(false);
-    const [transcript, setTranscript] = useState("");
-  
-    // Reference to store the SpeechRecognition instance
-    const recognitionRef = useRef(null);
-  
-    // Function to start recording
-    const startRecording = () => {
-      setIsRecording(true);
-      // Create a new SpeechRecognition instance and configure it
-      recognitionRef.current = new window.webkitSpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-  
-      // Event handler for speech recognition results
-      recognitionRef.current.onresult = () => {
-        const { transcript } = event.results[event.results.length - 1][0];
-  
-        // Log the recognition results and update the transcript state
-        console.log(event.results);
-        setTranscript(transcript);
-      };
-  
-      // Start the speech recognition
-      recognitionRef.current.start();
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingComplete, setRecordingComplete] = useState(false);
+  const [transcript, setTranscript] = useState("");
+
+  // Reference to store the SpeechRecognition instance
+  const recognitionRef = useRef(null);
+
+  // Function to start recording
+  const startRecording = () => {
+    setIsRecording(true);
+    // Create a new SpeechRecognition instance and configure it
+    recognitionRef.current = new window.webkitSpeechRecognition();
+    recognitionRef.current.continuous = true;
+    recognitionRef.current.interimResults = true;
+
+    // Event handler for speech recognition results
+    recognitionRef.current.onresult = () => {
+      const { transcript } = event.results[event.results.length - 1][0];
+
+      // Log the recognition results and update the transcript state
+      // console.log(event.results);
+      setTranscript(transcript);
     };
-  
-    // Cleanup effect when the component unmounts
-    useEffect(() => {
-      return () => {
-        // Stop the speech recognition if it's active
-        if (recognitionRef.current) {
-          recognitionRef.current.stop();
-        }
-      };
-    }, []);
-  
-    // Function to stop recording
-    const stopRecording = () => {
+
+    // Start the speech recognition
+    recognitionRef.current.start();
+  };
+
+  // Cleanup effect when the component unmounts
+  useEffect(() => {
+    return () => {
+      // Stop the speech recognition if it's active
       if (recognitionRef.current) {
-        // Stop the speech recognition and mark recording as complete
         recognitionRef.current.stop();
-        setRecordingComplete(true);
       }
     };
-  
-    // Toggle recording state and manage recording actions
-    const handleToggleRecording = () => {
-      setIsRecording(!isRecording);
-      if (!isRecording) {
-        startRecording();
-      } else {
-        stopRecording();
-      }
-    };
-    
-    return (
-      <div className='search-page'>
-         <div className="flex items-center justify-center h-screen w-full">
+  }, []);
+
+  // Function to stop recording
+  const stopRecording = () => {
+    if (recognitionRef.current) {
+      // Stop the speech recognition and mark recording as complete
+      recognitionRef.current.stop();
+      setRecordingComplete(true);
+    }
+  };
+
+  // Toggle recording state and manage recording actions
+  const handleToggleRecording = () => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  };
+
+  return (
+    <div className="search-page">
+      <div className="flex items-center justify-center h-screen w-full">
         <div className="w-full">
           {(isRecording || transcript) && (
             <div className="w-1/4 m-auto rounded-md border p-4 bg-white">
@@ -79,7 +80,7 @@ const VoiceAssistant = () => {
                   <div className="rounded-full w-4 h-4 bg-red-400 animate-pulse" />
                 )}
               </div>
-  
+
               {transcript && (
                 <div className="border rounded-md p-2 h-fullm mt-4">
                   <p className="mb-0">{transcript}</p>
@@ -87,7 +88,7 @@ const VoiceAssistant = () => {
               )}
             </div>
           )}
-  
+
           <div className="flex items-center w-full">
             {isRecording ? (
               // Button for stopping recording
@@ -124,8 +125,8 @@ const VoiceAssistant = () => {
           </div>
         </div>
       </div>
-      </div>
-    )
-}
+    </div>
+  );
+};
 
-export default VoiceAssistant
+export default VoiceAssistant;

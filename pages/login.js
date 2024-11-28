@@ -10,7 +10,7 @@ const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
-  const { login } = useAuth();
+  const { login } = useAuth() || {};
   const router = useRouter();
 
   const validateForm = () => {
@@ -51,9 +51,9 @@ const Login = () => {
       });
       const userData = await response.json();
 
-    if (!response.ok) throw new Error(userData.message || 'Error during login');
+    if (!response.ok) throw new Error(userData.message || 'Error during login is invalid');
 
-    login(userData); 
+    // login(userData); 
     router.push('/customer');
   } catch (error) {
     setErrorMessage(error.message);

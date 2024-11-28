@@ -1,6 +1,6 @@
 import React from 'react'
 import { getCollections } from "../../utils/shopify";
-import CollectionCard from "@/components/CollectionCard";
+import CollectionCard from "../../components/CollectionCard";
 import Head from "next/head";
 
 const Collections = ({collections}) => {
