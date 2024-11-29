@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
  
 const CustomerPage = () => {
-  const { user } = useAuth() ;
+  const {user} = useAuth() ;
   const router = useRouter();
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -71,8 +71,7 @@ const CustomerPage = () => {
       pathname: '/order',
     }, undefined, { state: { order } });
   };
-  
- 
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAddress({ ...newAddress, [name]: value });

@@ -1,4 +1,4 @@
-import { log } from "console";
+// import { log } from "console";
 import { gql, GraphQLClient } from "graphql-request";
 const token = process.env.TOKEN;
 const endpoint = process.env.SHOPURL;
