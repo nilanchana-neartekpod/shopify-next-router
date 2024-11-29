@@ -1,4 +1,4 @@
-import ProductDetails from "@/components/ProductDetails";
+import ProductDetails from "../../components/ProductDetails";
 import { getProduct } from "../../utils/shopify";
 import Head from "next/head";
 import Link from "next/link";

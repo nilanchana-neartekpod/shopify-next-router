@@ -51,7 +51,7 @@ const Login = () => {
       });
       const userData = await response.json();
 
-    if (!response.ok) throw new Error(userData.message || 'Error during login');
+    if (!response.ok) throw new Error(userData.message || 'Error during login is invalid');
 
     login(userData); 
     router.push('/customer');

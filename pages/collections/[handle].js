@@ -1,6 +1,6 @@
 import React from 'react'
 import { getCollectionProducts } from "../../utils/shopify";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "../../components/ProductCard";
 import Head from "next/head";
 
 export const getServerSideProps = async (context) => {

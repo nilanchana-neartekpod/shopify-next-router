@@ -4,6 +4,7 @@ import { customerLogin } from '../../utils/shopify';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { email, password } = req.body;
+    console.log("Sent",email, password);
 
     try {
       const result = await customerLogin(email, password);

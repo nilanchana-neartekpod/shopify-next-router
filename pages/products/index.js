@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Head from "next/head";
 import { getProducts } from "../../utils/shopify";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "../../components/ProductCard";
 import ReactPaginate from "react-paginate";
 import { GrNext, GrPrevious } from "react-icons/gr";
 
@@ -23,9 +23,9 @@ const Product = ({ products }) => {
     { label: '$101 - $200', min: 101, max: 200 },
     { label: 'Over $201', min: 201, max: Infinity },
   ];
-  const colors = [
-    'Pink', 'Blue', 'Green', 'Red', 'Black', 'White', 'Yellow', 'Purple', 'Orange', 'Brown'
-  ];
+  // const colors = [
+  //   'Pink', 'Blue', 'Green', 'Red', 'Black', 'White', 'Yellow', 'Purple', 'Orange', 'Brown'
+  // ];
 
   const handlePriceFilter = (range) => {
     setSelectedPriceRange(range);
@@ -70,16 +70,16 @@ const Product = ({ products }) => {
     setSelectedPriceRange(null);
     setColorFilter('');
   };
-  const handleColorFilter = (color) => {
-    setColorFilter(color);
-    if (color) {
-      setPd(products.filter(product => product.color?.toLowerCase() === color.toLowerCase()));
-    } else {
-      setPd(products); // Reset filter
-    }
-    setCurrentImages(null);
-    setImagesOffset(0);
-  };
+  // const handleColorFilter = (color) => {
+  //   setColorFilter(color);
+  //   if (color) {
+  //     setPd(products.filter(product => product.color?.toLowerCase() === color.toLowerCase()));
+  //   } else {
+  //     setPd(products); // Reset filter
+  //   }
+  //   setCurrentImages(null);
+  //   setImagesOffset(0);
+  // };
 
   useEffect(() => {
     let endOffset = imagesOffset + itemsPerPage;
@@ -166,7 +166,7 @@ const Product = ({ products }) => {
               )}
             </div>
             
-            <h5 className="pt-8 md:pt-12">Color</h5>
+            {/* <h5 className="pt-8 md:pt-12">Color</h5>
           <div className="colors pt-4 flex flex-wrap gap-4">
             {colors.map(color => (
               <label key={color} className="flex items-center cursor-pointer gap-2">
@@ -183,7 +183,7 @@ const Product = ({ products }) => {
                 <span className="text-sm">{color}</span>
               </label>
             ))}
-          </div>
+          </div> */}
 
           </div>
 
