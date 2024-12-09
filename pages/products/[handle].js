@@ -22,6 +22,7 @@ export default function Product({ product }) {
 
 export const getServerSideProps = async (context) => {
   const product =  await getProduct('gid://shopify/Product/'+ context.query.id);
+  
   return {
     props: {
       product,

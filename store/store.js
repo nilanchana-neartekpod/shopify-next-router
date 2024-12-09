@@ -4,6 +4,8 @@ const useStore = (set, get) => ({
   quantity: 0,
   cartItems: [],
   customerOrders: [],
+  wishlist: [],
+
   cartTotal: async (cartId) => {
     if (cartId) {
       console.log('Fetching cart data for cart ID:', cartId);
@@ -30,7 +32,12 @@ const useStore = (set, get) => ({
   },
   setCustomerOrders: (data) => {
     set({customerOrders: data});
-  }
+  },
+  
+  setWishlist: (data) => {
+    console.log('Setting wishlist with data:', data); // Log the wishlist data
+    set({ wishlist: data });
+  },
 });
 
 const useGlobalStore = create(useStore);

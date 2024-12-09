@@ -1,8 +1,36 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
+import useGlobalStore from '../store/store';
 
-const ProductCard = ({product}) => {
+const ProductCard = ({product, customerId}) => {
+    const { wishlist } = useGlobalStore();
+    const isInWishlist = Array.isArray(wishlist) && wishlist.includes(product.id);
+    console.log('Wishlist in ProductCard:', wishlist);
+    console.log('Product:', product);
+    const handleToggle = () => toggleWishlistItem(product.id, customerId);
+    const handleToggleWishlist = async () => {
+        const updatedWishlist = isInWishlist
+          ? wishlist.filter((id) => id !== product.id)
+          : [...wishlist, product.id];
+    
+        try {
+          const response =await fetch('/api/wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'UPDATE_WISHLIST',
+              wishlist: updatedWishlist,
+            }),
+          });
+          if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+          }
+          handleToggle(); // Update local state
+        } catch (error) {
+          console.error('Error updating wishlist:', error);
+        }
+      };
   return (
     <>
         <div className="product relative border rounded-lg overflow-hidden shadow-md group">
@@ -24,7 +52,11 @@ const ProductCard = ({product}) => {
                     <button className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800 ">
                         <FiShoppingCart size={18} />
                     </button>
-                    <button className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800">
+                    <button className={`text-white p-2 rounded-full ${
+                            isInWishlist ? 'bg-red-600 hover:bg-red-800' : 'bg-gray-600 hover:bg-gray-800'
+                        }`}
+                        onClick={handleToggleWishlist}
+                        >
                         <FiHeart size={18} />
                     </button>
                     </div>

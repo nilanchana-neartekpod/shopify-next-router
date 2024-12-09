@@ -191,6 +191,47 @@ export async function getProducts(count) {
       throw new Error(error);
     }
 }
+export async function updateMetafield(input) {
+  const mutation = gql`
+    mutation privateMetafieldUpsert($input: PrivateMetafieldInput!) {
+      privateMetafieldUpsert(input: $input) {
+        privateMetafield {
+          id
+          namespace
+          key
+          value
+          valueType
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {input};
+
+  try {
+    const data = await graphQLClient.request(mutation, variables);
+    console.log("GraphQL Private Metafield Upsert Response:", data);
+
+    // Check for user errors
+    if (data?.privateMetafieldUpsert?.userErrors?.length > 0) {
+      console.error(
+        "GraphQL Private Metafield Upsert Errors:",
+        data.privateMetafieldUpsert.userErrors
+      );
+      throw new Error(data.privateMetafieldUpsert.userErrors[0].message);
+    }
+
+    // Return the created/updated private metafield
+    return data.privateMetafieldUpsert.privateMetafield;
+  } catch (error) {
+    console.error("Error upserting private metafield:", error.message);
+    throw new Error(error.response?.errors[0]?.message || error.message || "Failed to upsert private metafield");
+  }
+}
 
 export async function fetchCustomerAddresses(accessToken) {
   const query = gql`
@@ -202,6 +243,12 @@ export async function fetchCustomerAddresses(accessToken) {
         email
         createdAt
         updatedAt
+        metafield(namespace: "custom", key: "wishlist") {
+          id
+          value
+          description
+          type
+        }
         addresses(first: 10) {
          nodes {
             id
@@ -288,6 +335,7 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
+    console.log("metafield",data.customer.metafield);
     return data;  
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
