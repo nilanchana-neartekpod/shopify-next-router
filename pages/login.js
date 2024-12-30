@@ -10,6 +10,7 @@ const Login = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [errors, setErrors] = useState({ email: '', password: '' });
+  const [forgotPassword,setForgotPassword]=useState("")
   const { login } = useAuth();
   const router = useRouter();
 
@@ -60,6 +61,29 @@ const Login = () => {
   }
   };
 
+
+  const handleForgotPassword = async (event) => {
+    event.preventDefault();
+    setErrorMessage('');
+  
+    try {
+      const response = await fetch('/api/forgotpw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const result = await response.json();
+  setForgotPassword(result)
+  setEmail(" ")
+      if (!response.ok) throw new Error(result.message || 'Error during password recovery');
+  
+      // Optionally, show a success message or redirect
+      setSuccessMessage('If an account exists with that email, we have sent instructions to reset your password.');
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  };
+  
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -71,7 +95,7 @@ const Login = () => {
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
 
         {showForgotPassword ? (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleForgotPassword}>
             <div className="mb-4">
               <label htmlFor="email" className="block text-sm font-medium mb-2">Email</label>
               <input
@@ -89,7 +113,15 @@ const Login = () => {
                 Back to Login
               </Link>
               <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">Send Reset Link</button>
+              {/* <Link
+  href="/login#"
+  onClick={handleForgotPassword}
+  className="bg-blue-500 text-white px-4 py-2 rounded-md inline-block"
+>
+  Send Reset Link
+</Link> */}
             </div>
+            {forgotPassword && <p className='text-green-500 mb-4'>{forgotPassword?.result?.message}</p>}
           </form>
         ) : (
           <form onSubmit={handleSubmit}>
