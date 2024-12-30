@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
@@ -5,7 +6,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import useGlobalStore from '../store/store';
  
 const CustomerPage = () => {
-  const { user } = useAuth();
+  const {user} = useAuth() ;
   const router = useRouter();
   const [addresses, setAddresses] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -76,8 +77,7 @@ const CustomerPage = () => {
       pathname: '/order',
     }, undefined, { state: { order } });
   };
-  
- 
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewAddress({ ...newAddress, [name]: value });
@@ -220,7 +220,7 @@ const CustomerPage = () => {
   };
   
  
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className='mt-20'>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!user) return <p>Please log in to view your account.</p>;
  

@@ -1,3 +1,4 @@
+// import { log } from "console";
 import { gql, GraphQLClient } from "graphql-request";
 const token = process.env.TOKEN;
 const endpoint = process.env.SHOPURL;
@@ -103,6 +104,8 @@ export async function customerLogin(email, password) {
 
   try {
     const data = await graphQLClient.request(mutation, variables);
+    console.log("backend", data);
+    
 
     if (data.customerAccessTokenCreate.customerUserErrors.length > 0) {
       throw new Error(
@@ -243,9 +246,9 @@ export async function fetchCustomerAddresses(accessToken) {
         email
         createdAt
         updatedAt
-        metafield(namespace: "custom", key: "wishlist") {
-          id
+        wishlist: metafield(key: "wishlist", namespace: "custom") {
           value
+          id
           description
           type
         }
@@ -781,5 +784,30 @@ export async function removeFromCart(cartId, lineId) {
     return data;
   } catch (error) {
     throw new Error(error);
+  }
+}
+
+
+export async function customerForgotPassword(email) {
+  const forgotPasswordMutation = gql`
+    mutation customerRecover($email: String!) {
+      customerRecover(email: $email) {
+        customerUserErrors {
+          message
+        }
+          userErrors {field message}
+      }
+    }
+  `;
+  const variables = { email };
+  try {
+    const data = await graphQLClient.request(forgotPasswordMutation, variables);
+    if(data.customerRecover.customerUserErrors.length>0){
+      throw new Error(`Error while resetting password: ${data.customerRecover.customerUserErrors[0].message}`)
+    }
+    return {
+  message:"password reset email sent sucessfully"};
+  } catch (error) {
+    throw new Error(error.message ||"Error while reseting password");
   }
 }

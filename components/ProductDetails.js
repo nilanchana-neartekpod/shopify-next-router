@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, Suspense, useRef } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "../components/ProductCard"; // Adjust the path as needed
 import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
 
