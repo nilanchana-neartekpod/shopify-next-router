@@ -742,3 +742,28 @@ export async function removeFromCart(cartId, lineId) {
     throw new Error(error);
   }
 }
+
+
+export async function customerForgotPassword(email) {
+  const forgotPasswordMutation = gql`
+    mutation customerRecover($email: String!) {
+      customerRecover(email: $email) {
+        customerUserErrors {
+          message
+        }
+          userErrors {field message}
+      }
+    }
+  `;
+  const variables = { email };
+  try {
+    const data = await graphQLClient.request(forgotPasswordMutation, variables);
+    if(data.customerRecover.customerUserErrors.length>0){
+      throw new Error(`Error while resetting password: ${data.customerRecover.customerUserErrors[0].message}`)
+    }
+    return {
+  message:"password reset email sent sucessfully"};
+  } catch (error) {
+    throw new Error(error.message ||"Error while reseting password");
+  }
+}
