@@ -33,10 +33,27 @@ const Header = () => {
   const wishlistDropdownRef = useRef(null);
   const [showCartDropdown, setShowCartDropdown] = useState(false); 
   const cartDrawerRef = useRef(null);
+  const currentPage = router.pathname;
+
+  useEffect(() => {
+    const handleAuthRedirect = () => {
+      if (user?.accessToken) {
+        if (currentPage === '/login') {
+          router.push('/customer');
+        }
+      } else {
+        if (!user?.accesstoken && currentPage === '/customer') {
+          router.push('/login');
+        }
+      }
+    };
+    const timeoutId = setTimeout(handleAuthRedirect);
+    return () => clearTimeout(timeoutId);
+  }, [user, currentPage, router]);
 
   useEffect(() => {
     let _cartId = sessionStorage.getItem("cartId");
-    if (_cartId) {
+    if (_cartId) { 
       setCartId(_cartId);
       cartTotal(_cartId);
     }
