@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import useGlobalStore from '../store/store';
  
 const CustomerPage = () => {
   const {user} = useAuth() ;
@@ -30,9 +31,11 @@ const CustomerPage = () => {
   // Fetch addresses when the user is available
   useEffect(() => {
     const fetchAddresses = async () => {
+      const { setWishlist } = useGlobalStore.getState();
       if (!user || !user.accessToken) return;
  
       try {
+        console.log('Fetching addresses for user:', user); 
         const response = await fetch('/api/getCustomerAddresses', {
           method: 'POST',
           headers: {
@@ -46,14 +49,10 @@ const CustomerPage = () => {
         }
  
         const data = await response.json();
-        console.log("alldata:", data);
         const addresses = data.addresses.customer.addresses.nodes;
         const orders = data.addresses.customer.orders.edges.map(orderEdge => orderEdge.node);
- 
-      console.log("Addresses:", addresses);
-      console.log("Orders:", orders);
- 
-      // Set extracted addresses and orders in the state
+      const wishlistData = JSON.parse(data.addresses.customer.metafield.value)?.wishlist || [];
+      setWishlist(wishlistData);
       setAddresses(addresses);
       setOrders(orders);
       } catch (err) {
@@ -450,4 +449,3 @@ const CustomerPage = () => {
 };
  
 export default CustomerPage;
- 

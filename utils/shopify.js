@@ -6,6 +6,9 @@ const endpoint = process.env.SHOPURL;
 const graphQLClient = new GraphQLClient(endpoint, {
   headers: { "X-Shopify-Storefront-Access-Token": token, "Content-Type": "application/json" }
 });
+const graphQLBackend = new GraphQLClient(process.env.ADMIN_API_END_POINT, {
+  headers: { 'X-Shopify-Access-Token': process.env.ADMIN_ACCESS_TOKEN, "Content-Type": "application/json" }
+});
 
 export async function searchProducts(queryString) {
   const query = gql`
@@ -122,6 +125,38 @@ export async function customerLogin(email, password) {
     throw new Error(error.message || 'Error logging in customer');
   }
 }
+export async function getMetaobjectByType() {
+  const query = gql`{
+    metaobjects(type: "Slider_card",first:10) {
+       nodes{
+        id
+        handle
+        fields {
+          key
+          value
+          reference{
+            ... on MediaImage{
+              id
+              image{
+                url
+              }
+            }
+          }
+          }
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await graphQLClient.request(query);
+    //console.log("Raw Backend Data:",  JSON.stringify(data, null, 2)); // Log the raw data
+    return data;
+  } catch (error) {
+    console.error("Error fetching metaobjects:", error.message);
+    throw new Error(error.message || "Error retrieving metaobjects");
+  }
+}
 export async function getMetaobjectById(metaobjectId) {
   const query = gql`{
     metaobject(id: "gid://shopify/Metaobject/${metaobjectId}") {
@@ -141,9 +176,7 @@ export async function getMetaobjectById(metaobjectId) {
       }
     }
   `;
-
   const variables = { id: metaobjectId };
-
   try {
     const data = await graphQLClient.request(query, variables);
     return data.metaobject;
@@ -194,6 +227,53 @@ export async function getProducts(count) {
       throw new Error(error);
     }
 }
+export async function updateMetafield(customerId, metafieldId, wishlistValue) {
+  const updateMetafieldMutation = gql`
+   mutation updateCustomerMetafields($input: CustomerInput!) {
+      customerUpdate(input: $input) {
+        customer {
+          id
+          metafields(first: 3) {
+            edges {
+              node {
+                id
+                namespace
+                key
+                value
+              }
+            }
+          }
+        }
+        userErrors {
+          message
+          field
+        }
+      }
+    }
+ 
+  `;
+  const input = {
+    id: customerId,
+    metafields: [
+      {
+        id: metafieldId,
+        value: wishlistValue,
+      },
+    ],
+  };
+
+  const variables = { input };
+
+  try {
+    const data = await graphQLBackend.request(updateMetafieldMutation, variables);
+    console.log("GraphQL Update Customer Metafields Response:", data); // Log response for debugging  
+    return [];
+
+  } catch (error) {
+    console.error("Error update metafield:", error.message);
+    throw new Error(error.data?.errors[0]?.message || error.message || "Failed to update  metafield");
+  }
+}
 
 export async function fetchCustomerAddresses(accessToken) {
   const query = gql`
@@ -208,6 +288,8 @@ export async function fetchCustomerAddresses(accessToken) {
         wishlist: metafield(key: "wishlist", namespace: "custom") {
           value
           id
+          description
+          type
         }
         addresses(first: 10) {
          nodes {
@@ -295,6 +377,7 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
+    console.log("metafield",data.customer.metafield);
     return data;  
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');

@@ -12,7 +12,7 @@ const geistMono = localFont({
 });
 
 import Head from "next/head";
-import { getProducts, getCollections } from "../utils/shopify";
+import { getProducts, getCollections, getMetaobjectByType } from "../utils/shopify";
 import ProductCard from "../components/ProductCard";
 import CollectionCard from "../components/CollectionCard";
 import Banner from "../components/home/Banner";
@@ -23,12 +23,17 @@ import Image from 'next/image';
 export const getServerSideProps = async () => {
   const data = await getProducts(8);
   const collections = await getCollections();
+  let { metaobjects } = await getMetaobjectByType({ metaobjectType: 'Slider_card'});
+  let sliderData = [];
+  if(metaobjects?.nodes){
+    sliderData = metaobjects?.nodes;
+  }
   return {
-    props: { data, collections },
+    props: { data, collections, sliderData },
   };
 };
 
-export default function Home({ data, collections }) {
+export default function Home({ data, collections, sliderData }) {
   const products = data.products.nodes;
   const collectionList = collections.collections.nodes;
   return (
@@ -63,7 +68,7 @@ export default function Home({ data, collections }) {
           </div>
         </div>
 
-        <ProductCarousel />
+        <ProductCarousel data={sliderData}/>
         {/* Video Section with Loop */}
         <div className="video-section mt-8">
           <div className="video-wrapper">
