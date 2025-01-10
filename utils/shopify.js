@@ -150,7 +150,7 @@ export async function getMetaobjectByType() {
 
   try {
     const data = await graphQLClient.request(query);
-    console.log("Raw Backend Data:",  JSON.stringify(data, null, 2)); // Log the raw data
+    //console.log("Raw Backend Data:",  JSON.stringify(data, null, 2)); // Log the raw data
     return data;
   } catch (error) {
     console.error("Error fetching metaobjects:", error.message);

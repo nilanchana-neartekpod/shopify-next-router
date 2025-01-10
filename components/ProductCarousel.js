@@ -7,38 +7,19 @@ import "swiper/css/navigation";
 import Image from 'next/image'
 import Link from 'next/link'
 
-const ProductCarousel = () => {
+const ProductCarousel = ({data}) => {
   const [isClient, setIsClient] = useState(false);
   const [slide, setSlide] = useState(0);
-  const [fetchedData, setFetchedData] = useState([]);
 
-  // Fetch data from the API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/getMetaobject", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ metaobjectType: 'Slider_card' })
-        });
-        const data = await response.json();
-        setFetchedData(data.metaobjects?.nodes || []); // Store the fetched data
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const [slideData, setSlideData] = useState(fetchedData[0]);
+  if(data.length == 0) return (<></>);
+  
+  const [slideData, setSlideData] = useState(data[0]);
 
   useEffect(() => {
-    if (fetchedData.length > 0) {
-      setSlideData(fetchedData[slide]);
+    if (data.length > 0) {
+      setSlideData(data[slide]);
     }
-  }, [slide, fetchedData]);
+  }, [slide, data]);
 
   useEffect(() => {
     setIsClient(true); // Set to true once the component is mounted
@@ -93,8 +74,8 @@ const ProductCarousel = () => {
           spaceBetween={20}
           onSlideChange={(el) => setSlide(Number(el.realIndex))}
         >
-          {fetchedData.length > 0 ? (
-            fetchedData.map((el, i) => {
+          {data.length > 0 ? (
+            data.map((el, i) => {
               const imgUrl = el?.fields?.find(field => field.key === 'slider_img')?.reference?.image?.url;
               return (
                 <SwiperSlide key={i}>
