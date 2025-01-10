@@ -20,7 +20,7 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-  const { wishlist, setWishlist } = useGlobalStore();
+  //const { wishlist, setWishlist } = useGlobalStore();
   const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
    
   
@@ -28,7 +28,8 @@ const Header = () => {
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
-  const setwishlist = useGlobalStore((state) => state.setwishlist);
+  const wishlist = useGlobalStore((state) => state.wishlist);
+  const setWishlist = useGlobalStore((state) => state.setWishlist);
   const getwishlist = useGlobalStore((state) => state.getwishlist);
 
   const router = useRouter();

@@ -40,7 +40,7 @@ const useStore = (set, get) => ({
           if (metafield) {
             set({ metafieldId: metafield.id });
             set({ customer_Id: data.addresses.customer.id });
-            set({ wishlistData: JSON.parse(metafield.value) });
+            set({ wishlist: JSON.parse(metafield.value)?.wishlist });
           }
       } catch (error) {
         console.error('Error fetching wishlist:', error);
