@@ -6,8 +6,8 @@ const endpoint = process.env.SHOPURL;
 const graphQLClient = new GraphQLClient(endpoint, {
   headers: { "X-Shopify-Storefront-Access-Token": token, "Content-Type": "application/json" }
 });
-const graphQLBackend = new GraphQLClient(process.env.endpointbackeend, {
-  headers: { 'X-Shopify-Access-Token': process.env.tokenbackend, "Content-Type": "application/json" }
+const graphQLBackend = new GraphQLClient(process.env.ADMIN_API_END_POINT, {
+  headers: { 'X-Shopify-Access-Token': process.env.ADMIN_ACCESS_TOKEN, "Content-Type": "application/json" }
 });
 
 export async function searchProducts(queryString) {
