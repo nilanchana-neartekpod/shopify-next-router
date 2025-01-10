@@ -20,13 +20,17 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const { wishlist, setWishlist } = useGlobalStore();
   const [showWishlistDropdown, setShowWishlistDropdown] = useState(false);
+   
   
-  
-  const { user,logout } = useAuth();
+  const { user, logout, accessToken } = useAuth(); 
   const cartTotal = useGlobalStore((state) => state.cartTotal);
   const quantity = useGlobalStore((state) => state.quantity);
   const cartItems = useGlobalStore((state) => state.cartItems);
+  const setwishlist = useGlobalStore((state) => state.setwishlist);
+  const getwishlist = useGlobalStore((state) => state.getwishlist);
+
   const router = useRouter();
   const profileDropdownRef = useRef(null);
   const cartDropdownRef = useRef(null);
@@ -60,6 +64,22 @@ const Header = () => {
   }, [cartId, cartTotal]);
 
   useEffect(() => {
+    getwishlist(user);
+  }, [user]);
+
+  useEffect(() => {
+    if (!accessToken) return; 
+    (async () => {
+      try {
+        const wishlistData = await fetchWishlist(accessToken);
+        setWishlist(wishlistData);
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    })();
+  }, [accessToken, setWishlist]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (cartDrawerRef.current && !cartDrawerRef.current.contains(event.target)) {
         setShowCartDrawer(false); // Close the drawer
@@ -89,6 +109,7 @@ const Header = () => {
     
     const productId = product.id.split('gid://shopify/Product/')[1];
     const productHandle = product.handle;
+
   
     // Construct the product page URL
     const productUrl = `/products/${productHandle}?id=${productId}`;
@@ -185,56 +206,16 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-6 gap-1 md:gap-5">
-          {!showSearchInput && (
-            <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
-              <GoSearch className="w-5 h-5" />
-            </button>
-          )}
-
-          {showSearchInput && (
-            <form className="hidden md:flex news-letterform" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="border rounded-md px-2 py-1"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onBlur={() => setShowSearchInput(false)}
-              />
-              <button
-                type="button"
-                className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl"
-                onClick={() => setShowSearchInput(false)} // Close search input when clicked
-              >
-                &times; {/* Close icon */}
+        {user &&
+          <div className="relative">
+              <button onClick={toggleCartDrawer} className="text-gray-800 shoppingCartIcon relative">
+                <BsCart3 className="w-5 h-5" />
+                <span>{quantity}</span>
               </button>
-            </form>
-          )}
-          {/* Search Results Display */}
-          {showSearchInput && searchQuery && (
-            <div className="absolute top-full mt-2 bg-white">
-              {searchResults.length > 0 ? (
-                <ul>
-                  {searchResults.map((product, index) => (
-                    <li key={index} className="py-1 border-b last:border-none">
-                      {product.name}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">The product is not available.</p>
-              )}
-            </div>
-          )}
-            <div className="relative">
-            <button onClick={toggleCartDrawer} className="text-gray-800 shoppingCartIcon relative">
-              <BsCart3 className="w-5 h-5" />
-              <span>{quantity}</span>
-            </button>
           </div>
-
+          }
             {/* Cart Drawer */}
-            {showCartDrawer && (
+          {showCartDrawer && (
               <div ref={cartDrawerRef} className="fixed top-0 right-0 w-80 h-full bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out mt-20">
                 <button 
                   onClick={() => setShowCartDrawer(false)} 
@@ -276,9 +257,9 @@ const Header = () => {
                   </div>
                 </div>
               </div>
-            )}
-
+          )}
           {/* Wishlist Dropdown */}
+          {user &&
           <div className="relative">
             <button onClick={toggleWishlistDropdown} className="text-gray-800">
               <AiOutlineHeart className="w-5 h-5" />
@@ -287,10 +268,71 @@ const Header = () => {
             {showWishlistDropdown && (
               <div ref={wishlistDropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md p-4">
                 {/* Wishlist content goes here */}
-                <p className="text-center text-gray-600">Your wishlist is empty.</p>
+                {wishlist && wishlist.length > 0 ? (
+                  wishlist.map((item) => (
+                    <div key={item.id} className="flex justify-between items-center mb-2">
+                      <p className="text-sm">{item.name}</p>
+                      <button
+                        className="text-red-500 hover:underline text-xs"
+                        onClick={() => {
+                          const updatedWishlist = wishlist.filter((w) => w.id !== item.id);
+                          setWishlist(updatedWishlist);
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center text-gray-600">Your wishlist is empty.</p>
+                )}             
               </div>
             )}
           </div>
+         }
+          
+          {!showSearchInput && (
+            <button onClick={toggleSearchInput} className="hidden md:flex text-gray-800">
+              <GoSearch className="w-5 h-5" />
+            </button>
+          )}
+
+          {showSearchInput && (
+            <form className="hidden md:flex news-letterform" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="text"
+                placeholder="Search..."
+                className="border rounded-md px-2 py-1"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onBlur={() => setShowSearchInput(false)}
+              />
+              <button
+                type="button"
+                className="absolute top-0 right-0 mb-2 mr-0 text-gray-600 hover:text-gray-800 text-2xl"
+                onClick={() => setShowSearchInput(false)} // Close search input when clicked
+              >
+                &times; {/* Close icon */}
+              </button>
+            </form>
+          )}
+          {/* Search Results Display */}
+          {showSearchInput && searchQuery && (
+            <div className="absolute top-full mt-2 bg-white">
+              {searchResults.length > 0 ? (
+                <ul>
+                  {searchResults.map((product, index) => (
+                    <li key={index} className="py-1 border-b last:border-none">
+                      {product.name}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">The product is not available.</p>
+              )}
+            </div>
+          )}
+          
           
           <div className="relative">
             <button onClick={toggleProfileDropdown} className="text-gray-800">
@@ -337,5 +379,3 @@ const Header = () => {
 };
 
 export default Header;
-
-
