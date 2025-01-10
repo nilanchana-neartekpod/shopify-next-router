@@ -10,44 +10,35 @@ import Link from 'next/link'
 const ProductCarousel = () => {
   const [isClient, setIsClient] = useState(false);
   const [slide, setSlide] = useState(0);
-  
+  const [fetchedData, setFetchedData] = useState([]);
 
-  const data = [
-    { 
-      id:0,
-      "img": "/men 1.svg",
-      "heading": "Shoes",
-      "sub_heading": "Mens Shirts",
-      "cta_link": "/collections/shoes"
-    },
-    {
-      id:1,
-      "img": "/electronics.svg",
-      "heading": "Electronics",
-      "sub_heading": "Smart Phones",
-      "cta_link": "/collections/electronics"
-    },
-    {
-      id:2,
-      "img": "/women.svg",
-      "heading": "Clothes",
-      "sub_heading": "Womens Clothes",
-      "cta_link": "/collections/clothes"
-    },
-    {
-      id:3,
-      "img": "/SlideImg1.png",
-      "heading": "Shoes",
-      "sub_heading": "Mens Shoes",
-      "cta_link": "/collections/shoes"
-    }
-  ];
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/getMetaobject", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ metaobjectType: 'Slider_card' })
+        });
+        const data = await response.json();
+        setFetchedData(data.metaobjects?.nodes || []); // Store the fetched data
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const [slideData, setSlideData] = useState(data[0]);
+  const [slideData, setSlideData] = useState(fetchedData[0]);
 
   useEffect(() => {
-    setSlideData(data[slide]);
-  }, [slide])
+    if (fetchedData.length > 0) {
+      setSlideData(fetchedData[slide]);
+    }
+  }, [slide, fetchedData]);
 
   useEffect(() => {
     setIsClient(true); // Set to true once the component is mounted
@@ -58,9 +49,7 @@ const ProductCarousel = () => {
   }
 
   return (
-    
     <div className="customSwiperSliderContainer py-8 md:py-12">
-      
       <div className="left pl-4 md:pl-12 pr-4 md:pr-0">
         <h2 className="font-bold mb-2">50+ Beautiful Rooms Inspiration</h2>
         <p className="text-gray-600 mb-4">
@@ -72,22 +61,29 @@ const ProductCarousel = () => {
       </div>
 
       <div className="middle px-4 md:px-0">
-        <Image
-          src={slideData.img}
-          fill={true}
-          alt={slideData.heading}
-        />
+        {slideData?.fields?.find(field => field.key === 'slider_img')?.reference?.image?.url && (
+          <Image
+            src={slideData.fields.find(field => field.key === 'slider_img').reference.image.url}
+            fill={true}
+            alt={slideData.fields.find(field => field.key === 'slider_title')?.value}
+          />
+        )}
 
         <div className="content">
-          <span className="sub_head">0{Number(slideData.id + 1)} <span>----</span> {slideData.heading} </span>
-          <span className="head">{slideData.sub_heading}</span>
-          <Link href={slideData.cta_link}>
+          <span className="sub_head">
+            {slideData?.fields?.find(field => field.key === 'slider_tag')?.value}
+          </span>
+          <span className="head">
+            {slideData?.fields?.find(field => field.key === 'slider_title')?.value}
+          </span>
+          <Link href={`/collections/${slideData?.handle}`}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M21 12H3M21 12L15 6M21 12L15 18" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
       </div>
+
       <div className="right pl-4 md:pl-0">
         <Swiper
           slidesPerView={1.2}
@@ -97,19 +93,23 @@ const ProductCarousel = () => {
           spaceBetween={20}
           onSlideChange={(el) => setSlide(Number(el.realIndex))}
         >
-          {
-            data.map((el, i) => {
-              return(
+          {fetchedData.length > 0 ? (
+            fetchedData.map((el, i) => {
+              const imgUrl = el?.fields?.find(field => field.key === 'slider_img')?.reference?.image?.url;
+              return (
                 <SwiperSlide key={i}>
                   <Image
-                    src={el.img}
+                    src={imgUrl || '/default-image.jpg'} // Fallback to a default image if imgUrl is missing
                     fill={true}
-                    alt={el.heading}
+                    alt={el?.handle || 'Slide Image'}
                   />
                 </SwiperSlide>
-              )
+              );
             })
-          }
+          ) : (
+            <div>Loading...</div> // Fallback UI when data is still being fetched
+          )}
+
         </Swiper>
       </div>
     </div>
