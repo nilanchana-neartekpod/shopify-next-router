@@ -51,7 +51,7 @@ const CustomerPage = () => {
         const data = await response.json();
         const addresses = data.addresses.customer.addresses.nodes;
         const orders = data.addresses.customer.orders.edges.map(orderEdge => orderEdge.node);
-      const wishlistData = JSON.parse(data.addresses.customer.metafield.value)?.wishlist || [];
+      const wishlistData = JSON.parse(data?.addresses?.customer?.wishlist.value)?.wishlist || [];
       setWishlist(wishlistData);
       setAddresses(addresses);
       setOrders(orders);
