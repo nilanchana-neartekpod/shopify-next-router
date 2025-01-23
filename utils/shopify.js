@@ -1,5 +1,5 @@
 // import { log } from "console";
-import { gql, GraphQLClient } from "graphql-request";
+import { gql, GraphQLClient,request } from "graphql-request";
 const token = process.env.TOKEN;
 const endpoint = process.env.SHOPURL;
 
@@ -848,5 +848,40 @@ export async function customerForgotPassword(email) {
   message:"password reset email sent sucessfully"};
   } catch (error) {
     throw new Error(error.message ||"Error while reseting password");
+  }
+}
+
+export async function createCustomerSub(email) {
+  const mutation = gql`
+    mutation customerCreate($input: CustomerInput!) {
+      customerCreate(input: $input) {
+        customer {
+          email
+        }
+        userErrors{
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  try {
+    const variables = {"input": { "email": email ,emailMarketingConsent: { marketingState: "SUBSCRIBED", marketingOptInLevel: "CONFIRMED_OPT_IN"} } };
+    
+    const data = await graphQLBackend.request(mutation,variables);
+
+    if(data.customerCreate.userErrors.length > 0) throw new Error(data.customerCreate.userErrors[0].message);
+
+    return {
+      success: true,
+      customer: data.customerCreate.customer,
+    };
+  } catch (error) {
+    console.error("Error creating customer:", error.message);
+    return {
+      success: false,
+      message: error.message || "Error creating customer",
+    };
   }
 }
