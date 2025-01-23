@@ -17,11 +17,10 @@ export default function Home() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify( email ),
+        body: JSON.stringify({email}),
       });
 
       const result = await response.json();
-      console.log(result,"xxdfvbnjmjhgsdfghj");
 
       // Handle success
       if (response.ok) {
