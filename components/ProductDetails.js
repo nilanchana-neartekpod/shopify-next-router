@@ -3,8 +3,10 @@ import Link from "next/link";
 import { useState, useEffect, Suspense, useRef } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "../components/ProductCard"; // Adjust the path as needed
+import ReviewForm from '../components/Rating';
 import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
+
 
 const ProductDetails = ({product}) => {
     const [quantity, setQuantity] = useState(0);
@@ -181,7 +183,7 @@ const ProductDetails = ({product}) => {
                         <h3 className="text-xl text-gray-700 mb-4">$ {product.priceRange.minVariantPrice.amount}</h3> 
 
                         <div className="mb-4 flex">
-                            {Array.from({ length: Number(product.rating.value) }, (_, i) => 
+                            {Array.from({ length: Number(product?.rating?.value) }, (_, i) => 
                                 <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
                                 </svg>
@@ -266,19 +268,23 @@ const ProductDetails = ({product}) => {
                     </div>
                 </div>
             </div>
+            <div className="review-section mt-12">
+                <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
+                <ReviewForm />
+            </div>
 
             <div className="px-4 md:px-12">
                 <h2 className="text-center text-xl md:text-3xl mb-4 md:mb-8">Related Products</h2>
             </div>
 
             <div className="productsList px-4 md:px-12 pb-8 md:pb-12">
-                {product.collection.reference.products.nodes.map((product) => {
+                {product?.collection?.reference?.products?.nodes?.map((product) => {
                     return <ProductCard key={product.id} product={product} />;
                 })}
             </div>
             
             <div className="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
-                <Link href={`/collections/${product.collection.reference.handle}`} className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
+                <Link href={`/collections/${product?.collection?.reference?.handle}`} className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
             </div>
             
         </div>

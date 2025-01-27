@@ -81,6 +81,45 @@ export async function createCustomer(input) {
     throw new Error(error.message || "Error creating customer");
   }
 }
+export async function createMetaobject(fields) {
+  const mutation = gql`
+    mutation MyMutation($fields: [MetaobjectFieldInput!] = ${fields}) {
+    metaobjectCreate(metaobject: {type: "review", fields: $fields}) {
+          metaobject {
+            fields {
+              value
+            }
+          }
+        userErrors {
+            field
+            message
+            code
+          }
+        }
+      }
+    `;
+
+
+  try {
+    const variables = [];
+    const data = await graphQLBackend.request(mutation, variables);
+    console.log("data"+JSON.stringify(data,null,2));
+    
+
+    if ( data.metaobjectCreate.userErrors.length > 0) {
+      throw new Error(
+        `Error creating metaobject: ${data.metaobjectCreate.userErrors[0].message}`
+      );
+    }
+
+    // Return the created customer data
+    return  data.metaobjectCreate.metaobject.fields;
+  } catch (error) {
+    throw new Error(error.message || "Error creating customer");
+  }
+}
+
+
 export async function customerLogin(email, password) {
   const mutation = gql`
     mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {

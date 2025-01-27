@@ -1,26 +1,125 @@
-import React from 'react';
-import Rating from 'react-rating'; // Assuming you're using a rating library like `react-rating`
+import React, { useState } from 'react';
+import Rating from 'react-rating';
 
-class Rating extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: props.placeholderRating || 0 }; // Initialize the value from props
+const ReviewForm = () => {
+  const [title, setTitle] = useState('');
+  const [pid, setPid] = useState('');
+  const [body, setBody] = useState('');
+  const [rating, setRating] = useState(0);
+  const [customerName, setCustomerName] = useState('');
+  const [email, setEmail] = useState('');
 
-    this.handleClick = this.handleClick.bind(this);
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  handleClick() {
-    this.setState({ value: undefined }); // Reset the rating to undefined
-  }
+    const fields = [
+      { key: 'title', value: title },
+      { key: 'pid', value: pid },
+      { key: 'body', value: body },
+      { key: 'rating', value: rating },
+      { key: 'customer_name', value: customerName },
+      { key: 'email', value: email },
+    ];
+    console.log("Submitted Fields:", fields);
 
-  render() {
-    return (
+    try {
+      const response = await fetch('/api/review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fields }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Metaobject created:', data.metaobjectFields);
+      } else {
+        console.error('Error creating metaobject:', data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-6 p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg"
+    >
       <div>
-        <Rating {...this.props} initialRating={this.state.value} />
-        <button onClick={this.handleClick}>Reset</button>
+        <label className="block text-sm font-medium mb-1">Title:</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2"
+        />
       </div>
-    );
-  }
-}
+      <div>
+        <label className="block text-sm font-medium mb-1">PID:</label>
+        <input
+          type="text"
+          value={pid}
+          onChange={(e) => setPid(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Body:</label>
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Rate this Product:</label>
+        <Rating
+          initialRating={rating}
+          onChange={(value) => setRating(value)}
+          emptySymbol={
+            <span className="text-gray-300 text-xl">&#9734;</span>
+          } // Empty star
+          fullSymbol={
+            <span className="text-yellow-400 text-xl">&#9733;</span>
+          } // Full star
+          fractions={2}
+        />
+        <p className="text-sm mt-2">Your Rating: {rating}</p>
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Customer Name:</label>
+        <input
+          type="text"
+          value={customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium mb-1">Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          className="w-full border border-gray-300 rounded p-2"
+        />
+      </div>
+      <button
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        Submit Review
+      </button>
+    </form>
+  );
+};
 
-export default Rating;
+export default ReviewForm;
