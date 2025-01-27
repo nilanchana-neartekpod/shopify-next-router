@@ -32,8 +32,8 @@ export default function Home() {
         console.log(
           `Success! You have been subscribed with email: ${result.email}`
         );
-        sessionStorage.setItem("subscribed", true); // Store subscription status in sessionStorage
-        setShowModal(false); // Close the modal after subscription
+        sessionStorage.setItem("subscribed", true); 
+        setShowModal(false); 
       } else {
         throw new Error(result.error || "Subscription failed");
       }
@@ -62,7 +62,7 @@ export default function Home() {
                 &times;
               </button>
               <img
-                src="https://ecomusnext-themesflat.vercel.app/images/item/banner-newleter.jpg" // Replace with your image URL
+                src="https://ecomusnext-themesflat.vercel.app/images/item/banner-newleter.jpg" 
                 alt="Welcome Image"
                 className="mb-6 rounded-lg shadow-lg"
               />
@@ -93,7 +93,7 @@ export default function Home() {
               <button
                 className="mt-4 text-sm text-blue-500 hover:underline hover:text-blue-800"
                 onClick={() => {
-                  sessionStorage.setItem("subscribed", true); // Set subscribed status even if they close the modal manually
+                  sessionStorage.setItem("subscribed", true);
                   setShowModal(false);
                 }}
               >
