@@ -1,76 +1,106 @@
-import React from 'react';
-import { useState } from "react"; 
-
-
+import React, { useState, useEffect } from "react";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
- 
-  
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    // Show the modal when the page loads
+    setShowModal(true);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('/api/subscribe', {
-        method: 'POST',
+      const response = await fetch("/api/subscribe", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({email}),
+        body: JSON.stringify({ email }),
       });
 
       const result = await response.json();
 
       // Handle success
       if (response.ok) {
-        console.log(`Success! You have been subscribed with email: ${result.email}`);
+        console.log(
+          `Success! You have been subscribed with email: ${result.email}`
+        );
       } else {
-        throw new Error(result.error || 'Subscription failed');
+        throw new Error(result.error || "Subscription failed");
       }
     } catch (error) {
-      console.error(`Error: ${error.message || "An error occurred while subscribing."}`);
+      console.error(
+        `Error: ${error.message || "An error occurred while subscribing."}`
+      );
     }
 
     // Reset state after the operation
     setEmail("");
     setLoading(false);
+    setShowModal(false); // Close the modal after subscription
   };
 
   return (
-    <div className="min-h-16 flex items-center justify-center mt-16">
-      <div className="relative w-full max-w-md mx-auto bg-gradient-to-r from-purple-800 via-purple-600 to-purple-400 text-white rounded-lg shadow-lg overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-70"
-          style={{
-            backgroundImage:
-              "url('https://source.unsplash.com/1600x900/?city,skyline')",
-          }}
-        ></div>
-        <div className="relative z-10 p-6 text-center">
-          <h1 className="text-2xl font-bold mb-4">Our Newsletter</h1>
-          <p className="text-sm mb-6">
-            We bring the right people together to challenge established thinking
-            and drive transformation. We will show the way to success.
-          </p>
-          <form onSubmit={handleSubmit} className="flex items-center justify-center">
-            <input
-             type="email"
-             placeholder="Enter your email..."
-             value={email}
-             onChange={(e) => setEmail(e.target.value)}
-             className="px-4 py-2 rounded-l-lg w-full max-w-[250px] text-gray-900 focus:outline-none"
-             required
-            />
-            <button
-              type="submit"
-              className="bg-purple-700 hover:bg-purple-800 px-4 py-2 rounded-r-lg"disabled={loading}
-            >
-              {loading ? "Subscribing..." : "Subscribe Now"}
-            </button>
-          </form>
+    <>
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="relative w-full max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+            <div className="relative z-10 p-6 text-center">
+              <button
+                className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                onClick={() => setShowModal(false)}
+               >
+                &times;
+              </button>
+              <img
+                src="https://ecomusnext-themesflat.vercel.app/images/item/banner-newleter.jpg" // Replace with your image URL
+                alt="Welcome Image"
+                className="mb-6 rounded-lg shadow-lg"
+              />
+              <h1 className="text-2xl font-bold mb-4">Don’t miss out</h1>
+              <p className="text-sm mb-6">
+                Be the first one to get the new product at early bird prices.
+              </p>
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col items-center"
+              >
+                <input
+                  type="email"
+                  placeholder="Enter your email..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="px-4 py-2 rounded-lg w-full max-w-[250px] text-gray-900 border border-gray-300 focus:outline-none mb-4"
+                  required
+                />
+                <button
+                  type="submit"
+                  className="bg-black text-white hover:bg-gray-800 px-4 py-2 rounded-lg w-full max-w-[250px]"
+                  disabled={loading}
+                >
+                  {loading ? "Subscribing..." : "Keep me updated"}
+                </button>
+              </form>
+              <button
+                className="mt-4 text-sm text-blue-500 hover:underline hover:text-blue-800"
+                onClick={() => setShowModal(false)}
+              >
+                Not interested
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+
+      {/* Main Page Content */}
+      <div className="min-h-screen flex items-center justify-center">
+        <h1 className="text-4xl font-bold">Welcome to Our Website</h1>
       </div>
-    </div>
+    </>
   );
 }
