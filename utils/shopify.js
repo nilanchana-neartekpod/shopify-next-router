@@ -82,31 +82,32 @@ export async function createCustomer(input) {
   }
 }
 export async function createMetaobject(fields) {
-  const mutation = gql`
-    mutation MyMutation($fields: [MetaobjectFieldInput!] = ${fields}) {
-    metaobjectCreate(metaobject: {type: "review", fields: $fields}) {
-          metaobject {
-            fields {
-              value
-            }
-          }
-        userErrors {
-            field
-            message
-            code
-          }
+ const mutation = gql`mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+    metaobjectCreate(metaobject: $metaobject) {
+      metaobject {
+        fields {
+          value
         }
       }
-    `;
-
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }`;
 
   try {
-    const variables = [];
+    const variables = {
+      "metaobject": {
+        "type": "review",
+        "fields": fields,
+        "capabilities": { publishable : {status: "ACTIVE" } }
+      }
+    };
     const data = await graphQLBackend.request(mutation, variables);
-    console.log("data"+JSON.stringify(data,null,2));
     
-
-    if ( data.metaobjectCreate.userErrors.length > 0) {
+    if(data.metaobjectCreate.userErrors.length > 0) {
       throw new Error(
         `Error creating metaobject: ${data.metaobjectCreate.userErrors[0].message}`
       );

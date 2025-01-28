@@ -270,7 +270,7 @@ const ProductDetails = ({product}) => {
             </div>
             <div className="review-section mt-12">
                 <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
-                <ReviewForm />
+                <ReviewForm productid={product.id.split('gid://shopify/Product/')[1]} />
             </div>
 
             <div className="px-4 md:px-12">

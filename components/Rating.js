@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Rating from 'react-rating';
 
-const ReviewForm = () => {
+const ReviewForm = ({productid}) => {
   const [title, setTitle] = useState('');
-  const [pid, setPid] = useState('');
+  const [pid, setPid] = useState(productid);
   const [body, setBody] = useState('');
   const [rating, setRating] = useState(0);
   const [customerName, setCustomerName] = useState('');
@@ -16,7 +16,7 @@ const ReviewForm = () => {
       { key: 'title', value: title },
       { key: 'pid', value: pid },
       { key: 'body', value: body },
-      { key: 'rating', value: rating },
+      { key: 'rating', value: rating.toString() },
       { key: 'customer_name', value: customerName },
       { key: 'email', value: email },
     ];
@@ -58,7 +58,7 @@ const ReviewForm = () => {
           className="w-full border border-gray-300 rounded p-2"
         />
       </div>
-      <div>
+      <div style={{display:"none"}}>
         <label className="block text-sm font-medium mb-1">PID:</label>
         <input
           type="text"
