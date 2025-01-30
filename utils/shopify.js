@@ -102,7 +102,7 @@ export async function createMetaobject(fields) {
       "metaobject": {
         "type": "review",
         "fields": fields,
-        "capabilities": { publishable : {status: "ACTIVE" } }
+        "capabilities": { publishable : {status: "DRAFT" } }
       }
     };
     const data = await graphQLBackend.request(mutation, variables);
@@ -195,6 +195,45 @@ export async function getMetaobjectByType() {
   } catch (error) {
     console.error("Error fetching metaobjects:", error.message);
     throw new Error(error.message || "Error retrieving metaobjects");
+  }
+}
+export async function getReviews(productId) {
+  const query = gql`
+    query MyQuery {
+      metaobjects(type: "review", first: 250, query: "display_name:${productId}") {
+        nodes {
+          product_id: field(key: "pid") {
+            value
+          }
+          product_title: field(key: "title") {
+            value
+          }
+          product_body: field(key: "body") {
+            value
+          }
+          product_rating: field(key: "rating") {
+            value
+          }
+          customer_name:field(key: "customer_name") {
+            value
+          }
+          email: field(key: "email") {
+            value
+          }
+          updatedAt
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await graphQLBackend.request(query);
+    console.log("values",data?.metaobjects?.nodes );
+    
+    return data?.metaobjects?.nodes || [];
+  } catch (error) {
+    console.error("Error fetching reviews:", error.message);
+    throw new Error(error.message || "Error retrieving reviews");
   }
 }
 export async function getMetaobjectById(metaobjectId) {
@@ -631,7 +670,6 @@ export const getProduct = async (id) => {
                         node {
                             id
                             title
-                            quantityAvailable
                             availableForSale
                             selectedOptions{
                               name

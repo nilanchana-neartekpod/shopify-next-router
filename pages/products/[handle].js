@@ -1,12 +1,13 @@
 import ProductDetails from "../../components/ProductDetails";
-import { getProduct } from "../../utils/shopify";
+import { getProduct, getReviews } from "../../utils/shopify";
 import Head from "next/head";
 import Link from "next/link";
 
-export default function Product({ product }) {
+export default function Product({ product, reviews}) {
   if(!product){
     return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">No product found: <Link className="underline text-[#0348be]" href='/products'>Visit Products Page</Link></div>
   }
+  console.log("Product Data:", product);
   return (
     <>
       <Head>
@@ -15,16 +16,23 @@ export default function Product({ product }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ProductDetails product={product} />
+      <ProductDetails product={product} reviews={reviews} />
     </>
   )
 }
 
 export const getServerSideProps = async (context) => {
+  console.log("Query ID:", context.query.id);
   const product =  await getProduct('gid://shopify/Product/'+ context.query.id);
+  const productId = context.query.id;
+  console.log("Query ID:", productId);
+
+  const reviews = await getReviews(productId); 
+  console.log("Fetched Reviews:", reviews);
   return {
     props: {
       product,
+      reviews
     },
   };
 };

@@ -8,13 +8,12 @@ import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
 
 
-const ProductDetails = ({product}) => {
+const ProductDetails = ({product, reviews}) => {
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
     const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
     const prodVariantRef = useRef(null);
-
     const [opt1, setOpt1] = useState(null);
     const [opt2, setOpt2] = useState(null);
     const [opt3, setOpt3] = useState(null);
@@ -267,6 +266,30 @@ const ProductDetails = ({product}) => {
                         <p className="text-gray-600">{product.description}</p>
                     </div>
                 </div>
+            </div>
+            <div className="mt-6">
+                <h2 className="text-xl font-semibold">Customer Reviews:</h2>
+
+                {/* Display Raw Review Data
+                <pre className="bg-gray-100 p-4 rounded text-sm text-gray-800 overflow-x-auto">
+                    {JSON.stringify(reviews, null, 2)}
+                </pre> */}
+
+                {/* Display Formatted Reviews */}
+                { reviews?.length > 0 ? (
+                    <ul className="mt-2">
+                    {reviews?.map((r, index) => (
+                        <li key={index} className="border-b py-2">
+                        <p className="text-gray-700 ">Rating: {r.rating} <span className="bg-blue-400 rounded-xl">{r?.product_rating?.value}⭐</span> </p>
+                        <p className="font-semibold text-gray-700">{r?.product_title?.value}</p>
+                        <p className="text-gray-700">{r?.product_body?.value}</p>
+                        <p className="text-sm text-gray-500">{r?.customer_name?.value} certified Customer {r?.updatedAt}</p>
+                        </li>
+                    ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-500">No reviews yet.</p>
+                )}
             </div>
             <div className="review-section mt-12">
                 <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
