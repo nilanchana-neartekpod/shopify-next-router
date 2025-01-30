@@ -566,71 +566,98 @@ export const getProduct = async (id) => {
                 title
                 description
                 priceRange {
-                    minVariantPrice {
-                        amount
-                        currencyCode
-                    }
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
                 }
                 featuredImage {
-                    url
-                    altText
+                  url
+                  altText
                 }
                 images(first: 50) {
                   nodes {
                     url
                   }
                 }
-                options(first: 100){
+                options(first: 100) {
                   name
-                  optionValues{
+                  optionValues {
                     name
                   }
                 }
-                  requiresSellingPlan
-                  
-                  sellingPlanGroups(first: 10) {
+                sellingPlanGroups(first: 10) {
                   nodes {
                     name
                     sellingPlans(first: 10) {
                       nodes {
                         id
                         name
-                        priceAdjustments
-                        {
-                        adjustmentValue
-                          {
-                            SellingPlanFixedAmountPriceAdjustment{
-                                adjustmentAmount{
-                                  amount
-                                }
+                        options {
+                          name
+                          value
+                        }
+                        priceAdjustments {
+                          adjustmentValue {
+                            ... on SellingPlanFixedAmountPriceAdjustment {
+                              adjustmentAmount {
+                                amount
                               }
-                            SellingPlanFixedPriceAdjustment{
-                                price{
-                                  amount
-                                  }
-                                }
-                            SellingPlanPercentagePriceAdjustment{
-                                adjustmentPercentage
-                                }
+                            }
+                            ... on SellingPlanPercentagePriceAdjustment {
+                              adjustmentPercentage
                             }
                           }
                         }
                       }
                     }
                   }
-                            variants(first: 100) {
-                    edges {
-                        node {
-                            id
-                            title
-                            quantityAvailable
-                            availableForSale
-                            selectedOptions{
+                }
+                variants(first: 100) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      compareAtPrice {
+                        amount
+                        currencyCode
+                      }
+                      quantityAvailable
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                      sellingPlanAllocations(first: 10) {
+                        nodes {
+                          sellingPlan {
+                            name
+                            options {
                               name
                               value
                             }
+                            id
+                            priceAdjustments {
+                              adjustmentValue {
+                                ... on SellingPlanFixedAmountPriceAdjustment {
+                                  adjustmentAmount {
+                                    amount
+                                  }
+                                }
+                                ... on SellingPlanPercentagePriceAdjustment {
+                                  adjustmentPercentage
+                                }
+                              }
+                            }
+                          }
                         }
+                      }
                     }
+                  }
                 }
                 rating: metafield(key: "rating", namespace: "custom") {
                   value
@@ -650,10 +677,10 @@ export const getProduct = async (id) => {
                           handle
                           title
                           priceRange {
-                              minVariantPrice {
-                                  amount
-                                  currencyCode
-                              }
+                            minVariantPrice {
+                              amount
+                              currencyCode
+                            }
                           }
                         }
                       }
@@ -677,9 +704,15 @@ export const getProduct = async (id) => {
     }
 };
 
-export const addToCart = async (itemId, quantity) => {
+export const addToCart = async (itemId, quantity, sellingPlanId) => {
     const createCartMutation = gql`mutation createCart($cartInput: CartInput){ cartCreate(input: $cartInput){ cart{ id } } }`;
-    const variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId } ] } };
+    let variables = null;
+
+    if(sellingPlanId){
+      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, sellingPlanId } ] } }
+    }else{
+      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId } ] } }
+    }
 
     try {
       return await graphQLClient.request(createCartMutation, variables);
@@ -688,17 +721,32 @@ export const addToCart = async (itemId, quantity) => {
     }
 }
 
-export async function updateCart(cartId, itemId, quantity) {
+export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
     const updateCartMutation = gql`mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id } } }`;
-    const variables = {
-      cartId: cartId,
-      lines: [
-        {
-          quantity: parseInt(quantity),
-          merchandiseId: itemId,
-        },
-      ],
-    };
+    let variables = null;
+
+    if(sellingPlanId){
+      variables = {
+        cartId: cartId,
+        lines: [
+          {
+            quantity: parseInt(quantity),
+            merchandiseId: itemId,
+            sellingPlanId
+          },
+        ],
+      };
+    }else{
+      variables = {
+        cartId: cartId,
+        lines: [
+          {
+            quantity: parseInt(quantity),
+            merchandiseId: itemId,
+          },
+        ],
+      };
+    }
 
     try {
       const data = await graphQLClient.request(updateCartMutation, variables);

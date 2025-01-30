@@ -12,7 +12,9 @@ const ProductDetails = ({product}) => {
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
     const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
     const prodVariantRef = useRef(null);
-    const [selectedOffer, setSelectedOffer] = useState(""); // Add this line to manage the selected offer
+    const [selectedOffer, setSelectedOffer] = useState(null); // Add this line to manage the selected offer
+    const [varPrice, setVarPrice] = useState(product.variants?.edges[0]?.node?.price);
+    const [varCompPrice, setVarCompPrice] = useState(product.variants?.edges[0]?.node?.compareAtPrice);
 
     const handleSellingPlanChange = (plan) => {
         setSelectedOffer(plan); // Set the selected offer (or selling plan)
@@ -87,7 +89,37 @@ const ProductDetails = ({product}) => {
                 setAvailableForSale(false);
             }
             if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            
+            // let curVar = product.variants.edges.filter(function(o) {
+            //     return o.node.id === selectedVariant;
+            // })
+            // let amt = curVar[0]?.node?.price?.amount;
+            // let compAmt = curVar[0]?.node?.compareAtPrice?.amount;
+            
+            // if(selectedOffer){
+            //     if(selectedOffer.priceAdjustments){
+            //         if(selectedOffer.priceAdjustments[0]?.adjustmentValue){
+            //             if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
+            //                 if(amt){
+            //                     let _amt = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+            //                     if(_amt){
+            //                         setVarPrice({amount: Number(amt) - Number(_amt)});
+            //                     }
+            //                 }
+            //                 if(compAmt){
+            //                     let _cmpamt = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+            //                     if(_cmpamt){
+            //                         setVarCompPrice({amount: Number(compAmt) - Number(_cmpamt)});
+            //                     }
+            //                 }
+            //             }
+            //             if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
+
+            //             }
+            //         }
+            //     }
+            // }
+            
         }else if(opt1 && !opt2 && !opt3){
             let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1));
             if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
@@ -98,7 +130,7 @@ const ProductDetails = ({product}) => {
             if(variant) setSelectedVariant(variant.node.id);
             console.log(variant);
         }
-    },[availableForSale, selectedVariant, opt1, opt2, opt3]);
+    },[availableForSale, selectedVariant, opt1, opt2, opt3, selectedOffer, varPrice, varCompPrice]);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -137,13 +169,24 @@ const ProductDetails = ({product}) => {
 
     const handleAddToCart = async () => {
         let cartId = sessionStorage.getItem("cartId");
+        
+        let sellPlanId = null;
+        if(selectedOffer){
+            sellPlanId = selectedOffer.id;
+        }
+
         if (quantity > 0) {
           if (cartId) {
+
+            let bodyData = { cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' };
+            if(sellPlanId){
+                bodyData.sellingPlanId = sellPlanId;
+            }
 
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' })
+                body: JSON.stringify(bodyData)
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -153,10 +196,15 @@ const ProductDetails = ({product}) => {
             setQuantity(0);
           } else {
 
+            let bodyData = { varId: selectedVariant, quantity, type: 'ADD_TO_CART' };
+            if(sellPlanId){
+                bodyData.sellingPlanId = sellPlanId;
+            }
+
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ varId: selectedVariant, quantity, type: 'ADD_TO_CART' })
+                body: JSON.stringify(bodyData)
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -183,7 +231,10 @@ const ProductDetails = ({product}) => {
                     </nav>
                     <div>
                         <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
-                        <h3 className="text-xl text-gray-700 mb-4">$ {product.priceRange.minVariantPrice.amount}</h3> 
+                        <h3 className="text-xl text-gray-700 mb-4">
+                            <span className={`${varCompPrice ? 'line-through text-[#7d7d7d]' : ''}`}> $ {varPrice?.amount}</span> 
+                            { varCompPrice?.amount && <span> $ {varCompPrice?.amount}</span> }
+                        </h3> 
 
                         <div className="mb-4 flex">
                             {Array.from({ length: Number(product.rating.value) }, (_, i) => 
@@ -206,29 +257,50 @@ const ProductDetails = ({product}) => {
                             </button>
                        </div>
                        <div className="mt-5">
-                        <h4 className="text-lg font-semibold">Choose an Offer:</h4>
+                        { product.sellingPlanGroups.nodes.length > 0 && <h4 className="text-lg font-semibold">Choose an Offer:</h4> }
                         <div className="flex flex-col mt-4">
-                        {JSON.stringify(product.sellingPlanGroups.nodes)}
-                        {product.sellingPlanGroups.length > 0 ? (
-                            product.sellingPlanGroups.nodes.map((group, index) => (
-                            group.sellingPlans.nodes.map((data, index) => (
-                                <div key={index}>
-                                <h5 className="font-semibold">{data.name}</h5>
-                                {group.plans.map((plan, i) => (
-                                    <label key={i} className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name="offer"
-                                        value={plan.id}
-                                        onChange={() => handleSellingPlanChange(plan)}
-                                        className="w-4 h-4"
-                                    />
-                                    <span>{plan.name} - ${plan.price.amount} (save {plan.discountPercentage}%)</span>
-                                    </label>
-                                ))}
-                                </div>
-                            ))
-                            ))
+                        {product?.sellingPlanGroups.nodes ? (
+                            <div className="sellingPlans flex flex-col gap-4">
+                                { product.sellingPlanGroups.nodes.length > 0 && 
+                                    <div>
+                                        <div>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="offer"
+                                                    value={"null"}
+                                                    onChange={() => handleSellingPlanChange(null)}
+                                                    style={{height:"20px", width:'20px'}}
+                                                    defaultChecked={"checked"}
+                                                />
+                                                <span>One Time Subscription</span>
+                                            </label>
+                                        </div>
+                                    </div> 
+                                }
+                                { product.sellingPlanGroups.nodes.map((group, index) => (
+                                    <div key={index}>
+                                        {
+                                            group.sellingPlans.nodes.map((data, _i) => (
+                                                <div key={_i}>
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="offer"
+                                                            value={data.id}
+                                                            onChange={() => handleSellingPlanChange(data)}
+                                                            style={{height:"20px", width:'20px'}}
+                                                        />
+                                                        <span>{data.name}</span>
+                                                    </label>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                    
+                                )) }
+                            </div>
+                            
                         ) : (
                             <p>No subscription options available</p>
                         )}
