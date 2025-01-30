@@ -12,6 +12,11 @@ const ProductDetails = ({product}) => {
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
     const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
     const prodVariantRef = useRef(null);
+    const [selectedOffer, setSelectedOffer] = useState(""); // Add this line to manage the selected offer
+
+    const handleSellingPlanChange = (plan) => {
+        setSelectedOffer(plan); // Set the selected offer (or selling plan)
+    };
 
     const [opt1, setOpt1] = useState(null);
     const [opt2, setOpt2] = useState(null);
@@ -200,6 +205,36 @@ const ProductDetails = ({product}) => {
                                 +
                             </button>
                        </div>
+                       <div className="mt-5">
+                        <h4 className="text-lg font-semibold">Choose an Offer:</h4>
+                        <div className="flex flex-col mt-4">
+                        {JSON.stringify(product.sellingPlanGroups.nodes)}
+                        {product.sellingPlanGroups.length > 0 ? (
+                            product.sellingPlanGroups.nodes.map((group, index) => (
+                            group.sellingPlans.nodes.map((data, index) => (
+                                <div key={index}>
+                                <h5 className="font-semibold">{data.name}</h5>
+                                {group.plans.map((plan, i) => (
+                                    <label key={i} className="flex items-center gap-2">
+                                    <input
+                                        type="radio"
+                                        name="offer"
+                                        value={plan.id}
+                                        onChange={() => handleSellingPlanChange(plan)}
+                                        className="w-4 h-4"
+                                    />
+                                    <span>{plan.name} - ${plan.price.amount} (save {plan.discountPercentage}%)</span>
+                                    </label>
+                                ))}
+                                </div>
+                            ))
+                            ))
+                        ) : (
+                            <p>No subscription options available</p>
+                        )}
+                        </div>
+
+                    </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
                         {availableForSale && selectedVariant ? (
@@ -215,7 +250,6 @@ const ProductDetails = ({product}) => {
                             </Link>
                         )}
                     </div>
-
                     {product.options.length > 0 && (
                         <div className="gap-4 flex flex-col" ref={prodVariantRef}>
                             {product.options.map((edge,i) => (

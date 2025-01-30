@@ -586,7 +586,39 @@ export const getProduct = async (id) => {
                     name
                   }
                 }
-                variants(first: 100) {
+                  requiresSellingPlan
+                  
+                  sellingPlanGroups(first: 10) {
+                  nodes {
+                    name
+                    sellingPlans(first: 10) {
+                      nodes {
+                        id
+                        name
+                        priceAdjustments
+                        {
+                        adjustmentValue
+                          {
+                            SellingPlanFixedAmountPriceAdjustment{
+                                adjustmentAmount{
+                                  amount
+                                }
+                              }
+                            SellingPlanFixedPriceAdjustment{
+                                price{
+                                  amount
+                                  }
+                                }
+                            SellingPlanPercentagePriceAdjustment{
+                                adjustmentPercentage
+                                }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                            variants(first: 100) {
                     edges {
                         node {
                             id
@@ -637,6 +669,8 @@ export const getProduct = async (id) => {
     
     try {
       const data = await graphQLClient.request(productQuery, variables);
+      const sp=
+      console.log("colle1",data);
       return data.product;
     } catch (error) {
       throw new Error(error);
