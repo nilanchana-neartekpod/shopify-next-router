@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "../components/ProductCard"; // Adjust the path as needed
 import ImageGallery from "react-image-gallery";
@@ -12,6 +12,54 @@ const ProductDetails = ({product}) => {
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
     const [availableForSale, setAvailableForSale] = useState(product.variants.edges[0].node.availableForSale);
     const prodVariantRef = useRef(null);
+    const [selectedOffer, setSelectedOffer] = useState(null); // Add this line to manage the selected offer
+    const [varPrice, setVarPrice] = useState(product.variants?.edges[0]?.node?.price);
+    const [varCompPrice, setVarCompPrice] = useState(product.variants?.edges[0]?.node?.compareAtPrice);
+
+    const handleSellingPlanChange = (plan) => {
+        setSelectedOffer(plan); // Set the selected offer (or selling plan);
+
+        if(product.options.length === 1 && product.options[0]?.name === 'Title'){
+            if(product.options[0]?.optionValues[0]?.name === 'Default Title'){
+                let amt = product.variants?.edges[0]?.node?.price?.amount;
+                let compAmt = product.variants?.edges[0]?.node?.compareAtPrice?.amount;
+                if(!plan){
+                    setVarPrice({ amount: amt});
+                    setVarCompPrice({amount: compAmt});
+                }else{
+                    updateBaseAndSellingPlans(plan, amt, compAmt);
+                }
+            }
+        }
+
+    };
+
+    const updateBaseAndSellingPlans = (plan, amt, compAmt) =>{
+        if(plan.priceAdjustments){
+            if(plan.priceAdjustments[0]?.adjustmentValue){
+                if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
+                    let amtDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+                    if(amt && amtDiscount){
+                        setVarPrice({amount: Number(amt) - Number(amtDiscount)});
+                    }
+                    if(compAmt && amtDiscount){
+                        setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
+                    }
+                }
+                if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
+                    let prtgDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
+                    if(amt && prtgDiscount){
+                        let discountAmt = (( prtgDiscount / 100 ) * amt );
+                        setVarPrice({amount: Number(amt) - Number(discountAmt)});
+                    }
+                    if(compAmt && prtgDiscount){
+                        let discountAmt = (( prtgDiscount / 100 ) * compAmt );
+                        setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
+                    }
+                }
+            }
+        }
+    }
 
     const [opt1, setOpt1] = useState(null);
     const [opt2, setOpt2] = useState(null);
@@ -26,6 +74,17 @@ const ProductDetails = ({product}) => {
             setOpt3(_val);
         }
     }
+
+    const getPrices = useCallback((variant) => {
+        let amt = variant?.price?.amount;
+        let compAmt = variant?.compareAtPrice?.amount;
+        if(selectedOffer){
+            updateBaseAndSellingPlans(selectedOffer, amt, compAmt);
+        }else{
+            setVarPrice({amount: amt});
+            setVarCompPrice({amount: compAmt });
+        }
+    }, [selectedOffer, selectedVariant]);
 
     useEffect(() => {
         let opt1_len = prodVariantRef.current?.querySelectorAll("[name='variantOption0']");
@@ -72,8 +131,7 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            if(variant) { setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }else if(opt1 && opt2 && !opt3){
             let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2));
             if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
@@ -81,8 +139,7 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            if(variant){ setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }else if(opt1 && !opt2 && !opt3){
             let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1));
             if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
@@ -90,10 +147,9 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            if(variant) { setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }
-    },[availableForSale, selectedVariant, opt1, opt2, opt3]);
+    },[availableForSale, selectedVariant, opt1, opt2, opt3, getPrices]);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -132,13 +188,24 @@ const ProductDetails = ({product}) => {
 
     const handleAddToCart = async () => {
         let cartId = sessionStorage.getItem("cartId");
+        
+        let sellPlanId = null;
+        if(selectedOffer){
+            sellPlanId = selectedOffer.id;
+        }
+
         if (quantity > 0) {
           if (cartId) {
+
+            let bodyData = { cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' };
+            if(sellPlanId){
+                bodyData.sellingPlanId = sellPlanId;
+            }
 
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' })
+                body: JSON.stringify(bodyData)
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -148,10 +215,15 @@ const ProductDetails = ({product}) => {
             setQuantity(0);
           } else {
 
+            let bodyData = { varId: selectedVariant, quantity, type: 'ADD_TO_CART' };
+            if(sellPlanId){
+                bodyData.sellingPlanId = sellPlanId;
+            }
+
             let settings = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ varId: selectedVariant, quantity, type: 'ADD_TO_CART' })
+                body: JSON.stringify(bodyData)
             }
             let response = await fetch('/api/cart', settings);
             let data = await response.json();
@@ -178,7 +250,10 @@ const ProductDetails = ({product}) => {
                     </nav>
                     <div>
                         <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
-                        <h3 className="text-xl text-gray-700 mb-4">$ {product.priceRange.minVariantPrice.amount}</h3> 
+                        <h3 className="text-xl text-gray-700 mb-4">
+                            { varCompPrice?.amount && <span className={`line-through text-[#7d7d7d]`}> $ {varCompPrice?.amount}</span>  }
+                            { varPrice?.amount && <span> $ {varPrice?.amount}</span> }
+                        </h3> 
 
                         <div className="mb-4 flex">
                             {Array.from({ length: Number(product.rating.value) }, (_, i) => 
@@ -200,6 +275,57 @@ const ProductDetails = ({product}) => {
                                 +
                             </button>
                        </div>
+                       <div className="mt-5">
+                        { product.sellingPlanGroups.nodes.length > 0 && <h4 className="text-lg font-semibold">Choose an Offer:</h4> }
+                        <div className="flex flex-col mt-4">
+                        {product?.sellingPlanGroups.nodes ? (
+                            <div className="sellingPlans flex flex-col gap-4">
+                                { product.sellingPlanGroups.nodes.length > 0 && 
+                                    <div>
+                                        <div>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="radio"
+                                                    name="offer"
+                                                    value={"null"}
+                                                    onChange={() => handleSellingPlanChange(null)}
+                                                    style={{height:"20px", width:'20px'}}
+                                                    defaultChecked={"checked"}
+                                                />
+                                                <span>One Time Subscription</span>
+                                            </label>
+                                        </div>
+                                    </div> 
+                                }
+                                { product.sellingPlanGroups.nodes.map((group, index) => (
+                                    <div key={index}>
+                                        {
+                                            group.sellingPlans.nodes.map((data, _i) => (
+                                                <div key={_i}>
+                                                    <label className="flex items-center gap-2 cursor-pointer">
+                                                        <input
+                                                            type="radio"
+                                                            name="offer"
+                                                            value={data.id}
+                                                            onChange={() => handleSellingPlanChange(data)}
+                                                            style={{height:"20px", width:'20px'}}
+                                                        />
+                                                        <span>{data.name}</span>
+                                                    </label>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                    
+                                )) }
+                            </div>
+                            
+                        ) : (
+                            <p>No subscription options available</p>
+                        )}
+                        </div>
+
+                    </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
                         {availableForSale && selectedVariant ? (
@@ -215,7 +341,6 @@ const ProductDetails = ({product}) => {
                             </Link>
                         )}
                     </div>
-
                     {product.options.length > 0 && (
                         <div className="gap-4 flex flex-col" ref={prodVariantRef}>
                             {product.options.map((edge,i) => (
@@ -253,7 +378,7 @@ const ProductDetails = ({product}) => {
                                     className="border border-gray-300 rounded px-3 py-2 w-1/2"
                                 >
                                     {product.variants.edges.map(edge => (
-                                        <option key={edge.node.id} value={edge.node.id}>
+                                        <option key={edge.node.id} data-cprice={edge.node?.compareAtPrice?.amount} data-price={edge.node?.price?.amount} value={edge.node.id}>
                                             {edge.node.title}
                                         </option>
                                     ))}

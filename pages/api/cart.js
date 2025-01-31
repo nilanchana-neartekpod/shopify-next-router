@@ -16,14 +16,14 @@ export default async function handler(req, res) {
   
   } else if(req.method === 'POST' && req.body.type === 'ADD_TO_CART'){
 
-    let {varId, quantity} = req.body;
-    let data = await addToCart(varId, quantity);
+    let {varId, quantity, sellingPlanId} = req.body;
+    let data = await addToCart(varId, quantity, sellingPlanId);
     res.status(200).json({ cartId: data.cartCreate.cart.id });
   
   } else if(req.method === 'POST' && req.body.type === 'UPDATE_CART'){
 
-    let {cartId, varId, quantity} = req.body;
-    let data = await updateCart(cartId, varId, quantity);
+    let {cartId, varId, quantity, sellingPlanId} = req.body;
+    let data = await updateCart(cartId, varId, quantity, sellingPlanId);
     res.status(200).json({ cartId: data.cartLinesAdd.cart.id });
 
   } else {
