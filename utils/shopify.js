@@ -696,8 +696,6 @@ export const getProduct = async (id) => {
     
     try {
       const data = await graphQLClient.request(productQuery, variables);
-      const sp=
-      console.log("colle1",data);
       return data.product;
     } catch (error) {
       throw new Error(error);

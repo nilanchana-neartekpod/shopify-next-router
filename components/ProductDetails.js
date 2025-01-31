@@ -232,8 +232,8 @@ const ProductDetails = ({product}) => {
                     <div>
                         <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
                         <h3 className="text-xl text-gray-700 mb-4">
-                            <span className={`${varCompPrice ? 'line-through text-[#7d7d7d]' : ''}`}> $ {varPrice?.amount}</span> 
-                            { varCompPrice?.amount && <span> $ {varCompPrice?.amount}</span> }
+                            { varCompPrice?.amount && <span className={`line-through text-[#7d7d7d]`}> $ {varCompPrice?.amount}</span>  }
+                            { varPrice?.amount && <span> $ {varPrice?.amount}</span> }
                         </h3> 
 
                         <div className="mb-4 flex">
