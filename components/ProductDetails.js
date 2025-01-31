@@ -27,45 +27,39 @@ const ProductDetails = ({product}) => {
                     setVarPrice({ amount: amt});
                     setVarCompPrice({amount: compAmt});
                 }else{
-                    
-                    if(plan.priceAdjustments){
-                        if(plan.priceAdjustments[0]?.adjustmentValue){
-                            if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
-                                let amtDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
-                                if(amt){
-                                    if(amtDiscount){
-                                        setVarPrice({amount: Number(amt) - Number(amtDiscount)});
-                                    }
-                                }
-                                if(compAmt){
-                                    if(amtDiscount){
-                                        setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
-                                    }
-                                }
-                            }
-                            if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
-                                let prtgDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
-                                if(amt){
-                                    if(prtgDiscount){
-                                        let discountAmt = (( prtgDiscount / 100 ) * amt );
-                                        setVarPrice({amount: Number(amt) - Number(discountAmt)});
-                                    }
-                                }
-                                if(compAmt){
-                                    if(prtgDiscount){
-                                        let discountAmt = (( prtgDiscount / 100 ) * compAmt );
-                                        setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
-                                    }
-                                }
-                            }
-                        }
-                    }
-
+                    updateBaseAndSellingPlans(plan, amt, compAmt);
                 }
             }
         }
 
     };
+
+    const updateBaseAndSellingPlans = (plan, amt, compAmt) =>{
+        if(plan.priceAdjustments){
+            if(plan.priceAdjustments[0]?.adjustmentValue){
+                if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
+                    let amtDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+                    if(amt && amtDiscount){
+                        setVarPrice({amount: Number(amt) - Number(amtDiscount)});
+                    }
+                    if(compAmt && amtDiscount){
+                        setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
+                    }
+                }
+                if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
+                    let prtgDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
+                    if(amt && prtgDiscount){
+                        let discountAmt = (( prtgDiscount / 100 ) * amt );
+                        setVarPrice({amount: Number(amt) - Number(discountAmt)});
+                    }
+                    if(compAmt && prtgDiscount){
+                        let discountAmt = (( prtgDiscount / 100 ) * compAmt );
+                        setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
+                    }
+                }
+            }
+        }
+    }
 
     const [opt1, setOpt1] = useState(null);
     const [opt2, setOpt2] = useState(null);
@@ -82,46 +76,13 @@ const ProductDetails = ({product}) => {
     }
 
     const getPrices = useCallback((variant) => {
-       
         let amt = variant?.price?.amount;
         let compAmt = variant?.compareAtPrice?.amount;
-        
         if(selectedOffer){
-            if(selectedOffer.priceAdjustments){
-                if(selectedOffer.priceAdjustments[0]?.adjustmentValue){
-                    if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
-                        let amtDiscount = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
-                        if(amt){
-                            if(amtDiscount){
-                                setVarPrice({amount: Number(amt) - Number(amtDiscount)});
-                            }
-                        }
-                        if(compAmt){
-                            if(amtDiscount){
-                                setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
-                            }
-                        }
-                    }
-                    if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
-                        let prtgDiscount = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
-                        if(amt){
-                            if(prtgDiscount){
-                                let discountAmt = (( prtgDiscount / 100 ) * amt );
-                                setVarPrice({amount: Number(amt) - Number(discountAmt)});
-                            }
-                        }
-                        if(compAmt){
-                            if(prtgDiscount){
-                                let discountAmt = (( prtgDiscount / 100 ) * compAmt );
-                                setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
-                            }
-                        }
-                    }
-                }
-            }
+            updateBaseAndSellingPlans(selectedOffer, amt, compAmt);
         }else{
-            setVarPrice({amount: variant?.price?.amount});
-            setVarCompPrice({amount: variant?.compareAtPrice?.amount});
+            setVarPrice({amount: amt});
+            setVarCompPrice({amount: compAmt });
         }
     }, [selectedOffer, selectedVariant]);
 
