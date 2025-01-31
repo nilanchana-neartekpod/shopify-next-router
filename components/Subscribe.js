@@ -6,8 +6,11 @@ export default function Home() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    // Show the modal when the page loads
-    setShowModal(true);
+    // Check session storage to determine if the modal should be shown
+    const isSubscribed = sessionStorage.getItem("subscribed");
+    if (!isSubscribed) {
+      setShowModal(true);
+    }
   }, []);
 
   const handleSubmit = async (e) => {
@@ -29,6 +32,8 @@ export default function Home() {
         console.log(
           `Success! You have been subscribed with email: ${result.email}`
         );
+        sessionStorage.setItem("subscribed", true); 
+        setShowModal(false); 
       } else {
         throw new Error(result.error || "Subscription failed");
       }
@@ -41,7 +46,6 @@ export default function Home() {
     // Reset state after the operation
     setEmail("");
     setLoading(false);
-    setShowModal(false); // Close the modal after subscription
   };
 
   return (
@@ -54,11 +58,11 @@ export default function Home() {
               <button
                 className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
                 onClick={() => setShowModal(false)}
-               >
+              >
                 &times;
               </button>
               <img
-                src="https://ecomusnext-themesflat.vercel.app/images/item/banner-newleter.jpg" // Replace with your image URL
+                src="https://ecomusnext-themesflat.vercel.app/images/item/banner-newleter.jpg" 
                 alt="Welcome Image"
                 className="mb-6 rounded-lg shadow-lg"
               />
@@ -88,7 +92,10 @@ export default function Home() {
               </form>
               <button
                 className="mt-4 text-sm text-blue-500 hover:underline hover:text-blue-800"
-                onClick={() => setShowModal(false)}
+                onClick={() => {
+                  sessionStorage.setItem("subscribed", true);
+                  setShowModal(false);
+                }}
               >
                 Not interested
               </button>
@@ -96,11 +103,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Main Page Content */}
-      <div className="min-h-screen flex items-center justify-center">
-        <h1 className="text-4xl font-bold">Welcome to Our Website</h1>
-      </div>
     </>
   );
 }
