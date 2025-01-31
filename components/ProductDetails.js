@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "../components/ProductCard"; // Adjust the path as needed
 import ImageGallery from "react-image-gallery";
@@ -17,7 +17,54 @@ const ProductDetails = ({product}) => {
     const [varCompPrice, setVarCompPrice] = useState(product.variants?.edges[0]?.node?.compareAtPrice);
 
     const handleSellingPlanChange = (plan) => {
-        setSelectedOffer(plan); // Set the selected offer (or selling plan)
+        setSelectedOffer(plan); // Set the selected offer (or selling plan);
+
+        if(product.options.length === 1 && product.options[0]?.name === 'Title'){
+            if(product.options[0]?.optionValues[0]?.name === 'Default Title'){
+                let amt = product.variants?.edges[0]?.node?.price?.amount;
+                let compAmt = product.variants?.edges[0]?.node?.compareAtPrice?.amount;
+                if(!plan){
+                    setVarPrice({ amount: amt});
+                    setVarCompPrice({amount: compAmt});
+                }else{
+                    
+                    if(plan.priceAdjustments){
+                        if(plan.priceAdjustments[0]?.adjustmentValue){
+                            if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
+                                let amtDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+                                if(amt){
+                                    if(amtDiscount){
+                                        setVarPrice({amount: Number(amt) - Number(amtDiscount)});
+                                    }
+                                }
+                                if(compAmt){
+                                    if(amtDiscount){
+                                        setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
+                                    }
+                                }
+                            }
+                            if(plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
+                                let prtgDiscount = plan.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
+                                if(amt){
+                                    if(prtgDiscount){
+                                        let discountAmt = (( prtgDiscount / 100 ) * amt );
+                                        setVarPrice({amount: Number(amt) - Number(discountAmt)});
+                                    }
+                                }
+                                if(compAmt){
+                                    if(prtgDiscount){
+                                        let discountAmt = (( prtgDiscount / 100 ) * compAmt );
+                                        setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
     };
 
     const [opt1, setOpt1] = useState(null);
@@ -33,6 +80,50 @@ const ProductDetails = ({product}) => {
             setOpt3(_val);
         }
     }
+
+    const getPrices = useCallback((variant) => {
+       
+        let amt = variant?.price?.amount;
+        let compAmt = variant?.compareAtPrice?.amount;
+        
+        if(selectedOffer){
+            if(selectedOffer.priceAdjustments){
+                if(selectedOffer.priceAdjustments[0]?.adjustmentValue){
+                    if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
+                        let amtDiscount = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
+                        if(amt){
+                            if(amtDiscount){
+                                setVarPrice({amount: Number(amt) - Number(amtDiscount)});
+                            }
+                        }
+                        if(compAmt){
+                            if(amtDiscount){
+                                setVarCompPrice({amount: Number(compAmt) - Number(amtDiscount)});
+                            }
+                        }
+                    }
+                    if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
+                        let prtgDiscount = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage;
+                        if(amt){
+                            if(prtgDiscount){
+                                let discountAmt = (( prtgDiscount / 100 ) * amt );
+                                setVarPrice({amount: Number(amt) - Number(discountAmt)});
+                            }
+                        }
+                        if(compAmt){
+                            if(prtgDiscount){
+                                let discountAmt = (( prtgDiscount / 100 ) * compAmt );
+                                setVarCompPrice({amount: Number(compAmt) - Number(discountAmt)});
+                            }
+                        }
+                    }
+                }
+            }
+        }else{
+            setVarPrice({amount: variant?.price?.amount});
+            setVarCompPrice({amount: variant?.compareAtPrice?.amount});
+        }
+    }, [selectedOffer, selectedVariant]);
 
     useEffect(() => {
         let opt1_len = prodVariantRef.current?.querySelectorAll("[name='variantOption0']");
@@ -79,8 +170,7 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            if(variant) { setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }else if(opt1 && opt2 && !opt3){
             let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1) && variant.node.selectedOptions.some(option => option.value == opt2));
             if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
@@ -88,38 +178,7 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            
-            // let curVar = product.variants.edges.filter(function(o) {
-            //     return o.node.id === selectedVariant;
-            // })
-            // let amt = curVar[0]?.node?.price?.amount;
-            // let compAmt = curVar[0]?.node?.compareAtPrice?.amount;
-            
-            // if(selectedOffer){
-            //     if(selectedOffer.priceAdjustments){
-            //         if(selectedOffer.priceAdjustments[0]?.adjustmentValue){
-            //             if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount){
-            //                 if(amt){
-            //                     let _amt = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
-            //                     if(_amt){
-            //                         setVarPrice({amount: Number(amt) - Number(_amt)});
-            //                     }
-            //                 }
-            //                 if(compAmt){
-            //                     let _cmpamt = selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentAmount?.amount;
-            //                     if(_cmpamt){
-            //                         setVarCompPrice({amount: Number(compAmt) - Number(_cmpamt)});
-            //                     }
-            //                 }
-            //             }
-            //             if(selectedOffer.priceAdjustments[0]?.adjustmentValue?.adjustmentPercentage){
-
-            //             }
-            //         }
-            //     }
-            // }
-            
+            if(variant){ setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }else if(opt1 && !opt2 && !opt3){
             let variant = product.variants.edges.find(variant => variant.node.selectedOptions.some(option => option.value == opt1));
             if(variant && variant.node.quantityAvailable > 0 && variant.node.availableForSale){
@@ -127,10 +186,9 @@ const ProductDetails = ({product}) => {
             }else{
                 setAvailableForSale(false);
             }
-            if(variant) setSelectedVariant(variant.node.id);
-            console.log(variant);
+            if(variant) { setSelectedVariant(variant.node.id); getPrices(variant?.node); }
         }
-    },[availableForSale, selectedVariant, opt1, opt2, opt3, selectedOffer, varPrice, varCompPrice]);
+    },[availableForSale, selectedVariant, opt1, opt2, opt3, getPrices]);
 
     const cartTotal = useGlobalStore((state) => state.cartTotal);
 
@@ -359,7 +417,7 @@ const ProductDetails = ({product}) => {
                                     className="border border-gray-300 rounded px-3 py-2 w-1/2"
                                 >
                                     {product.variants.edges.map(edge => (
-                                        <option key={edge.node.id} value={edge.node.id}>
+                                        <option key={edge.node.id} data-cprice={edge.node?.compareAtPrice?.amount} data-price={edge.node?.price?.amount} value={edge.node.id}>
                                             {edge.node.title}
                                         </option>
                                     ))}
