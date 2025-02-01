@@ -12,7 +12,7 @@ const ProductCard = ({product, customerId}) => {
     const addToWishlist = useGlobalStore((state) => state.addToWishlist);
     // const isInWishlist = Array.isArray(wishlist) && wishlist.includes(product.id);
     const handleToggle = () => toggleWishlistItem(product.id, customerId);
-    const handleWishlist = async (pid) => {
+    const handleWishlist = async (pid, name, featuredImage ) => {
       console.log('pr0duct ID:', pid);
       const currentWishlist = wishlist || []; // Get the current wishlist from the store
 
@@ -26,7 +26,7 @@ const ProductCard = ({product, customerId}) => {
     window.alert('Product removed from wishlist!');
   } else {
     // If the product doesn't exist, push it to the array
-    updatedWishlist.push({ id: pid });
+    updatedWishlist.push({ id: pid, name:name, img:featuredImage });
     window.alert('Product added to wishlist!');
   }
 
@@ -116,7 +116,9 @@ const ProductCard = ({product, customerId}) => {
                                         ? 'bg-red-600 hover:bg-red-800'
                                         : 'bg-gray-600 hover:bg-gray-800'
                                     }`}
-                        onClick={  () => handleWishlist(`${product.id.split('gid://shopify/Product/')[1]}`)}
+                        onClick={  () => handleWishlist(`${product.id.split('gid://shopify/Product/')[1]}`,
+                        product.name, 
+                        product.featuredImage?.url)}
                         >
                         <FiHeart size={18} />
                     </button>
