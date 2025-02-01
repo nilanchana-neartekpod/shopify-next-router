@@ -240,7 +240,7 @@ const ProductDetails = ({product, reviews}) => {
 
     return (
         <div className="mt-24">
-            <div className="product-details px-4 md:px-12 py-8 md:py-12">
+            <div className="product-details px-4 md:px-12 pt-8 md:pt-12">
                 <div className="left">
                     <Suspense fallback={"Loading data...."}>
                         <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
@@ -393,7 +393,7 @@ const ProductDetails = ({product, reviews}) => {
                     </div>
                 </div>
             </div>
-            <div className="mt-6">
+            <div className="mt-6 px-4 md:px-12 py-8 md:py-12">
                 <h2 className="text-xl font-semibold">Customer Reviews:</h2>
 
                 {/* Display Raw Review Data
@@ -417,7 +417,7 @@ const ProductDetails = ({product, reviews}) => {
                     <p className="text-gray-500">No reviews yet.</p>
                 )}
             </div>
-            <div className="review-section mt-12">
+            <div className="review-section px-4 md:px-12 py-8 md:py-12">
                 <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
                 <ReviewForm productid={product.id.split('gid://shopify/Product/')[1]} />
             </div>

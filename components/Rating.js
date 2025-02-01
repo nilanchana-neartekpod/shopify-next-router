@@ -48,7 +48,7 @@ const ReviewForm = ({productid}) => {
   };
 
   return (
-    <div className="p-4 mb-14">
+    <div className="p-4">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col item-start gap-6 p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg"
