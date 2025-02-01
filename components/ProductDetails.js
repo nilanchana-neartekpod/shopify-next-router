@@ -3,10 +3,12 @@ import Link from "next/link";
 import { useState, useEffect, Suspense, useRef, useCallback } from "react";
 import { addToCart, updateCart } from "../utils/shopify";
 import ProductCard from "../components/ProductCard"; // Adjust the path as needed
+import ReviewForm from '../components/Rating';
 import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
 
-const ProductDetails = ({product}) => {
+
+const ProductDetails = ({product, reviews}) => {
     const [quantity, setQuantity] = useState(0);
     const [checkout, setCheckout] = useState(false);
     const [selectedVariant, setSelectedVariant] = useState(product.variants.edges[0].node.id);
@@ -238,7 +240,7 @@ const ProductDetails = ({product}) => {
 
     return (
         <div className="mt-24">
-            <div className="product-details px-4 md:px-12 py-8 md:py-12">
+            <div className="product-details px-4 md:px-12 pt-8 md:pt-12">
                 <div className="left">
                     <Suspense fallback={"Loading data...."}>
                         <ImageGallery lazyLoad={true} items={imagesArray} thumbnailPosition={"left"} showFullscreenButton={false} showPlayButton={false} showNav={false} showBullets={true} />
@@ -256,7 +258,7 @@ const ProductDetails = ({product}) => {
                         </h3> 
 
                         <div className="mb-4 flex">
-                            {Array.from({ length: Number(product.rating.value) }, (_, i) => 
+                            {Array.from({ length: Number(product?.rating?.value) }, (_, i) => 
                                 <svg key={i} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M10 1L13 7L19 7.75L14.88 12.37L16 19L10 16L4 19L5.13 12.37L1 7.75L7 7L10 1Z" fill="#FFC700"/>
                                 </svg>
@@ -391,19 +393,47 @@ const ProductDetails = ({product}) => {
                     </div>
                 </div>
             </div>
+            <div className="mt-6 px-4 md:px-12 py-8 md:py-12">
+                <h2 className="text-xl font-semibold">Customer Reviews:</h2>
+
+                {/* Display Raw Review Data
+                <pre className="bg-gray-100 p-4 rounded text-sm text-gray-800 overflow-x-auto">
+                    {JSON.stringify(reviews, null, 2)}
+                </pre> */}
+
+                {/* Display Formatted Reviews */}
+                { reviews?.length > 0 ? (
+                    <ul className="mt-2">
+                    {reviews?.map((r, index) => (
+                        <li key={index} className="border-b py-2">
+                        <p className="text-gray-700 ">Rating: {r.rating} <span className="bg-blue-400 rounded-xl">{r?.product_rating?.value}⭐</span> </p>
+                        <p className="font-semibold text-gray-700">{r?.product_title?.value}</p>
+                        <p className="text-gray-700">{r?.product_body?.value}</p>
+                        <p className="text-sm text-gray-500">{r?.customer_name?.value} certified Customer {r?.updatedAt}</p>
+                        </li>
+                    ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-500">No reviews yet.</p>
+                )}
+            </div>
+            <div className="review-section px-4 md:px-12 py-8 md:py-12">
+                <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
+                <ReviewForm productid={product.id.split('gid://shopify/Product/')[1]} />
+            </div>
 
             <div className="px-4 md:px-12">
                 <h2 className="text-center text-xl md:text-3xl mb-4 md:mb-8">Related Products</h2>
             </div>
 
             <div className="productsList px-4 md:px-12 pb-8 md:pb-12">
-                {product.collection.reference.products.nodes.map((product) => {
+                {product?.collection?.reference?.products?.nodes?.map((product) => {
                     return <ProductCard key={product.id} product={product} />;
                 })}
             </div>
             
             <div className="flex mx-4 md:mx-12 mb-8 md:mb-12 justify-center">
-                <Link href={`/collections/${product.collection.reference.handle}`} className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
+                <Link href={`/collections/${product?.collection?.reference?.handle}`} className="bg-[#0348be] px-6 py-3 text-white font-bold uppercase rounded">Show More</Link>
             </div>
             
         </div>

@@ -272,7 +272,14 @@ const Header = () => {
                 {wishlist && wishlist.length > 0 ? (
                   wishlist.map((item) => (
                     <div key={item.id} className="flex justify-between items-center mb-2">
-                      <p className="text-sm">{item.name}</p>
+                      {item.img ? (
+                          <img src={item.img} alt={item.handle || "Wishlist item"} className="w-12 h-12 object-cover rounded-lg" />
+                        ) : (
+                          <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                            No Image
+                          </div>
+                        )}
+                      <p className="text-sm font-semibold">{item.name}</p>
                       <button
                         className="text-red-500 hover:underline text-xs"
                         onClick={() => {

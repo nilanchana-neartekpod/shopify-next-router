@@ -81,6 +81,46 @@ export async function createCustomer(input) {
     throw new Error(error.message || "Error creating customer");
   }
 }
+export async function createMetaobject(fields) {
+ const mutation = gql`mutation CreateMetaobject($metaobject: MetaobjectCreateInput!) {
+    metaobjectCreate(metaobject: $metaobject) {
+      metaobject {
+        fields {
+          value
+        }
+      }
+      userErrors {
+        field
+        message
+        code
+      }
+    }
+  }`;
+
+  try {
+    const variables = {
+      "metaobject": {
+        "type": "review",
+        "fields": fields,
+        "capabilities": { publishable : {status: "DRAFT" } }
+      }
+    };
+    const data = await graphQLBackend.request(mutation, variables);
+    
+    if(data.metaobjectCreate.userErrors.length > 0) {
+      throw new Error(
+        `Error creating metaobject: ${data.metaobjectCreate.userErrors[0].message}`
+      );
+    }
+
+    // Return the created customer data
+    return  data.metaobjectCreate.metaobject.fields;
+  } catch (error) {
+    throw new Error(error.message || "Error creating customer");
+  }
+}
+
+
 export async function customerLogin(email, password) {
   const mutation = gql`
     mutation customerAccessTokenCreate($input: CustomerAccessTokenCreateInput!) {
@@ -155,6 +195,45 @@ export async function getMetaobjectByType() {
   } catch (error) {
     console.error("Error fetching metaobjects:", error.message);
     throw new Error(error.message || "Error retrieving metaobjects");
+  }
+}
+export async function getReviews(productId) {
+  const query = gql`
+    query MyQuery {
+      metaobjects(type: "review", first: 250, query: "display_name:${productId}") {
+        nodes {
+          product_id: field(key: "pid") {
+            value
+          }
+          product_title: field(key: "title") {
+            value
+          }
+          product_body: field(key: "body") {
+            value
+          }
+          product_rating: field(key: "rating") {
+            value
+          }
+          customer_name:field(key: "customer_name") {
+            value
+          }
+          email: field(key: "email") {
+            value
+          }
+          updatedAt
+        }
+      }
+    }
+  `;
+
+  try {
+    const data = await graphQLBackend.request(query);
+    console.log("values",data?.metaobjects?.nodes );
+    
+    return data?.metaobjects?.nodes || [];
+  } catch (error) {
+    console.error("Error fetching reviews:", error.message);
+    throw new Error(error.message || "Error retrieving reviews");
   }
 }
 export async function getMetaobjectById(metaobjectId) {
