@@ -51,10 +51,11 @@ const ReviewForm = ({productid}) => {
     <div className="p-4">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col item-start gap-6 p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg"
+        className="flex flex-col item-start gap-6 p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg h-96 overflow-y-auto"
       >
+        <h1>Share your experience</h1>
         <div>
-          <label className="block text-sm font-medium mb-1">Title:</label>
+          <label className="text-start block text-sm font-semibold mb-1">Review Title:</label>
           <input
             type="text"
             value={title}
@@ -64,7 +65,7 @@ const ReviewForm = ({productid}) => {
           />
         </div>
         <div style={{display:"none"}}>
-          <label className="block text-sm font-medium mb-1">PID:</label>
+          <label className="text-start block text-sm font-semibold mb-1">PID:</label>
           <input
             type="text"
             value={pid}
@@ -74,17 +75,19 @@ const ReviewForm = ({productid}) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Body:</label>
+          <label className="text-start block text-sm font-semibold mb-1">Review:</label>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
+             placeholder="Write your feedback here..."
             required
             className="w-full border border-gray-300 rounded p-2"
           />
         </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Rate this Product:</label>
+        <div className='flex flex-col-2 gap-3'>
+          <label className="text-start block text-sm font-semibold mt-1">Rate this Product:</label>
           <Rating
+          className='mb-1'
             initialRating={rating}
             onChange={(value) => setRating(value)}
             emptySymbol={
@@ -95,10 +98,10 @@ const ReviewForm = ({productid}) => {
             } // Full star
             fractions={2}
           />
-          <p className="text-sm mt-2">Your Rating: {rating}</p>
         </div>
+        <p className="text-start font-semibold text-sm mt-2">Your Rating: {rating}</p>
         <div>
-          <label className="block text-sm font-medium mb-1">Customer Name:</label>
+          <label className="text-start block text-sm font-semibold mb-1">Customer Name:</label>
           <input
             type="text"
             value={customerName}
@@ -108,7 +111,7 @@ const ReviewForm = ({productid}) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Email:</label>
+          <label className="text-start block text-sm font-semibold mb-1">Email:</label>
           <input
             type="email"
             value={email}
