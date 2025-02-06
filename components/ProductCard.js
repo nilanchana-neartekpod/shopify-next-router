@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import useGlobalStore from '../store/store';
 
-const ProductCard = ({product, customerId}) => {
+const ProductCard = ({product, customerId, onClickClose}) => {
   const getwishlist = useGlobalStore((state) => state.getwishlist);
   const wishlist = useGlobalStore((state) => state.wishlist);
   const metafieldId = useGlobalStore((state) => state.metafieldId);
@@ -90,12 +90,17 @@ const ProductCard = ({product, customerId}) => {
       //     console.error('Error updating wishlist:', error);
       //   }
       };
+      const handleProductClick = () => {
+        // Call the parent-provided callback to close search results
+        if (onClickClose) onClickClose();
+      };
   return (
     <>
-        <div className="product relative border rounded-lg overflow-hidden shadow-md group">
-            <div className="relative">
-                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
+        <div className="product relative px-3 py-3 border rounded-lg overflow-hidden shadow-md group">
+            <div className="relative flex items-center justify-center ">
+                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`} onClick={handleProductClick}>
                     
+
                     {product.featuredImage?.url ? (
                         <>
                             <Image src={product.featuredImage?.url} alt={product.title} fill={true} className="object-cover group-hover:opacity-100 transition-opacity duration-200"/>
@@ -126,7 +131,7 @@ const ProductCard = ({product, customerId}) => {
                 </div>
                 
                 <div>
-                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}>
+                <Link href={`/products/${product.handle}/?id=${product.id.split('gid://shopify/Product/')[1]}`}  onClick={handleProductClick}>
                     <h5>{product.title}</h5>
                 </Link>
                 <div>$ {product.priceRange.minVariantPrice.amount}</div>
