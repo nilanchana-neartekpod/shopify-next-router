@@ -741,6 +741,25 @@ export const getProduct = async (id) => {
                 rating: metafield(key: "rating", namespace: "custom") {
                   value
                 }
+                option: metafield(key: "options", namespace: "custom") {
+                  value
+                  updatedAt
+                  type
+                  namespace
+                  id
+                  key
+                  references(first: 10) {
+                    nodes {
+                      ... on Metaobject {
+                        id
+                        fields {
+                          key
+                          value
+                        }
+                      }
+                    }
+                  }
+                }
                 collection: metafield(key: "collection", namespace: "custom") {
                   reference {
                     ... on Collection {
@@ -781,24 +800,28 @@ export const getProduct = async (id) => {
     }
 };
 
-export const addToCart = async (itemId, quantity, sellingPlanId) => {
+export const addToCart = async (itemId, quantity, sellingPlanId, attributes) => {
     const createCartMutation = gql`mutation createCart($cartInput: CartInput){ cartCreate(input: $cartInput){ cart{ id } } }`;
     let variables = null;
 
     if(sellingPlanId){
-      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, sellingPlanId } ] } }
+      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, attributes, sellingPlanId } ] } }
     }else{
-      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId } ] } }
+      variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, attributes } ] } }
     }
+    console.log("addToCart Variables:", variables);
 
     try {
-      return await graphQLClient.request(createCartMutation, variables);
+      let response = await graphQLClient.request(createCartMutation, variables);
+      console.log("addToCart Variables:", variables);
+      console.log("rsp",response);
+      return response;
     } catch (error) {
       throw new Error(error);
     }
 }
 
-export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
+export async function updateCart(cartId, itemId, quantity, sellingPlanId , attributes) {
     const updateCartMutation = gql`mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id } } }`;
     let variables = null;
 
@@ -809,7 +832,8 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
           {
             quantity: parseInt(quantity),
             merchandiseId: itemId,
-            sellingPlanId
+            sellingPlanId,
+             attributes
           },
         ],
       };
@@ -820,6 +844,7 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
           {
             quantity: parseInt(quantity),
             merchandiseId: itemId,
+            attributes
           },
         ],
       };
@@ -827,6 +852,7 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
 
     try {
       const data = await graphQLClient.request(updateCartMutation, variables);
+      console.log("updated Cart:", JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
       throw new Error(error);
@@ -846,6 +872,10 @@ export async function retrieveCart(cartId) {
               node {
                 id
                 quantity
+                attributes {
+                    key
+                    value
+                  }
                 merchandise {
                   ... on ProductVariant {
                     id
@@ -883,6 +913,7 @@ export async function retrieveCart(cartId) {
     };
     try {
       const data = await graphQLClient.request(cartQuery, variables);
+      console.log("Retrieved Cart:", JSON.stringify(data, null, 2));
       return data.cart;
     } catch (error) {
       throw new Error(error);

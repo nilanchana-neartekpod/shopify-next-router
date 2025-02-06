@@ -15,6 +15,7 @@
     "@openai/realtime-api-beta": "github:openai/openai-realtime-api-beta",
     "fuse.js": "^7.0.0",
     "graphql-request": "^7.1.0",
+    "javascript-time-ago": "^2.5.11",
     "next": "14.2.14",
     "nookies": "^2.5.2",
     "rc-slider": "^11.1.7",

@@ -6,7 +6,8 @@ import ProductCard from "../components/ProductCard"; // Adjust the path as neede
 import ReviewForm from '../components/Rating';
 import ImageGallery from "react-image-gallery";
 import useGlobalStore from '../store/store'
-
+import TimeAgo from 'javascript-time-ago'
+import en from 'javascript-time-ago/locale/en'
 
 const ProductDetails = ({product, reviews}) => {
     const [quantity, setQuantity] = useState(0);
@@ -17,6 +18,10 @@ const ProductDetails = ({product, reviews}) => {
     const [selectedOffer, setSelectedOffer] = useState(null); // Add this line to manage the selected offer
     const [varPrice, setVarPrice] = useState(product.variants?.edges[0]?.node?.price);
     const [varCompPrice, setVarCompPrice] = useState(product.variants?.edges[0]?.node?.compareAtPrice);
+    const [showModal, setShowModal] = useState(false);
+    const [selectedPreferences, setSelectedPreferences] = useState({});
+    TimeAgo.addDefaultLocale(en)
+    const timeAgo = new TimeAgo('en-US')
 
     const handleSellingPlanChange = (plan) => {
         setSelectedOffer(plan); // Set the selected offer (or selling plan);
@@ -188,9 +193,17 @@ const ProductDetails = ({product, reviews}) => {
         }
     }
 
+
+    const handlePreferenceChange = (title, value) => {
+        setSelectedPreferences(prev => ({ ...prev, [title]: value }));
+    };
+
     const handleAddToCart = async () => {
         let cartId = sessionStorage.getItem("cartId");
-        
+        const attributes = Object.entries(selectedPreferences).map(([key, value]) => ({
+            key,
+            value,
+          }));
         let sellPlanId = null;
         if(selectedOffer){
             sellPlanId = selectedOffer.id;
@@ -199,7 +212,7 @@ const ProductDetails = ({product, reviews}) => {
         if (quantity > 0) {
           if (cartId) {
 
-            let bodyData = { cartId, varId: selectedVariant, quantity, type: 'UPDATE_CART' };
+            let bodyData = { cartId, varId: selectedVariant, quantity, attributes, type: 'UPDATE_CART' };
             if(sellPlanId){
                 bodyData.sellingPlanId = sellPlanId;
             }
@@ -217,7 +230,7 @@ const ProductDetails = ({product, reviews}) => {
             setQuantity(0);
           } else {
 
-            let bodyData = { varId: selectedVariant, quantity, type: 'ADD_TO_CART' };
+            let bodyData = { varId: selectedVariant, quantity, attributes, type: 'ADD_TO_CART' };
             if(sellPlanId){
                 bodyData.sellingPlanId = sellPlanId;
             }
@@ -277,7 +290,7 @@ const ProductDetails = ({product, reviews}) => {
                                 +
                             </button>
                        </div>
-                       <div className="mt-5">
+                        <div className="mt-5">
                         { product.sellingPlanGroups.nodes.length > 0 && <h4 className="text-lg font-semibold">Choose an Offer:</h4> }
                         <div className="flex flex-col mt-4">
                         {product?.sellingPlanGroups.nodes ? (
@@ -327,7 +340,34 @@ const ProductDetails = ({product, reviews}) => {
                         )}
                         </div>
 
-                    </div>
+                        </div>
+                        <div className="mt-5">
+                            { ( <>
+                                <h4 className="text-lg font-semibold">Choose your preference:</h4>
+                                {product?.option?.references?.nodes.map((option, index) => {
+                                    const titleField = option.fields.find(field => field.key === 'title');
+                                    const optionsField = option.fields.find(field => field.key === 'options');
+                                    const title = titleField ? titleField.value : '';
+                                    const options = optionsField ? JSON.parse(optionsField.value) : [];
+
+                                    return (
+                                    <div key={index} className="mt-3">
+                                        <label className="block text-sm font-medium text-gray-700">{title}</label>
+                                        <select
+                                        className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                                        onChange={(e) => handlePreferenceChange(title, e.target.value)}
+                                        >
+                                        <option value="">Select {title}</option>
+                                        {options.map((opt, idx) => (
+                                            <option key={idx} value={opt}>{opt}</option>
+                                        ))}
+                                        </select>
+                                    </div>
+                                    );
+                                })}
+                                </>
+                            )}
+                        </div>
                     </div>
                     <div className="mt-4 flex w-auto gap-x-4">
                         {availableForSale && selectedVariant ? (
@@ -393,30 +433,6 @@ const ProductDetails = ({product, reviews}) => {
                     </div>
                 </div>
             </div>
-            {/* <div className="mt-6 px-4 md:px-12 py-8 md:py-12">
-                <h2 className="text-xl font-semibold">Customer Reviews:</h2> */}
-
-                {/* Display Raw Review Data
-                <pre className="bg-gray-100 p-4 rounded text-sm text-gray-800 overflow-x-auto">
-                    {JSON.stringify(reviews, null, 2)}
-                </pre> */}
-
-                {/* Display Formatted Reviews */}
-                {/* { reviews?.length > 0 ? (
-                    <ul className="mt-2">
-                    {reviews?.map((r, index) => (
-                        <li key={index} className="border-b py-2">
-                        <p className="text-gray-700 ">Rating: {r.rating} <span className="bg-blue-400 rounded-xl">{r?.product_rating?.value}⭐</span> </p>
-                        <p className="font-semibold text-gray-700">{r?.product_title?.value}</p>
-                        <p className="text-gray-700">{r?.product_body?.value}</p>
-                        <p className="text-sm text-gray-500">{r?.customer_name?.value} certified Customer {r?.updatedAt}</p>
-                        </li>
-                    ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-500">No reviews yet.</p>
-                )}
-            </div> */}
             <div className="mt-8 px-6 md:px-16 py-10 bg-gradient-to-b from-gray-100 to-gray-200 rounded-xl shadow-lg">
         <h2 className="text-3xl font-extrabold text-gray-800 text-center mb-8">
           What Our Customers Say
@@ -474,11 +490,33 @@ const ProductDetails = ({product, reviews}) => {
           </p>
         )}
       </div>
-            <div className="review-section px-4 md:px-12 py-8 md:py-12">
-                <h2 className="text-2xl font-bold mb-6">Leave a Review</h2>
-                <ReviewForm productid={product.id.split('gid://shopify/Product/')[1]} />
-            </div>
 
+            <div className="review-section text-center mb-12 px-4 md:px-12 py-8 md:py-12">
+                <p className="text-blue-500 font-semibold mb-2"> Your review helps us improve and serve you better. </p>
+                <h2 className="text-2xl font-bold mb-6">Provide us with your feedback here</h2>
+                <button onClick={() => setShowModal(true)} className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800">
+                    Add Review
+                </button>
+                {showModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="relative w-full max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-6">
+                        {/* Close Button */}
+                        <button
+                        className="absolute top-2 right-2 text-5xl font-bold text-gray-600 hover:text-gray-900"
+                        onClick={() => setShowModal(false)}
+                        >
+                        &times;
+                        </button>
+
+                        {/* Review Form Component */}
+                        <ReviewForm
+                        productid={product.id.split("gid://shopify/Product/")[1]}
+                        closeModal={() => setShowModal(false)} // Pass function to close modal
+                        />
+                    </div>
+                    </div>
+                )}           
+            </div>
             <div className="px-4 md:px-12">
                 <h2 className="text-center text-xl md:text-3xl mb-4 md:mb-8">Related Products</h2>
             </div>
