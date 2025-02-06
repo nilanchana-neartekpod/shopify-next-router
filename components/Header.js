@@ -255,9 +255,11 @@ const Header = () => {
                     
                   {/* <p className="text-gray-600">No products in the cart.</p> */}
                   <Link href="/products" className="text-blue-500 hover:underline mt-2 block">Continue Shopping</Link>
-                  <Link className="viewCartCta justify-self-start hover:bg-[#013396]" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
-                       View Cart
-                  </Link>    
+                  {cartItems.length > 0 && (
+                    <Link className="viewCartCta justify-self-start hover:bg-[#013396]" href={`/cart?cartid=${sessionStorage.getItem("cartId")}`}>
+                      View Cart
+                    </Link>
+                  )}   
                   </div>
                 </div>
               </div>

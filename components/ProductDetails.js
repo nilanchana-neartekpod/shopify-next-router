@@ -342,10 +342,9 @@ const ProductDetails = ({product, reviews}) => {
 
                         </div>
                         <div className="mt-5">
-                            {product.option.references.nodes.length > 0 && (
-                                <>
+                            { ( <>
                                 <h4 className="text-lg font-semibold">Choose your preference:</h4>
-                                {product.option.references.nodes.map((option, index) => {
+                                {product?.option?.references?.nodes.map((option, index) => {
                                     const titleField = option.fields.find(field => field.key === 'title');
                                     const optionsField = option.fields.find(field => field.key === 'options');
                                     const title = titleField ? titleField.value : '';
@@ -469,7 +468,7 @@ const ProductDetails = ({product, reviews}) => {
                     <div className="relative w-full max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden p-6">
                         {/* Close Button */}
                         <button
-                        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                        className="absolute top-2 right-2 text-5xl font-bold text-gray-600 hover:text-gray-900"
                         onClick={() => setShowModal(false)}
                         >
                         &times;

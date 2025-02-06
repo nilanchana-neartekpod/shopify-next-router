@@ -92,6 +92,14 @@ export default function Cart({ cart, checkoutUrl }) {
                           <div>{item.node.merchandise.title}</div> <div>-</div>
                         </>
                       )} 
+                      {(<div className="text-sm text-gray-500 mt-1">
+                              {item?.node?.attributes?.map((attr) => (
+                                  <p key={attr.key}>
+                                      <strong>{attr.key}:</strong> {attr.value}
+                                  </p>
+                              ))}
+                          </div>
+                      )}
                       <div>$ { item.node.merchandise.product.priceRange.minVariantPrice.amount}</div>
                     </div>
                     <p className="text-sm text-gray-500 mt-1">Quantity: {item.node.quantity}</p>

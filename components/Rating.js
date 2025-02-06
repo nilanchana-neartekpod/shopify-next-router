@@ -48,12 +48,27 @@ const ReviewForm = ({productid}) => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-2">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col item-start gap-6 p-4 max-w-md mx-auto bg-white shadow-lg rounded-lg h-96 overflow-y-auto"
+        className="flex flex-col item-start gap-6 p-4 max-w-md mx-auto bg-slate-200  rounded-lg"
       >
         <h1>Share your experience</h1>
+        <div className='flex flex-col-2 gap-3'>
+          <label className="text-start block text-sm font-semibold mt-1">Rate this Product:</label>
+          <Rating
+          className='mb-1'
+            initialRating={rating}
+            onChange={(value) => setRating(value)}
+            emptySymbol={
+              <span className="text-gray-300 text-xl">&#9734;</span>
+            } // Empty star
+            fullSymbol={
+              <span className="text-yellow-400 text-xl">&#9733;</span>
+            } 
+          />
+          <p className="hidden text-start font-semibold text-sm mt-2">Your Rating: {rating}</p>
+        </div>
         <div>
           <label className="text-start block text-sm font-semibold mb-1">Review Title:</label>
           <input
@@ -84,22 +99,6 @@ const ReviewForm = ({productid}) => {
             className="w-full border border-gray-300 rounded p-2"
           />
         </div>
-        <div className='flex flex-col-2 gap-3'>
-          <label className="text-start block text-sm font-semibold mt-1">Rate this Product:</label>
-          <Rating
-          className='mb-1'
-            initialRating={rating}
-            onChange={(value) => setRating(value)}
-            emptySymbol={
-              <span className="text-gray-300 text-xl">&#9734;</span>
-            } // Empty star
-            fullSymbol={
-              <span className="text-yellow-400 text-xl">&#9733;</span>
-            } // Full star
-            fractions={2}
-          />
-        </div>
-        <p className="text-start font-semibold text-sm mt-2">Your Rating: {rating}</p>
         <div>
           <label className="text-start block text-sm font-semibold mb-1">Customer Name:</label>
           <input

@@ -821,7 +821,7 @@ export const addToCart = async (itemId, quantity, sellingPlanId, attributes) => 
     }
 }
 
-export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
+export async function updateCart(cartId, itemId, quantity, sellingPlanId , attributes) {
     const updateCartMutation = gql`mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) { cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id } } }`;
     let variables = null;
 
@@ -832,7 +832,8 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
           {
             quantity: parseInt(quantity),
             merchandiseId: itemId,
-            sellingPlanId
+            sellingPlanId,
+             attributes
           },
         ],
       };
@@ -843,6 +844,7 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
           {
             quantity: parseInt(quantity),
             merchandiseId: itemId,
+            attributes
           },
         ],
       };
@@ -850,6 +852,7 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId) {
 
     try {
       const data = await graphQLClient.request(updateCartMutation, variables);
+      console.log("updated Cart:", JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
       throw new Error(error);
@@ -869,6 +872,10 @@ export async function retrieveCart(cartId) {
               node {
                 id
                 quantity
+                attributes {
+                    key
+                    value
+                  }
                 merchandise {
                   ... on ProductVariant {
                     id
@@ -906,6 +913,7 @@ export async function retrieveCart(cartId) {
     };
     try {
       const data = await graphQLClient.request(cartQuery, variables);
+      console.log("Retrieved Cart:", JSON.stringify(data, null, 2));
       return data.cart;
     } catch (error) {
       throw new Error(error);
