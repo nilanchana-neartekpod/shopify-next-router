@@ -165,6 +165,9 @@ const Header = () => {
     setShowNav(false); // Hide navigation and search form
     router.push("/voiceAssistance");
   };
+   const handleCloseSearchResults = () => {
+    setShowSearchInput(false);
+  };
 
   return (
     <header className={`w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50 ${showNav ? 'active-nav' : ''}`}>
@@ -381,9 +384,9 @@ const Header = () => {
       </div>
 
       {showSearchInput && searchResults.length > 0 && (
-        <div className="md:px-12 md:pt-8 searchresults grid grid-cols-1 md:grid-cols-5 gap-4 p-4 mx-auto">
+        <div className=" md:px-12 md:pt-8 searchresults grid grid-cols-1 md:grid-cols-5 gap-4  mx-auto">
           {searchResults.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} onClickClose={handleCloseSearchResults} />
           ))}
         </div>
       )}
