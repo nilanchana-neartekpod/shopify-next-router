@@ -228,7 +228,7 @@ export async function getReviews(productId) {
 
   try {
     const data = await graphQLBackend.request(query);
-    console.log("values",data?.metaobjects?.nodes );
+    // console.log("values",data?.metaobjects?.nodes );
     
     return data?.metaobjects?.nodes || [];
   } catch (error) {
@@ -345,7 +345,7 @@ export async function updateMetafield(customerId, metafieldId, wishlistValue) {
 
   try {
     const data = await graphQLBackend.request(updateMetafieldMutation, variables);
-    console.log("GraphQL Update Customer Metafields Response:", data); // Log response for debugging  
+    // console.log("GraphQL Update Customer Metafields Response:", data); // Log response for debugging  
     return [];
 
   } catch (error) {
@@ -456,7 +456,7 @@ export async function fetchCustomerAddresses(accessToken) {
 
   try {
     const data = await graphQLClient.request(query, variables);
-    console.log("metafield",data.customer.metafield);
+    // console.log("metafield",data.customer.metafield);
     return data;  
   } catch (error) {
     throw new Error(error.message || 'Error fetching customer addresses');
@@ -493,7 +493,7 @@ export async function createCustomerAddress(customerAccessToken, addressInput) {
   
   try {
     const data = await graphQLClient.request(mutation, variables);
-    console.log("GraphQL Create Address Response:", data); // Log the response for debugging
+    // console.log("GraphQL Create Address Response:", data); // Log the response for debugging
 
     if (data.customerAddressCreate.customerUserErrors.length > 0) {
       console.error(
@@ -525,7 +525,7 @@ export async function deleteCustomerAddress(accessToken, addressId) {
     customerAccessToken: accessToken,
     id: addressId,
   };
-  console.log('GraphQL Variables:', variables);
+  // console.log('GraphQL Variables:', variables);
   try {
     const data = await graphQLClient.request(mutation, variables);
 
@@ -585,7 +585,7 @@ export async function updateCustomerAddress(customerAccessToken, addressId, addr
 
   try {
     const data = await graphQLClient.request(updateAddressMutation, variables);
-    console.log("GraphQL response:", data);  // Add logging to capture the response
+    // console.log("GraphQL response:", data);  // Add logging to capture the response
 
     if (data.customerAddressUpdate.customerUserErrors.length > 0) {
       console.log("User errors:", data.customerAddressUpdate.customerUserErrors);  // Log the errors
@@ -809,12 +809,12 @@ export const addToCart = async (itemId, quantity, sellingPlanId, attributes) => 
     }else{
       variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, attributes } ] } }
     }
-    console.log("addToCart Variables:", variables);
+    // console.log("addToCart Variables:", variables);
 
     try {
       let response = await graphQLClient.request(createCartMutation, variables);
-      console.log("addToCart Variables:", variables);
-      console.log("rsp",response);
+      // console.log("addToCart Variables:", variables);
+      // console.log("rsp",response);
       return response;
     } catch (error) {
       throw new Error(error);
@@ -852,7 +852,7 @@ export async function updateCart(cartId, itemId, quantity, sellingPlanId , attri
 
     try {
       const data = await graphQLClient.request(updateCartMutation, variables);
-      console.log("updated Cart:", JSON.stringify(data, null, 2));
+      // console.log("updated Cart:", JSON.stringify(data, null, 2));
       return data;
     } catch (error) {
       throw new Error(error);
@@ -913,7 +913,7 @@ export async function retrieveCart(cartId) {
     };
     try {
       const data = await graphQLClient.request(cartQuery, variables);
-      console.log("Retrieved Cart:", JSON.stringify(data, null, 2));
+      // console.log("Retrieved Cart:", JSON.stringify(data, null, 2));
       return data.cart;
     } catch (error) {
       throw new Error(error);

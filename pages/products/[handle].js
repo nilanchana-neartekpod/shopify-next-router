@@ -7,7 +7,7 @@ export default function Product({ product, reviews}) {
   if(!product){
     return <div className="mt-20 px-4 md:px-12 py-8 md:py-12 text-center font-bold text-2xl md:text-3xl">No product found: <Link className="underline text-[#0348be]" href='/products'>Visit Products Page</Link></div>
   }
-  console.log("Product Data:", product);
+  // console.log("Product Data:", product);
   return (
     <>
       <Head>
@@ -22,13 +22,13 @@ export default function Product({ product, reviews}) {
 }
 
 export const getServerSideProps = async (context) => {
-  console.log("Query ID:", context.query.id);
+  // console.log("Query ID:", context.query.id);
   const product =  await getProduct('gid://shopify/Product/'+ context.query.id);
   const productId = context.query.id;
-  console.log("Query ID:", productId);
+  // console.log("Query ID:", productId);
 
   const reviews = await getReviews(productId); 
-  console.log("Fetched Reviews:", reviews);
+  // console.log("Fetched Reviews:", reviews);
   return {
     props: {
       product,
