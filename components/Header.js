@@ -173,8 +173,8 @@ const Header = () => {
     <header className={`w-full bg-white shadow-md py-4 fixed top-0 left-0 z-50 ${showNav ? 'active-nav' : ''}`}>
       <div className="px-4 md:px-12 mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-4 cursor-pointer">
-          <img src="/House.svg" alt="Furniro" className="w-[40px] h-[24px] md:w-[64px] md:h-[40px]" />
-          <span className="text-gray-800 text-base md:text-xl font-semibold">NearTekPod</span>
+          <img src="/NTP_Brandmark_Digital_Full Colour.png" alt="Furniro" className="w-[40px] h-[24px] md:w-[64px] md:h-[40px]" />
+          <span className="text-gray-800 text-base md:text-xl font-semibold">Near<span className='text-blue-600'>Tek</span>Pod</span>
         </Link>
 
         <div className="flex md:order-2 space-x-3 md:space-x-0 gap-5 rtl:space-x-reverse rounded-lg ">

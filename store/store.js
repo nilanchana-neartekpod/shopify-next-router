@@ -30,10 +30,10 @@ const useStore = (set, get) => ({
         }
   
         const data = await response.json();
-        console.log('Data:', data);
-        console.log("Customer:", data?.addresses?.customer);
-        console.log("Metafield:", data?.addresses?.customer?.wishlist);
-        console.log("Wishlist", JSON.parse(data?.addresses?.customer?.wishlist.value));
+        // console.log('Data:', data);
+        // console.log("Customer:", data?.addresses?.customer);
+        // console.log("Metafield:", data?.addresses?.customer?.wishlist);
+        // console.log("Wishlist", JSON.parse(data?.addresses?.customer?.wishlist.value));
         
 
         const metafield = data.addresses?.customer?.wishlist;

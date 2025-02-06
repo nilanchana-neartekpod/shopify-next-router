@@ -20,8 +20,8 @@ const ProductDetails = ({product, reviews}) => {
     const [varCompPrice, setVarCompPrice] = useState(product.variants?.edges[0]?.node?.compareAtPrice);
     const [showModal, setShowModal] = useState(false);
     const [selectedPreferences, setSelectedPreferences] = useState({});
-    TimeAgo.addDefaultLocale(en)
-    const timeAgo = new TimeAgo('en-US')
+    // TimeAgo.addDefaultLocale(en)
+    // const timeAgo = new TimeAgo('en-US')
 
     const handleSellingPlanChange = (plan) => {
         setSelectedOffer(plan); // Set the selected offer (or selling plan);
