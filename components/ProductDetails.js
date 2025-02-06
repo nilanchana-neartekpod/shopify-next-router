@@ -433,30 +433,64 @@ const ProductDetails = ({product, reviews}) => {
                     </div>
                 </div>
             </div>
-            <div className="mt-6 px-4 md:px-12 py-8 md:py-12">
-                <h2 className="text-xl font-semibold">Customer Reviews:</h2>
+            <div className="mt-8 px-6 md:px-16 py-10 bg-gradient-to-b from-gray-100 to-gray-200 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-extrabold text-gray-800 text-center mb-8">
+          What Our Customers Say
+        </h2>
 
-                {/* Display Raw Review Data
-                <pre className="bg-gray-100 p-4 rounded text-sm text-gray-800 overflow-x-auto">
-                    {JSON.stringify(reviews, null, 2)}
-                </pre> */}
+        {reviews?.length > 0 ? (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {reviews.map((r, index) => (
+              <div
+                key={index}
+                className="relative bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:scale-105"
+              >
+                {/* Star Rating */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <span className="text-yellow-400 text-2xl font-bold">
+                      {r.rating}⭐
+                    </span>
+                  </div>
+                  <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wide">
+                    {r?.product_rating?.value} Stars
+                  </span>
+                </div>
 
-                {/* Display Formatted Reviews */}
-                { reviews?.length > 0 ? (
-                    <ul className="mt-2">
-                    {reviews?.map((r, index) => (
-                        <li key={index} className="border-b py-2">
-                        <p className="text-gray-700 ">Rating: {r.rating} <span className="bg-blue-500 px-3 py-1 rounded-xl">{r?.product_rating?.value}⭐</span> </p>
-                        <p className="font-semibold text-gray-700">{r?.product_title?.value}</p>
-                        <p className="text-gray-700">{r?.product_body?.value}</p>
-                        <p className="text-sm text-gray-500">{r?.customer_name?.value} certified Customer- {timeAgo.format(new Date(r?.updatedAt))}</p>
-                        </li>
-                    ))}
-                    </ul>
-                ) : (
-                    <p className="text-gray-500">No reviews yet.</p>
-                )}
-            </div>
+                {/* Review Title */}
+                <h3 className="mt-4 text-lg font-bold text-gray-900">
+                  {r?.product_title?.value}
+                </h3>
+
+                {/* Review Body */}
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">
+                  {r?.product_body?.value}
+                </p>
+
+                {/* Reviewer Info */}
+                <div className="bottom-4 left-6 right-6 flex items-center mt-6">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-700 text-white flex items-center justify-center font-bold text-xl">
+                    {r?.customer_name?.value[0]?.toUpperCase()}
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-semibold text-gray-800">
+                      {r?.customer_name?.value}
+                    </p>
+                    {/* <p className="text-xs text-gray-500">
+                Certified Customer  {timeAgo.format(new Date(r?.updatedAt))}
+              </p> */}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600 text-center">
+            No reviews yet. Be the first to share your experience!
+          </p>
+        )}
+      </div>
+
             <div className="review-section text-center mb-12 px-4 md:px-12 py-8 md:py-12">
                 <p className="text-blue-500 font-semibold mb-2"> Your review helps us improve and serve you better. </p>
                 <h2 className="text-2xl font-bold mb-6">Provide us with your feedback here</h2>
