@@ -2,8 +2,12 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import useGlobalStore from '../store/store';
+import { useState} from "react";
+
 
 const ProductCard = ({product, customerId, onClickClose}) => {
+  const [checkout, setCheckout] = useState(false);
+  const cartTotal = useGlobalStore((state) => state.cartTotal);
   const getwishlist = useGlobalStore((state) => state.getwishlist);
   const wishlist = useGlobalStore((state) => state.wishlist);
   const metafieldId = useGlobalStore((state) => state.metafieldId);
@@ -11,6 +15,50 @@ const ProductCard = ({product, customerId, onClickClose}) => {
   const setWishlist = useGlobalStore((state) => state.setWishlist);
     const addToWishlist = useGlobalStore((state) => state.addToWishlist);
     // const isInWishlist = Array.isArray(wishlist) && wishlist.includes(product.id);
+   
+    const handleAddToCart = async (product) => {
+      let cartId = sessionStorage.getItem("cartId");
+      if (product.selectedOrFirstAvailableVariant?.availableForSale) {
+        const varId = product.selectedOrFirstAvailableVariant?.id;
+        console.log("merchandise ID",varId);
+        
+        if (cartId) {
+
+          let bodyData = { cartId, varId, quantity: 1,
+            type: 'UPDATE_CART' };
+        
+          let settings = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(bodyData)
+          }
+          let response = await fetch('/api/cart', settings);
+          let data = await response.json();
+
+          setCheckout(true);
+          cartTotal(data.cartId);
+          
+        } else {
+
+          let bodyData = {  varId, quantity: 1,
+                         type: 'ADD_TO_CART' };
+                         console.log("sendind data", bodyData);
+                         
+          let settings = {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(bodyData)
+          }
+          let response = await fetch('/api/cart', settings);
+          let data = await response.json();
+          console.log("responseIn",data);
+          
+          sessionStorage.setItem("cartId", data.cartId);
+          setCheckout(true);
+          cartTotal(data.cartId);
+        }
+      }
+  };
     const handleToggle = () => toggleWishlistItem(product.id, customerId);
     const handleWishlist = async (pid, title, featuredImage ) => {
       console.log('pr0duct ID:', pid);
@@ -113,7 +161,7 @@ const ProductCard = ({product, customerId, onClickClose}) => {
                   </Link>
                     {/* Icons container, positioned at the bottom and visible only on hover */}
                     <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200  py-2">
-                    <button className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800 ">
+                    <button onClick={() => handleAddToCart(product)} className="text-white p-2  rounded-full bg-gray-600 hover:bg-gray-800 ">
                         <FiShoppingCart size={18} />
                     </button>
                     <button className={`text-white p-2 rounded-full ${

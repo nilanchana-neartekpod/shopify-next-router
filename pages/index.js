@@ -34,7 +34,7 @@ export const getServerSideProps = async () => {
 };
 
 export default function Home({ data, collections, sliderData }) {
-  const products = data.products.nodes;
+  const products = data.products.nodes; 
   const collectionList = collections.collections.nodes;
   return (
     <>
@@ -63,7 +63,7 @@ export default function Home({ data, collections, sliderData }) {
           </h2>
           <div className="productsList px-4 md:px-12 py-8 md:py-12">
             {products.map((product) => {
-              return <ProductCard key={product.id} product={product} />;
+              return <ProductCard key={product.id} product={product}  selectedVariant={product.selectedOrFirstAvailableVariant} />;
             })}
           </div>
         </div>
