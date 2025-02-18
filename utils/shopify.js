@@ -272,6 +272,10 @@ export async function getProducts(count) {
                     title
                     id
                     handle
+                    selectedOrFirstAvailableVariant {
+                      id
+                      availableForSale
+                    }
                     priceRange {
                         minVariantPrice {
                             amount
@@ -644,6 +648,10 @@ export const getProduct = async (id) => {
                 handle
                 title
                 description
+                availableForSale
+                selectedOrFirstAvailableVariant {
+                  id
+                }
                 priceRange {
                   minVariantPrice {
                     amount
@@ -809,6 +817,7 @@ export const addToCart = async (itemId, quantity, sellingPlanId, attributes) => 
     }else{
       variables = { cartInput: { lines: [ { quantity: parseInt(quantity), merchandiseId: itemId, attributes } ] } }
     }
+    
     // console.log("addToCart Variables:", variables);
 
     try {
